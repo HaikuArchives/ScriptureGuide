@@ -64,7 +64,7 @@ All rights reserved.
 
 #include "ObjectList.h"
 #include "ColumnListView.h"
-#include "ColorTools.h"
+//#include "ColorTools.h"
 /*
 #ifndef _ARCHIVE_DEFS_H
 #include <archive_defs.h>
@@ -1916,9 +1916,9 @@ void TitleView::ComputeDragBoundries(BColumn *findColumn, BPoint )
 void TitleView::DrawTitle(BView *view, BRect rect, BColumn *column, bool depressed)
 {
 	BRect drawRect;
-	rgb_color borderColor = mix_color(fMasterView->Color(B_COLOR_HEADER_BACKGROUND), make_color(0, 0, 0), 128);
+	rgb_color borderColor = tint_color(fMasterView->Color(B_COLOR_HEADER_BACKGROUND), B_DARKEN_2_TINT);
+	//rgb_color borderColor = mix_color(fMasterView->Color(B_COLOR_HEADER_BACKGROUND), make_color(0, 0, 0), 128);
 	rgb_color backgroundColor;
-
 	rgb_color bevelHigh;
 	rgb_color bevelLow;
 	// Want exterior borders to overlap.
@@ -1926,15 +1926,20 @@ void TitleView::DrawTitle(BView *view, BRect rect, BColumn *column, bool depress
 	drawRect = rect;
 	drawRect.InsetBy(2, 2);
 	if (depressed) {
-		backgroundColor = mix_color(fMasterView->Color(B_COLOR_HEADER_BACKGROUND), make_color(0, 0, 0), 64);
+		backgroundColor = tint_color(fMasterView->Color(B_COLOR_HEADER_BACKGROUND),  B_DARKEN_1_TINT);
+		bevelHigh = tint_color(backgroundColor,B_LIGHTEN_1_TINT);
+		bevelLow =tint_color(backgroundColor,B_DARKEN_1_TINT);
+		/*backgroundColor = mix_color(fMasterView->Color(B_COLOR_HEADER_BACKGROUND), make_color(0, 0, 0), 64);
 		bevelHigh = mix_color(backgroundColor, make_color(0, 0, 0), 64);
-		bevelLow = mix_color(backgroundColor, make_color(255, 255, 255), 128);
+		bevelLow = mix_color(backgroundColor, make_color(255, 255, 255), 128);*/
 		drawRect.left++;
 		drawRect.top++;
 	} else {
 		backgroundColor = fMasterView->Color(B_COLOR_HEADER_BACKGROUND);
-		bevelHigh = mix_color(backgroundColor, make_color(255, 255, 255), 192);
-		bevelLow = mix_color(backgroundColor, make_color(0, 0, 0), 64);
+		bevelHigh = tint_color(backgroundColor,  B_LIGHTEN_1_TINT);
+		bevelLow =tint_color(backgroundColor,B_DARKEN_1_TINT);
+		//bevelHigh = mix_color(backgroundColor, make_color(255, 255, 255), 192);
+		//bevelLow = mix_color(backgroundColor, make_color(0, 0, 0), 64);
 		drawRect.bottom--;
 		drawRect.right--;
 	}
