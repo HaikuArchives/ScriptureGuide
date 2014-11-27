@@ -1,11 +1,3 @@
-/* Scripture Guide - LogosSearchWindow.cpp
- *
- * Published under the GNU General Public License
- * see LICENSE for details
- *
- * LogosSearchWindiw displays the search gui and shows search results
- */
-
 #include <Application.h>
 #include <Alert.h>
 #include <Box.h>
@@ -29,7 +21,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "constants.h"
 #include "LogosApp.h"
@@ -37,6 +29,22 @@
 #include "LogosSearchWindow.h"
 #include "SwordBackend.h"
 #include "Preferences.h"
+
+/*enum
+{
+	FIND_BUTTON_OK = 'FBok',
+	FIND_BUTTON_HELP,
+	FIND_CHECK_CASE_SENSITIVE,
+	FIND_SELECT_FROM,
+	FIND_SELECT_TO,
+	FIND_SEARCH_STR,
+	FIND_RADIO1,
+	FIND_RADIO2,
+	FIND_RADIO3,
+	FIND_LIST_CLICK,
+	FIND_LIST_DCLICK,
+	FIND_TMP
+};*/
 
 class VersePreview : public BTextView
 {
@@ -46,8 +54,9 @@ public:
 	virtual void FrameResized(float width, float height);
 };
 
-VersePreview::VersePreview(BRect r, const char *name, BRect textrect, int32 resize, int32 flags)
- : BTextView(r,name,textrect,resize,flags)
+VersePreview::VersePreview(BRect r, const char *name, BRect textrect, int32 resize,
+							int32 flags)
+ :	BTextView(r,name,textrect,resize,flags)
 {
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	SetStylable(true);
@@ -67,79 +76,63 @@ void VersePreview::FrameResized(float width, float height)
 	SetTextRect(Bounds().InsetByCopy(5,5));
 }
 
-// constructor; gets the module and the options to pass on for subwindows
-LogosSearchWindow::LogosSearchWindow(BRect frame, const char* module)
-	: BWindow(frame, "Find ", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_NOT_ZOOMABLE)
+SGSearchWindow::SGSearchWindow(BRect frame, const char *module, BMessenger *owner)
+ :	BWindow(frame,"", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_NOT_ZOOMABLE),
+ 	fMessenger(owner)
 {
 	float minw,minh,maxw,maxh;
 	GetSizeLimits(&minw,&maxw,&minh,&maxh);
-	minw=325;
-	minh=410;
+	minw = 325;
+	minh = 410;
 	SetSizeLimits(minw,maxw,minh,maxh);
 	
-	int8 myFontSize=12;
-	bool myLineBreak=false;
+	int8 myFontSize;
+	bool myLineBreak;
 	
 	prefsLock.Lock();
 	if(preferences.FindInt8("fontsize",&myFontSize)!=B_OK)
-		myFontSize=12;
+		myFontSize = 12;
 	if(preferences.FindBool("linebreaks",&myLineBreak)!=B_OK)
-		myLineBreak=false;
+		myLineBreak = false;
 	if(preferences.FindString("module",&curModule)!=B_OK)
-		curModule="Webster";
+		curModule = "WEB";
 	prefsLock.Unlock();
 	
 	myBible = new SwordBackend();
 	curModule = module;
-	books = myBible->getBookNames();
-	myBible->setModule(curModule);
+	books = GetBookNames();
+	fCurrentModule = myBible->FindModule(curModule);
 	
-	romanFont.SetSize(12);
-	curFont = &romanFont;
-
-	// loads the greek font 
-	// do we need this?
-	greekFont.SetSize(12);
-
-	int32 numFamilies = count_font_families(); 
-	for ( int32 i = 0; i < numFamilies; i++ ) 
-	{ 
-		font_family family; 
-		uint32 flags; 
-		if ( get_font_family(i, &family, &flags) == B_OK ) 
-		{ 
-			if(!strcmp(family,GREEK))
-				greekFont.SetFamilyAndStyle(family, NULL);
-		}
+	if (module)
+	{
+		BString title("Find in ");
+		title << fCurrentModule->FullName();
+		SetTitle(title.String());
 	}
+	else
+		SetTitle("Find");
 	
-	mySearchStyle = -2;
-	mySearchFlags = REG_ICASE;
-	myFrom = 0;
-	myTo = books.size()-1;
-	myTxt = "";
-
-	isLineBreak = myLineBreak;
-	curFontSize = myFontSize;
+	fSearchMode = SEARCH_WORDS;
+	fSearchFlags = REG_ICASE;
+	fSearchStart = 0;
+	fSearchEnd = books.size()-1;
 
 	// start the show
-	_initWindow();
+	BuildGUI();
 	searchString->MakeFocus(true);
-	Show();
 }
 
-// destructor
-LogosSearchWindow::~LogosSearchWindow()
+SGSearchWindow::~SGSearchWindow(void)
 {
 	delete myBible;
-	Unregister();
+	
+	fMessenger->SendMessage(FIND_QUIT);
+	delete fMessenger;
 }
 
-// builds the gui
-void LogosSearchWindow::_initWindow()
+void SGSearchWindow::BuildGUI(void)
 {
 	BRect r(Bounds());
-	BRect buttonframe;
 	
 	// for holding preferred width values
 	float pwidth,pheight;
@@ -149,19 +142,20 @@ void LogosSearchWindow::_initWindow()
 	searchWindow->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 
 	// The find button
-	findButton=new BButton(BRect(0,0,0,0), "find_button", "Find", new BMessage(FIND_BUTTON_OK),
-		B_FOLLOW_RIGHT, B_WILL_DRAW);
+	findButton = new BButton(BRect(0,0,0,0), "find_button", "Find", 
+							new BMessage(FIND_BUTTON_OK), B_FOLLOW_RIGHT, B_WILL_DRAW);
 	findButton->GetPreferredSize(&pwidth,&pheight);
 	findButton->ResizeToPreferred();
-	findButton->MoveTo(Bounds().Width()-10-pwidth,10);
+	findButton->MoveTo(Bounds().Width() - 10 - pwidth,10);
 	searchWindow->AddChild(findButton); 
 	SetDefaultButton(findButton);
 	
 	// The search query box
-	r.Set(10,10,findButton->Frame().left-10,35);
+	r.Set(10,10,findButton->Frame().left - 10,35);
 	searchString = new BTextControl(r, "searchstring", "Find: ", "", 
-			new BMessage(FIND_SEARCH_STR), B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW | B_NAVIGABLE);
-	searchString->SetDivider(searchString->StringWidth("Find: ")+5);
+									new BMessage(FIND_SEARCH_STR),
+									B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW | B_NAVIGABLE);
+	searchString->SetDivider(searchString->StringWidth("Find: ") + 5);
 	
 	// We do this craziness because a BTextControl has a fixed height. Given two of them with
 	// the same width, one with a height of 100 and one with a height of 40, both will end up
@@ -196,7 +190,7 @@ void LogosSearchWindow::_initWindow()
  	BMenuItem* firstBook = new BMenuItem(books[0], new BMessage(FIND_SELECT_FROM)); 
 	firstBook->SetMarked(true);
 	bookChoice->AddItem(firstBook);
-	for(int i=1; i<books.size(); i++)
+	for(unsigned int i=1; i<books.size(); i++)
 		bookChoice->AddItem(new BMenuItem(books[i], new BMessage(FIND_SELECT_FROM)));
 	box1->AddChild(bookField);
 
@@ -204,11 +198,11 @@ void LogosSearchWindow::_initWindow()
 	
 	// The last book in the scope
 	BPopUpMenu *sndBookChoice = new BPopUpMenu("biblebook2");
-	sndBookField = new BMenuField(r, "book_field", "End at ", sndBookChoice);
-	sndBookField->SetDivider(sndBookField->StringWidth("End at ")+5);
- 	BMenuItem* lastBook = new BMenuItem(books[books.size()-1], new BMessage(FIND_SELECT_TO)); 
+	sndBookField = new BMenuField(r, "book_field", "End in ", sndBookChoice);
+	sndBookField->SetDivider(sndBookField->StringWidth("End in ") + 5);
+ 	BMenuItem *lastBook = new BMenuItem(books[books.size()-1], new BMessage(FIND_SELECT_TO)); 
 	lastBook->SetMarked(true);
-	for(int i=0; i<books.size()-1; i++)
+	for (uint16 i = 0; i < books.size() - 1; i++)
 		sndBookChoice->AddItem(new BMenuItem(books[i], new BMessage(FIND_SELECT_TO)));
 	sndBookChoice->AddItem(lastBook);
 	box1->AddChild(sndBookField);
@@ -293,209 +287,156 @@ void LogosSearchWindow::_initWindow()
 
 	searchWindow->AddChild(box5);
 	AddChild(searchWindow);
-	
-	Register(true);
-	Minimize(true);		// So Show() doesn't really make it visible
 }
 
-// Parse incoming messages
-void LogosSearchWindow::MessageReceived(BMessage *message) 
+void SGSearchWindow::MessageReceived(BMessage *message) 
 {
 	switch(message->what) 
 	{
-		// set window title
-		case WINDOW_REGISTRY_ADDED:
-			{
-				char s[100] = "Find in ";
-				if (message->FindInt32("new_window_number", &window_id) == B_OK) 
-				{
-					strcat(s, curModule);
-					SetTitle(s);
-				}
-				Minimize(false);
-			}
+		case M_ACTIVATE_WINDOW:
+		{
+			Activate(true);
 			break;
+		}
+		case FIND_SELECT_FROM:
+		{
+			// first book in search book
+			// Prevent a negative search scope for the last book
+			BMenu *menu = bookField->Menu();
+			BMenu *menu2 = sndBookField->Menu();
+			fSearchStart = menu->IndexOf(menu->FindMarked());
+			
+			for (uint8 i = 0; i < fSearchStart; i++)
+			{
+				BMenuItem* mi = menu2->ItemAt(i);
+				mi->SetEnabled(false);
+			}
+			
+			for (uint8 i = fSearchStart; i < books.size(); i++)
+			{
+				BMenuItem* mi = menu2->ItemAt(i);
+				mi->SetEnabled(true);
+			}
+			BMenuItem *mi = menu->ItemAt(fSearchStart);
+			mi->SetMarked(true);
+			break;
+		}
 		
-		// open the search help
-		case FIND_BUTTON_HELP:
+		case FIND_SELECT_TO:
+		{
+			// last book in search book
+			// Prevent a negative search scope for the last book
+			BMenu *menu = sndBookField->Menu();
+			BMenu *menu2 = bookField->Menu();
+			fSearchEnd = menu->IndexOf(menu->FindMarked());
+			for (uint8 i = 0; i <= fSearchEnd; i++)
 			{
-				BString helppath(GetAppPath());
-				helppath+="docs/help/index.html";
-				
-				BEntry entry;
-				if(entry.SetTo(helppath.String())!=B_OK)
-				{
-					BAlert *alert=new BAlert("Scripture Guide","The help files are either missing or "
-						"in an unusable condition. This shouldn't ever happen unless someone has "
-						"deleted them from your machine. Sorry. You can restore them by reinstalling "
-						" Scripture Guide.", "Bummer");
-					alert->Go();
-					be_app->PostMessage(DOCS_UNAVAILABLE);
-					break;
-				}
-				
-				entry_ref ref;
-				entry.GetRef(&ref);
-				be_roster->Launch(&ref);
+				BMenuItem* mi = menu2->ItemAt(i);
+				mi->SetEnabled(true);
 			}
+			for (uint8 i = fSearchEnd + 1; i < books.size(); i++)
+			{
+				BMenuItem* mi = menu2->ItemAt(i);
+				mi->SetEnabled(false);
+			}
+			BMenuItem *mi = menu->ItemAt(fSearchEnd);
+			mi->SetMarked(true);
 			break;
-		case DOCS_UNAVAILABLE:
+		}
+		
+		case FIND_SEARCH_STR:
+		{
+			fSearchString = searchString->Text();
+			break;
+		}
+
+		case FIND_BUTTON_OK:
+		{
+			fSearchString = searchString->Text();
+			if(fSearchString.CountChars() > 0)
 			{
 				findButton->SetEnabled(false);
+				searchString->SetEnabled(false);
+				
+				verseList = fCurrentModule->SearchModule(fSearchMode, fSearchFlags,
+														fSearchString.String(),
+														books[fSearchStart],
+														books[fSearchEnd],
+														searchStatus);
+				searchResults->RemoveItems(0,searchResults->CountItems());
+				for(uint32 i = 0; i < verseList.size(); i++)
+       			{
+					BString tmpstr(verseList[i]);
+					tmpstr << "   " << fCurrentModule->GetVerse(verseList[i]);
+					searchResults->AddItem(new BStringItem(tmpstr.String()));
+       			}   
+       			
+				findButton->SetEnabled(true);
+				searchString->SetEnabled(true);
 			}
-			break;
-			
-		// first book in search book
-		// do not allow negative search scope for the last book
-		case FIND_SELECT_FROM:
-			{
-				BMenu* menu = bookField->Menu();
-				BMenu* menu2 = sndBookField->Menu();
-				myFrom = menu->IndexOf(menu->FindMarked());
-				for(int i=0; i<myFrom; i++)
-				{
-					BMenuItem* mi = menu2->ItemAt(i);
-					mi->SetEnabled(false);
-				}
-				for(int i=myFrom; i<books.size(); i++)
-				{
-					BMenuItem* mi = menu2->ItemAt(i);
-					mi->SetEnabled(true);
-				}
-				BMenuItem* mi = menu->ItemAt(myFrom);
-				mi->SetMarked(true);
-			}
-			break;
-		
-		// last book in search book
-		// do not allow negative search scope for the first book
-		case FIND_SELECT_TO:
-			{
-				BMenu* menu = sndBookField->Menu();
-				BMenu* menu2 = bookField->Menu();
-				myTo = menu->IndexOf(menu->FindMarked());
-				for(int i=0; i<=myTo; i++)
-				{
-					BMenuItem* mi = menu2->ItemAt(i);
-					mi->SetEnabled(true);
-				}
-				for(int i=myTo+1; i<books.size(); i++)
-				{
-					BMenuItem* mi = menu2->ItemAt(i);
-					mi->SetEnabled(false);
-				}
-				BMenuItem* mi = menu->ItemAt(myTo);
-				mi->SetMarked(true);
-			}
-			break;
-		
-		// a entered search query
-		case FIND_SEARCH_STR:
-			{
-				myTxt = (char*) searchString->Text();
-			}
-			break;
-
-		// do the search
-		case FIND_BUTTON_OK:
-			{
-				myTxt = (char*) searchString->Text();
-				if(strlen(myTxt)>0)
-				{
-					findButton->SetEnabled(false);
-					searchString->SetEnabled(false);
-					
-					verseList = myBible->searchModule(mySearchStyle, mySearchFlags, myTxt, books[myFrom], books[myTo], searchStatus);
-					searchResults->RemoveItems(0,searchResults->CountItems());
- 					for(int i=0; i<verseList.size(); i++)
-        			{
-						BString tmpstr(verseList[i]);
-						tmpstr += "   ";
-						tmpstr += myBible->getVerse(verseList[i]);
-						searchResults->AddItem(new BStringItem(tmpstr.String()));
-        			}   
-        			
-					findButton->SetEnabled(true);
-					searchString->SetEnabled(true);
-				}
- 			}
  			break;
+		}
  
 		case FIND_CHECK_CASE_SENSITIVE:
- 			{
- 				if (caseSensitiveCheckBox->Value() == B_CONTROL_ON) mySearchFlags = 0;  // && REG_ICASE instead?
- 				else mySearchFlags = REG_ICASE; // || REG_ICASE instead?   // ignore case
-			}
+		{
+			fSearchFlags = (caseSensitiveCheckBox->Value() == B_CONTROL_ON) ?
+	 					fSearchFlags = 0 :
+	 					REG_ICASE;
 			break;
+		}
 
-		// an item in the list is double clicked
-		// open a new window with the selected verse
 		case FIND_LIST_DCLICK:
+		{
+			// an item in the list is double clicked. Open a new window with the selected verse
+			uint32 i = searchResults->CurrentSelection();
+			if (i < verseList.size())
 			{
-				int i = searchResults->CurrentSelection();
-				if(i<verseList.size())
-				{
-					BRect windowRect(50,50,599,399); 
-					new LogosMainWindow(windowRect, curModule, verseList[i], true);
-				}
+				// TODO: Spawn with a frame obtained from preferences
+				BRect windowRect(50,50,599,399); 
+				SGMainWindow *win = new SGMainWindow(windowRect, curModule, verseList[i]);
+				win->Show();
 			}
 			break;
+		}
 
-		// an item in the list is clicked 
-		// show the verse in the textview
 		case FIND_LIST_CLICK:
+		{
+			// an item in the list is clicked. Show the verse in the textview
+			uint32 i = searchResults->CurrentSelection();
+			verseSelected->Delete(0,verseSelected->TextLength());
+			if (i < verseList.size())
 			{
-				int i = searchResults->CurrentSelection();
 				verseSelected->Delete(0,verseSelected->TextLength());
-				if(i<verseList.size())
-				{
-					verseSelected->Delete(0,verseSelected->TextLength());
-					verseSelected->Insert(verseList[i]);
-					verseSelected->Insert("   ");
-					verseSelected->Insert(myBible->getVerse(verseList[i]));
-					verseSelected->Select(0,0);
-				}
+				verseSelected->Insert(verseList[i]);
+				verseSelected->Insert("   ");
+				verseSelected->Insert(fCurrentModule->GetVerse(verseList[i]));
+				verseSelected->Select(0,0);
 			}
 			break;
+		}
 
-		// the search method is selected 
 		case FIND_RADIO1:
-			{
-				mySearchStyle = -2;
-			}
+		{
+			fSearchMode = SEARCH_WORDS;
 			break;
+		}
 		case FIND_RADIO2:
-			{
-				mySearchStyle = -1;
-			}
+		{
+			fSearchMode = SEARCH_PHRASE;
 			break;
+		}
 		case FIND_RADIO3:
-			{
-				mySearchStyle = 0;
-			}
+		{
+			fSearchMode = SEARCH_REGEX;
 			break;
-
-		// otherwise
+		}
 		default:
 			BWindow::MessageReceived(message);
 			break;
 	}
 }
 
-void LogosSearchWindow::Register(bool need_id) 
-{
-	BMessage message(WINDOW_REGISTRY_ADD);
-	
-	message.AddBool("need_id", need_id);
-	be_app_messenger.SendMessage(&message, this);
-}
-
-void LogosSearchWindow::Unregister(void) 
-{
-	be_app_messenger.SendMessage(new BMessage(WINDOW_REGISTRY_SUB));
-}
-
-bool LogosSearchWindow::QuitRequested() 
+bool SGSearchWindow::QuitRequested() 
 {
 	return true;
 }

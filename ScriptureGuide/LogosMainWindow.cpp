@@ -259,8 +259,8 @@ void SGMainWindow::BuildGUI(void)
 	
 	menu = new BMenu("Options");
 	
-//	menu->AddItem(new BMenuItem("Choose Font...", new BMessage(SELECT_FONT)));
-//	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem("Choose Font...", new BMessage(SELECT_FONT)));
+	menu->AddSeparatorItem();
 	
 	fShowVerseNumItem = new BMenuItem("Show Verse Numbers", new BMessage(MENU_OPTIONS_VERSENUMBERS));
 	if (fShowVerseNumbers)
@@ -813,9 +813,9 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			BRect r(Frame().OffsetByCopy(5,23));
 			r.right = r.left + 325;
 			r.bottom = r.top + 410;
-		/**	SGSearchWindow *win = new SGSearchWindow(r, fCurrentModule->Name(),new BMessenger(this));
+			SGSearchWindow *win = new SGSearchWindow(r, fCurrentModule->Name(),new BMessenger(this));
 			fFindMessenger = new BMessenger(win);
-			win->Show();**/
+			win->Show();
 			break;
 		}
 		case MENU_EDIT_NOTE:
@@ -845,7 +845,7 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			break;
 		}
 
-/*		// Called when the user selects 'Choose Font...' from menu
+		// Called when the user selects 'Choose Font...' from menu
 		case SELECT_FONT:
 		{
 			if (fFontPanel)
@@ -872,10 +872,10 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			
 			fFontSize = (int)size;
 			fCurrentFont->SetSize(size);
-			fCurrentFont->SetFamilyAndStyle((font_family)(family.String()),(font_family)(style.String()));
+		//	fCurrentFont->SetFamilyAndStyle((font_family)(family.String()),(font_family)(style.String()));
 			
 			fDisplayFont.SetSize(size);
-			fDisplayFont.SetFamilyAndStyle((font_family)(family.String()),(font_family)(style.String()));
+		//	fDisplayFont.SetFamilyAndStyle((font_family)(family.String()),(font_family)(style.String()));
 			
 			fVerseView->Delete(0,fVerseView->TextLength());
 			fVerseView->SetFontAndColor(fCurrentFont,B_FONT_ALL,&BLACK);
@@ -884,7 +884,7 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			fVerseView->MakeFocus();
 			break;
 		}
-*/		
+		
 		default:
 		{
 			BWindow::MessageReceived(msg);

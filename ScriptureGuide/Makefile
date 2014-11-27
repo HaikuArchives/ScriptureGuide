@@ -30,6 +30,7 @@ APP_MIME_SIG =
 #	Also note that spaces in folder names do not work well with this Makefile.
 SRCS =	SwordBackend.cpp \
 		LogosMainWindow.cpp \
+		LogosSearchWindow.cpp \
 		LogosApp.cpp \
 		Preferences.cpp \
 		FontPanel.cpp \
