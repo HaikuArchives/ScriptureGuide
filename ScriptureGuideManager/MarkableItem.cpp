@@ -2,7 +2,7 @@
 #include <View.h>
 #include "MarkableItem.h"
 
-MarkableItem::MarkableItem(const char *text, bool marked, uint32 level=0, bool expanded=true)
+MarkableItem::MarkableItem(const char *text, bool marked, uint32 level, bool expanded)
  :BStringItem(text,level,expanded)
 {
 	fMarked=marked;
