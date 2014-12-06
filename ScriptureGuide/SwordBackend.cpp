@@ -24,7 +24,7 @@ using namespace sword;
 #endif
 
 // path for the modules; to be stored in a config file in future
-#define CONFIGPATH "/boot/home/config/non-packaged/data/sword"
+#define CONFIGPATH MODULES_PATH
 
 SGModule::SGModule(sword::SWModule *module)
  :	fModule(module),
