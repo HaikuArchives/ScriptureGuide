@@ -6,6 +6,7 @@
 
 # The name of the binary.
 NAME = ScriptureGuideManager
+TARGET_DIR= ../App
 
 # The type of binary, must be one of:
 #	APP:	Application
