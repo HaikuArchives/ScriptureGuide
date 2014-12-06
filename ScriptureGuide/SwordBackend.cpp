@@ -365,13 +365,15 @@ vector<const char*> GetBookNames(void)
 			books.push_back((const char*)VerseKey::builtin_books[i][j].name);
 	*/
 	VerseKey myKey=VerseKey();
-	int i = 0;
+	int i = 1;
 	int j = 0;
-	for (i = 0; i<2; i++)
+	for (i = 1; i<=2; i++)
 	{
 		myKey.setTestament(i);
+		const char *oSISBookName =myKey.getOSISBookName();
 		for (j=0;j<myKey.getBookMax();j++)
 		{
+			myKey.setTestament(i);
 			myKey.setBook(j);
 			books.push_back(myKey.getBookName());
 		}
