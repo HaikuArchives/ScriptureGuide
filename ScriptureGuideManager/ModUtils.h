@@ -10,7 +10,7 @@
 #define SG_PKGCACHE_PATH "/boot/home/config/settings/scripture-guide/packages/"
 #define SG_PKGINFO_PATH "/boot/home/config/settings/scripture-guide/package-info/"
 #define SG_MODULEBASE_PATH "/boot/home/config/add-ons/scripture-guide/"
-#define SG_DOWNLOAD_PATH "http://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/"
+
 class ConfigFile : public BArchivable
 {
 public:

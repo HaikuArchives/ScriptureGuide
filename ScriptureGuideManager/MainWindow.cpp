@@ -1,8 +1,10 @@
 #include <Application.h>
+#include <stdlib.h>
+
 #include "MainWindow.h"
 #include "ModUtils.h"
 #include "MarkableItem.h"
-#include <stdlib.h>
+#include "DownloadLocations.h"
 
 extern BList gFileNameList;
 extern BList fConfFileList;
@@ -225,7 +227,7 @@ int32 MainWindow::ApplyThread(void *data)
 		win->fTextView->Insert(displaystring.String());
 		win->Unlock();
 		
-		syscmd="wget --directory-prefix=" SG_PKGCACHE_PATH " " SG_DOWNLOAD_PATH;
+		syscmd="wget --directory-prefix=" SG_PKGCACHE_PATH " " SG_DOWNLOAD_PKGS;
 		syscmd+=zipfilename;
 		syscmd+=".zip";
 		

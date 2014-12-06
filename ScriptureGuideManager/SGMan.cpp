@@ -7,8 +7,10 @@
 #include <Directory.h>
 #include <List.h>
 #include <Application.h>
+
 #include "ModUtils.h"
 #include "MainWindow.h"
+#include "DownloadLocations.h"
 
 BList gFileNameList;
 BList gFileSizeList;
@@ -64,7 +66,7 @@ void SGMApp::SetupPackageList(void)
 	// Check for the index file
 	entry.SetTo("./index.html");
 	if(!entry.Exists())
-		system("wget http://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/");
+		system("wget " SG_DOWNLOAD_PKGS);
 		
 	entry.SetTo("./packagelist.txt");
 	if(!entry.Exists())
@@ -76,7 +78,7 @@ void SGMApp::SetupPackageList(void)
 	
 	entry.SetTo("mods.d.tar.gz");
 	if(!entry.Exists())
-		system("wget http://www.crosswire.org/ftpmirror/pub/sword/raw/mods.d.tar.gz");
+		system("wget " SG_DOWNLOAD_MODS);
 	
 	entry.SetTo(SG_PKGINFO_PATH "configfiles");
 	if(!entry.Exists())
