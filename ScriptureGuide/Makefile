@@ -5,7 +5,8 @@
 ## architecture of Haiku.
 
 # The name of the binary.
-NAME = Scripture\ Guide
+NAME = ScriptureGuide
+TARGET_DIR = ../App
 
 # The type of binary, must be one of:
 #	APP:	Application
@@ -39,14 +40,13 @@ SRCS =	SwordBackend.cpp \
 		HAboutWindow.cpp \
 		URLView.cpp
 		
-		
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
-RDEFS = 
+RDEFS = ScriptureGuide.rdef
 
 #	Specify the resource files to use. Full or relative paths can be used.
 #	Both RDEFS and RSRCS can be utilized in the same Makefile.
-RSRCS = Scripture\ Guide.rsrc
+RSRCS = 
 
 # End Pe/Eddie support.
 # @<-src@ 
@@ -123,7 +123,7 @@ LINKER_FLAGS =
 #	Specify the version of this binary. Example:
 #		-app 3 4 0 d 0 -short 340 -long "340 "`echo -n -e '\302\251'`"1999 GNU GPL"
 #	This may also be specified in a resource.
-APP_VERSION := 0.8.0
+APP_VERSION := 
 
 #	(Only used when "TYPE" is "DRIVER"). Specify the desired driver install
 #	location in the /dev hierarchy. Example:
