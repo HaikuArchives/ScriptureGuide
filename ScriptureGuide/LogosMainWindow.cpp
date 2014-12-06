@@ -16,6 +16,8 @@
 #include <Directory.h>
 #include <Box.h>
 
+#include <LayoutBuilder.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,34 +30,6 @@
 #include "FontPanel.h"
 #include "Preferences.h"
 
-/**enum
-{
-	MENU_FILE_NEW = 'MFnw',
-	MENU_FILE_QUIT,
-	MENU_EDIT_NOTE,
-	MENU_EDIT_FIND,
-	MENU_OPTIONS_PARALLEL,
-	MENU_OPTIONS_PARALLEL_CONTEXT,
-	MENU_OPTIONS_LINE,
-	MENU_OPTIONS_FONT,
-	MENU_OPTIONS_VERSENUMBERS,
-	MENU_HELP_LOGOS,
-	MENU_HELP_HOWTO,
-	MENU_HELP_ABOUT,
-	
-	SELECT_BIBLE,
-	SELECT_COMMENTARY,
-	SELECT_LEXICON,
-	SELECT_GENERAL,
-	SELECT_BOOK,
-	SELECT_CHAPTER,
-	SELECT_VERSE,
-	SELECT_FONT,
-	NEXT_BOOK,
-	PREV_BOOK,
-	NEXT_CHAPTER,
-	PREV_CHAPTER
-};*/
 
 SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key)
  :	BWindow(frame, "Scripture Guide", B_DOCUMENT_WINDOW, 0),
@@ -82,37 +56,16 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key)
 	if (item)
 		item->SetMarked(true);
 	
-	SetModuleFromString(module);
-	fCurrentModule->SetKey(key);
-
 	// More voodoo hackerdom to work around a bug. :)
 	AddCommonFilter(new EndKeyFilter);
 	
 	if (fModManager->CountModules()==0)
 	{
-		BAlert *alert = new BAlert("Scripture Guide","Scripture Guide could not find any books -- no Bibles,"
-			" commentaries, or anything else. You need to have at least one book from the"
-			" SWORD Project in order to run Scripture Guide. Would you like to go to their website"
-			" now, look at Scripture Guide's installation notes, or just quit?\n","Website",
-			"Install Notes","Quit");
-		int32 value = alert->Go();
-		
-		if (value == 0)
-			system("/boot/beos/apps/NetPositive http://www.crosswire.org/sword/index.jsp &");
-		else
-		if (value == 1)
-		{
-			BString string("/boot/beos/apps/StyledEdit ");
-			string << GetAppPath() << "INSTALL";
-			system(string.String());
-		}
-		
-		be_app->PostMessage(B_QUIT_REQUESTED);
-		PostMessage(B_QUIT_REQUESTED);
+		// TODO: fail
 		return;
 	}
 	
-	fCurrentModule = fModManager->FindModule(fCurrentModule->Name());
+	SetModuleFromString(module);
 	if (!fCurrentModule)
 	{
 		// It's possible for this call to fail, so we'll handle it as best we can. Seeing how we
@@ -158,30 +111,7 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key)
 			}
 		}
 		else
-		{
-			// we should never be here, but just in case we do....
-			
-			BAlert *alert = new BAlert("Scripture Guide","Scripture Guide could not find any books -- no Bibles,"
-				" commentaries, or anything else. You need to have at least one book from the"
-				" SWORD Project in order to run Scripture Guide. Would you like to go to their website"
-				" now, look at Scripture Guide's installation notes, or just quit?\n","Website",
-				"Install Notes","Quit");
-			int32 value = alert->Go();
-			
-			if (value == 0)
-				system("/boot/beos/apps/NetPositive http://www.crosswire.org/sword/index.jsp &");
-			else
-			if (value == 1)
-			{
-				BString string("/boot/beos/apps/StyledEdit ");
-				string << GetAppPath() << "INSTALL";
-				system(string.String());
-			}
-			
-			be_app->PostMessage(B_QUIT_REQUESTED);
-			PostMessage(B_QUIT_REQUESTED);
-			return;
-		}
+			return; // Shound never happen.
 	}
 	
 	// Load the preferences for the individual module
@@ -218,12 +148,8 @@ SGMainWindow::~SGMainWindow()
 
 void SGMainWindow::BuildGUI(void) 
 {
-	BRect r;
 	BMenu *menu;
-	
-	r = Bounds();
-	fMenuBar = new BMenuBar(r, "menubar");
-	AddChild(fMenuBar);
+	fMenuBar = new BMenuBar("menubar");
 	
 	menu = new BMenu("Program");
 	menu->AddItem(new BMenuItem("About Scripture Guide…", new BMessage(MENU_HELP_ABOUT)));
@@ -233,7 +159,6 @@ void SGMainWindow::BuildGUI(void)
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem("Quit", new BMessage(MENU_FILE_QUIT), 'Q'));
 	fMenuBar->AddItem(menu);
-
 
 	menu = new BMenu("Navigation");
 	menu->AddItem(new BMenuItem("Find Verse…", new BMessage(MENU_EDIT_FIND), 'F'));
@@ -251,11 +176,6 @@ void SGMainWindow::BuildGUI(void)
 	BMenuItem *selectallitem = new BMenuItem("Select All", new BMessage(B_SELECT_ALL), 'A');
 	menu->AddItem(selectallitem);
 	fMenuBar->AddItem(menu);
-	
-	// disabled this for now -- it doesn't make much sense to have *both* a menu item and a button,
-	// especially when we don't really have a menu to put it in where it makes much organizational sense
-//	menu->AddItem(new BMenuItem("Notes...", new BMessage(MENU_EDIT_NOTE), 'T'));
-//	menu->AddSeparatorItem();
 	
 	menu = new BMenu("Options");
 	
@@ -275,14 +195,11 @@ void SGMainWindow::BuildGUI(void)
 	BMenu *modulemenu = new BMenu("text");
 	int32 count = fModManager->CountBibles();
 	
-	float avgwidth = 0.0;
-	
 	// Add Bibles
 	fBibleMenu = new BMenu("Bibles");
 	for(int32 i = 0; i < count; i++)
 	{
 		BString modname = fModManager->BibleAt(i)->FullName();
-		avgwidth += be_plain_font->StringWidth(modname.String());
 		
 		BMessage *biblemsg = new BMessage(SELECT_BIBLE);
 		biblemsg->AddInt32("index",i);
@@ -297,7 +214,6 @@ void SGMainWindow::BuildGUI(void)
 	for(int32 i = 0; i < count; i++)
 	{
 		BString modname = fModManager->CommentaryAt(i)->FullName();
-		avgwidth += be_plain_font->StringWidth(modname.String());
 		
 		BMessage *commmsg = new BMessage(SELECT_COMMENTARY);
 		commmsg->AddInt32("index",i);
@@ -305,77 +221,32 @@ void SGMainWindow::BuildGUI(void)
 	}
 	modulemenu->AddItem(fCommentaryMenu);
 	
-	avgwidth /= fModManager->CountBibles() + fModManager->CountCommentaries();
+	// Add the toolbar view	
+	BBox *toolbar = new BBox("toolbar_view", B_FOLLOW_LEFT_RIGHT);
 	
-	
-	// Add the toolbar view
-	BRect toolframe = Bounds();
-	toolframe.top = fMenuBar->Bounds().bottom + 1.0;
-	toolframe.bottom = toolframe.top + 28.0;
-	
-	BBox *toolbar = new BBox(toolframe, "toolbar_view",  B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW);
-	//toolbar->SetViewColor(fMenuBar->ViewColor());
-	AddChild(toolbar);
-	
-	BRect fieldframe(toolbar->Bounds());
-	fieldframe.left = 5;
-	fieldframe.right = 5 + avgwidth + 30 + be_plain_font->StringWidth("Text:") + 5;
-	fModuleField = new BMenuField(fieldframe, "modulefield", "Text:", modulemenu);
+	fModuleField = new BMenuField("modulefield", "Text:", modulemenu);
 	fModuleField->SetDivider(be_plain_font->StringWidth("Text:") + 5);
-	fModuleField->ResizeToPreferred();
-	fModuleField->ResizeTo(fieldframe.Width(), fModuleField->Bounds().Height());
-	fModuleField->MoveTo(5, (toolbar->Bounds().Height() - fModuleField->Bounds().Height())/2);
-	fieldframe = fModuleField->Frame();
-	toolbar->AddChild(fModuleField);
 	
-	// Add the book menu
+	// Prepare the book menu
 	fBookMenu = new BMenu("book");
-	fieldframe.left = fieldframe.right + 5;
-	fieldframe.right = fieldframe.left + be_plain_font->StringWidth("Revelation of John") +
-						be_plain_font->StringWidth("Book:") + 30;
-	BMenuField *bookfield = new BMenuField(fieldframe, "bookfield", "Book:", fBookMenu);
+	BMenuField *bookfield = new BMenuField("bookfield", "Book:", fBookMenu);
 	bookfield->SetDivider(be_plain_font->StringWidth("Book:") + 5);
-	toolbar->AddChild(bookfield);
+	
 	fBookMenu->SetLabelFromMarked(true);
 	
+	// TODO: needs to be reworked for to make a dvision between Old Testament and New Testament
 	vector<const char *> booknames = GetBookNames();
 	for(uint32 i = 0; i < booknames.size(); i++)
 		fBookMenu->AddItem(new BMenuItem(booknames[i], new BMessage(SELECT_BOOK)));
 	fBookMenu->ItemAt(0)->SetMarked(true);
 	
-	// The toolbar controls go from general to specific (for the most part) when going from left to right.
-	// The textboxes and buttons are right justified, so the easiest way to dynamically calculate
-	// layout is from right to left based on the value of the right edge of the toolbar view. Thus, we
-	// will build all the controls from right to left, but in order to keep keyboard navigation in the
-	// proper order, we will wait until all controls have been built and add them in order of left to
-	// right.
+	// Prepare the notes button
+	BButton *fNoteButton = new BButton("note_button", "Notes…", new BMessage(MENU_EDIT_NOTE));
 	
-	// Add the notes button
-	fieldframe = toolbar->Bounds();
-	BButton *fNoteButton = new BButton(fieldframe, "note_button", "Notes…", new BMessage(MENU_EDIT_NOTE),
-										B_FOLLOW_RIGHT | B_FOLLOW_TOP , B_WILL_DRAW | B_NAVIGABLE);
-	fNoteButton->ResizeToPreferred();
-	fNoteButton->MoveTo( toolbar->Bounds().right - 10 - fNoteButton->Bounds().Width(),1);
-	
-	if (fieldframe.Height() < fNoteButton->Bounds().Height() + 5)
-	{
-		toolbar->ResizeTo(toolbar->Bounds().Width(), fNoteButton->Frame().bottom + 5);
-		fModuleField->MoveTo(5, (toolbar->Bounds().Height() - fModuleField->Bounds().Height())/2);
-		bookfield->MoveTo(fModuleField->Frame().right + 10, (toolbar->Bounds().Height() - fModuleField->Bounds().Height())/2);
-		fNoteButton->MoveBy(0,2);
-	}
-
+	// Prepare the Chapter intput box
 	BString alphaChars("qwertyuiop[]\\asdfghjkl;'zxcvbnm,./QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?`~!@#$%^&*()-_=+");
-	
-	// even though it seems like we just got the ideal size, ResizeToPreferred makes for a much wider
-	// size than what we want at this point. At the same time, the control has a fixed height, so if
-	// we ask for anything taller than this, it looks just plain dumb, so what we have done is actually
-	// obtained the height we want and dictated the width we want. :)
-	fieldframe = toolbar->Bounds();
-	fChapterBox = new BTextControl(fieldframe, "chapter_choice", "Chapter", NULL,
-									new BMessage(SELECT_CHAPTER), B_FOLLOW_RIGHT | B_FOLLOW_TOP,
-									B_WILL_DRAW  | B_NAVIGABLE);
-	
+	fChapterBox = new BTextControl("chapter_choice", "Chapter", NULL,
+									new BMessage(SELECT_CHAPTER));
 	BTextView *chapterView = fChapterBox->TextView();
 	for(int32 i=0; i < alphaChars.CountChars(); i++)
 	{
@@ -383,33 +254,16 @@ void SGMainWindow::BuildGUI(void)
 		chapterView->DisallowChar(c);
 	}
 	
-	toolbar->AddChild(fChapterBox);
-	toolbar->AddChild(fNoteButton);
-	
-	// We need to do the resizing code for the BTextControl because of an R5 bug -- the ResizeToPreferred
-	// code does nothing unless attached to a window
-	fChapterBox->ResizeToPreferred();
-	fieldframe = fChapterBox->Frame();
-	fChapterBox->SetDivider(be_plain_font->StringWidth("Chapter") + 5);
-	
-	fieldframe.right = fieldframe.left + 80;
-	fChapterBox->ResizeTo(fChapterBox->Divider() + be_plain_font->StringWidth("0000"),fieldframe.Height());
-	fChapterBox->MoveTo(fNoteButton->Frame().left - 10 - fChapterBox->Bounds().Width(),
-						(toolbar->Bounds().Height() - fChapterBox->Bounds().Height())/2);
-
-	// Add the text view
+	//prepare the TextFrame
 	BRect textframe = Bounds();
 	textframe.top = toolbar->Frame().bottom + 1;
 	textframe.right -= B_V_SCROLL_BAR_WIDTH;
 	BRect textrect = textframe;
 	textrect.OffsetTo(B_ORIGIN);
-	r.InsetBy(3.0,3.0);
 	
 	fVerseView = new BTextView(textframe, "text_view", textrect,
 				B_FOLLOW_ALL_SIDES, B_WILL_DRAW|B_PULSE_NEEDED);
-	
 	fScrollView = new BScrollView("scroll_view", fVerseView, B_FOLLOW_ALL_SIDES, 0, false, true, B_NO_BORDER);
-	AddChild(fScrollView);
 	
 	fVerseView->SetDoesUndo(false);
 	fVerseView->MakeFocus(true);
@@ -419,6 +273,21 @@ void SGMainWindow::BuildGUI(void)
         
 	copyitem->SetTarget(fVerseView);
 	selectallitem->SetTarget(fVerseView);
+	
+	BLayoutBuilder::Group<>(this, B_VERTICAL,0)
+		.Add(fMenuBar,B_USE_DEFAULT_SPACING)
+		.AddGroup(B_HORIZONTAL)
+			.SetInsets(B_USE_SMALL_SPACING,0)
+			.Add(fModuleField)
+			.Add(bookfield)
+			.AddGlue()
+			.Add(fChapterBox)
+			.Add(fNoteButton)
+		.End()
+		.AddSplit(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+			.Add(fScrollView)
+		.End()
+	.End();
 }
 
 void SGMainWindow::InsertVerseNumber(int verse)
