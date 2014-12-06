@@ -176,7 +176,6 @@ private:
 	BColumnListView *fFontList;
 	BButton *fOK, *fCancel;
 	Spinner *fSpinner;
-	BScrollBar *fScrollBar;
 };
 
 FontView::FontView(const BRect &frame, float size)
@@ -293,11 +292,6 @@ void FontView::AttachedToWindow(void)
 	fFontList->SetTarget(this);
 	fSpinner->SetTarget(this);
 	
-	// Do some "magic" because the ColumnListView's scrollview isn't one, so
-	// we find the scrollbars themselves. Having the source is nice sometimes. :P
-	fScrollBar=fFontList->ScrollBar(B_VERTICAL);
-	fScrollBar->SetSteps(20,130);
-	
 	fFontList->MakeFocus(true);
 }
 
@@ -342,9 +336,6 @@ void FontView::SetFontSize(uint16 size)
 	
 	float newrange=newheight * fFontList->CountRows();
 	
-	fScrollBar->SetRange(0,newrange);
-	fScrollBar->ValueChanged(fScrollBar->Value());
-	
 	fFontList->ScrollTo(fFontList->FocusRow());
 	
 	if(Window())
@@ -353,9 +344,9 @@ void FontView::SetFontSize(uint16 size)
 
 void FontView::SelectFont(const BFont &font)
 {
-font_family fam;
-font_style sty;
-font.GetFamilyAndStyle(&fam,&sty);
+	font_family fam;
+	font_style sty;
+	font.GetFamilyAndStyle(&fam,&sty);
 	
 	int32 rowcount=fFontList->CountRows();
 	int32 fontID=font.FamilyAndStyle();
