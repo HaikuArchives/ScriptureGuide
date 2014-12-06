@@ -2,6 +2,7 @@
 
 #include <Alert.h>
 #include <Application.h>
+#include <AboutWindow.h>
 #include <Button.h>
 #include <Entry.h>
 #include <MenuBar.h>
@@ -23,7 +24,6 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "HAboutWindow.h"
 #include "constants.h"
 #include "LogosApp.h"
 #include "LogosSearchWindow.h"
@@ -656,12 +656,22 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 		}
 		case MENU_HELP_ABOUT:
 		{
-			HAboutWindow *hwin = new HAboutWindow("Scripture Guide","March 24, 2007",
-				"Credits to \n\tBrian\n\tDarkWyrm\n\tjan__64\n\tKevin\n",
-				"http://www.scripture-guide.org/",
-				"webmaster@scripture-guide.org");
-			hwin->SetLook(B_TITLED_WINDOW_LOOK);
-			hwin->Show();
+			BAboutWindow* window = new BAboutWindow("ScriptureGuide", 
+						"application/x-vnd.Scripture-Guide");
+			const char* authors[] = {
+				"Jan Bungeroth (jan__64)",
+				"Augustin Cavalier (waddlesplash)",
+				"Kevin Field",
+				"Brian Jennings",
+				"Matthias Linder (Paradoxianer)",
+				"Jon Yoder (DarkWyrm)",
+				NULL
+			};
+
+			window->AddCopyright(2014, "Scripture Guide Team");
+			window->AddAuthors(authors);
+
+			window->Show();
 			break;
 		}
 		case FIND_QUIT:
