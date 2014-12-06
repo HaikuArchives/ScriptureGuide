@@ -4,17 +4,18 @@
 	Released under the MIT license.
 */
 
-#include <Application.h>
 #include "FontPanel.h"
+#include "Spinner.h"
+
+#include <Application.h>
 #include <ColumnListView.h>
 #include <ColumnTypes.h>
-//#include "ColorTools.h"
-#include "Spinner.h"
 #include <Invoker.h>
+#include <LayoutBuilder.h>
 #include <String.h>
-#include <stdio.h>
 #include <ScrollView.h>
-#include <ScrollBar.h>
+
+#include <stdio.h>
 
 // TODO: Add Escape key as a shortcut for cancelling
 
@@ -74,11 +75,13 @@ private:
 	float fFontSize;
 };
 
+#define PREVIEW_STR "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890"
+
 FontColumn::FontColumn(const char *title, float width,float minWidth,float maxWidth,
 		uint32 truncate, alignment align)
  :BTitledColumn(title, width, minWidth, maxWidth, align)
 {
-	fText="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+	fText= PREVIEW_STR;
 	fFontSize=32;
 }
 
@@ -187,17 +190,11 @@ FontView::FontView(const BRect &frame, float size)
 	fMessage.what=M_FONT_SELECTED;
 	fHideWhenDone=true;
 	
-	BRect r(Bounds());
-	r.InsetBy(10,10);
-	r.bottom-=50;
+	fFontList=new BColumnListView("fontlist", B_WILL_DRAW|B_NAVIGABLE);
 
-	
-	fFontList=new BColumnListView(r,"fontlist",B_FOLLOW_ALL,B_WILL_DRAW|B_NAVIGABLE);
-	AddChild(fFontList);
-	
-	BStringColumn *col=new BStringColumn("Font Name",r.Width()/3,StringWidth("Font Name"),
-			r.Width(),B_TRUNCATE_END);
-	fFontList->ScrollView()->SetResizingMode(B_FOLLOW_ALL);
+	float width = StringWidth("Font Name");
+	BStringColumn *col=new BStringColumn("Font Name", width*3, width,
+			width*20,B_TRUNCATE_END);
 	fFontList->AddColumn(col,0);
 	fFontList->SetSortColumn(col,true,true);
 	fFontList->SetSelectionMode(B_SINGLE_SELECTION_LIST);
@@ -207,37 +204,32 @@ FontView::FontView(const BRect &frame, float size)
 	fFontList->SetColor(B_COLOR_SELECTION,make_color(230,230,230,255));
 	fFontList->SetInvocationMessage(new BMessage(M_OK));
 
-	FontColumn *fcol=new FontColumn("Preview",r.Width()*2,StringWidth("Preview"),r.Width()*2,
+	width = StringWidth("Preview");
+	float previewWidth = StringWidth(PREVIEW_STR);
+	FontColumn *fcol=new FontColumn("Preview", previewWidth, width, previewWidth*2,
 			B_TRUNCATE_END);
 	fcol->SetFontSize(size);
 	fFontList->AddColumn(fcol,1);
 	fFontList->SetColumnFlags(B_ALLOW_COLUMN_RESIZE);
 	
-	
-	r=Bounds().InsetByCopy(10,10);
-	r.top=r.bottom-27;
-	r.right=r.left+100;
-	r.OffsetBy(25,0);
-	fSpinner=new Spinner(r,"spinner","Font Size: ", new BMessage(M_SIZE_CHANGE),
-			B_FOLLOW_LEFT|B_FOLLOW_BOTTOM);
-	AddChild(fSpinner);
+	fSpinner=new Spinner("spinner","Font Size: ", new BMessage(M_SIZE_CHANGE));
 	BTextControl *tcontrol=fSpinner->TextControl();
 	tcontrol->SetDivider(StringWidth("Font Size: ")+5);
 	fSpinner->SetRange(6,999);
 	fSpinner->SetValue(32);
 	
-	r.Set(0,0,50,50);
-	fCancel=new BButton(r,"Cancel","Cancel",new BMessage(M_CANCEL),B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
-	fCancel->ResizeToPreferred();
+	fCancel=new BButton("Cancel","Cancel",new BMessage(M_CANCEL));
+	fOK=new BButton("OK","OK",new BMessage(M_OK));
 	
-	r=fCancel->Frame();
-	r.OffsetTo(Bounds().right-((r.Width()+10)*2)-10,Bounds().bottom-r.Height()-10);
-	fCancel->MoveTo(r.left,r.top);
-	AddChild(fCancel);
-	
-	r.OffsetBy(r.Width()+10,0);
-	fOK=new BButton(r,"OK","OK",new BMessage(M_OK),B_FOLLOW_RIGHT | B_FOLLOW_BOTTOM);
-	AddChild(fOK);
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.Add(fFontList)
+		.AddGroup(B_HORIZONTAL)
+			.Add(fSpinner)
+			.AddGlue()
+			.Add(fCancel)
+			.Add(fOK)
+		.End()
+	.End();
 	
 	//Available fonts
 	font_family plain_family;
@@ -333,8 +325,6 @@ void FontView::SetFontSize(uint16 size)
 //		row->SetHeight(newheight); // TODO
 		fFontList->UpdateRow(row);
 	}
-	
-	float newrange=newheight * fFontList->CountRows();
 	
 	fFontList->ScrollTo(fFontList->FocusRow());
 	

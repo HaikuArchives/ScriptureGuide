@@ -7,18 +7,20 @@
 #include <StringView.h>
 #include <TextControl.h>
 
-class SpinnerPrivateData;
-class SpinnerArrowButton;
-class SpinnerMsgFilter;
+enum
+{
+	M_UP='mmup',
+	M_DOWN,
+	M_TEXT_CHANGED='mtch'
+};
 
 class Spinner : public BControl
 {
 public:
-	Spinner(BRect frame, const char *name, const char *label, BMessage *msg,
-			uint32 resize=B_FOLLOW_LEFT|B_FOLLOW_TOP,uint32 flags=B_WILL_DRAW|B_NAVIGABLE);
+	Spinner(const char *name, const char *label, BMessage *msg
+			,uint32 flags=B_WILL_DRAW|B_NAVIGABLE);
 	virtual ~Spinner(void);
-	virtual void AttachedToWindow(void);
-	virtual void DetachedFromWindow(void);
+	virtual void AttachedToWindow();
 	virtual void ValueChanged(int32 value);
 	virtual void MessageReceived(BMessage *msg);
 
@@ -42,16 +44,11 @@ public:
 	virtual void SetEnabled(bool value);
 	
 private:
-	friend SpinnerArrowButton;
-	friend SpinnerPrivateData;
-	
 	BTextControl *fTextControl;
-	SpinnerArrowButton *fUpButton, *fDownButton;
-	SpinnerPrivateData *privatedata;
+	BButton *fUpButton, *fDownButton;
 	
 	int32 fStep;
 	int32 fMin, fMax;
-	SpinnerMsgFilter *fFilter;
 };
 
 #endif
