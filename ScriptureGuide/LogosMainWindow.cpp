@@ -642,7 +642,7 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 		}
 		case MENU_FILE_QUIT:
 		{
-			be_app->PostMessage(B_QUIT_REQUESTED);
+			PostMessage(B_QUIT_REQUESTED);
 			break;
 		}
 		case MENU_OPTIONS_VERSENUMBERS:
@@ -950,7 +950,6 @@ bool SGMainWindow::QuitRequested()
 	
 	SavePrefsForModule();
 	be_app_messenger.SendMessage(new BMessage(M_WINDOW_CLOSED));
-	
 	return true;
 }
 

@@ -66,15 +66,12 @@ void SGApp::MessageReceived(BMessage *message)
 {
 	switch(message->what) 
 	{
-		case M_WINDOW_CLOSED:
-		{
-			if (CountWindows() <= 1)
-				PostMessage(B_QUIT_REQUESTED);
-			break;
-		}
-		default:
-			BApplication::MessageReceived(message);
-			break;
+	case M_WINDOW_CLOSED:
+		PostMessage(B_QUIT_REQUESTED);
+	break;
+	default:
+		BApplication::MessageReceived(message);
+	break;
 	}
 }
 
