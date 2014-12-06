@@ -9,9 +9,9 @@
 #include <Resources.h>
 #include <Alert.h>
 #include <ClassInfo.h>
+#include <TextView.h>
 
 #include "BitmapView.h"
-#include "CTextView.h"
 #include "URLView.h"
 
 #define ICON_OFFSET 60
@@ -164,7 +164,7 @@ HAboutWindow::InitGUI()
 	fBuiltDate = new BStringView(rect,"build","",B_FOLLOW_NONE);
 	fAboutView->AddChild(fBuiltDate);
 	rect.OffsetBy(0,fPlainHeight);
-	fComment = new CTextView(rect,"comment",B_FOLLOW_NONE,B_WILL_DRAW);
+	fComment = new BTextView(rect,"comment",B_FOLLOW_NONE,B_WILL_DRAW);
 	fAboutView->AddChild(fComment);
 	AddChild(fAboutView);
 }

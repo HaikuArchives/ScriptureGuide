@@ -7,7 +7,7 @@
 #include <StringView.h>
 
 class BitmapView;
-class CTextView;
+class BTextView;
 
 typedef struct {
 uint32 v1;
@@ -58,7 +58,7 @@ private:
 		BStringView*	fVersion;
 		BStringView*	fBuiltDate;
 		HAboutView*		fAboutView;
-		CTextView*		fComment;		
+		BTextView*		fComment;		
 		float			fBoldHeight;
 		float			fPlainHeight;	
 };

@@ -6,8 +6,8 @@
 
 #include <Application.h>
 #include "FontPanel.h"
-#include "ColumnListView.h"
-#include "ColumnTypes.h"
+#include <ColumnListView.h>
+#include <ColumnTypes.h>
 //#include "ColorTools.h"
 #include "Spinner.h"
 #include <Invoker.h>
@@ -336,7 +336,7 @@ void FontView::SetFontSize(uint16 size)
 	for(int32 i=0; i<fFontList->CountRows(); i++)
 	{
 		BRow *row=fFontList->RowAt(i);
-		row->SetHeight(newheight);
+//		row->SetHeight(newheight); // TODO
 		fFontList->UpdateRow(row);
 	}
 	

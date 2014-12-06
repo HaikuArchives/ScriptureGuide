@@ -36,7 +36,6 @@ SRCS =	SwordBackend.cpp \
 		FontPanel.cpp \
 		Spinner.cpp \
 		BitmapView.cpp \
-		CTextView.cpp \
 		HAboutWindow.cpp \
 		URLView.cpp
 		
@@ -65,19 +64,20 @@ RSRCS = Scripture\ Guide.rsrc
 #	- 	if your library does not follow the standard library naming scheme,
 #		you need to specify the path to the library and it's name.
 #		(e.g. for mylib.a, specify "mylib.a" or "path/mylib.a")
-LIBS = be root  $(STDCPPLIBS) sword
+LIBS = be $(STDCPPLIBS) sword icuuc z columnlistview icui18n
 
 #	Specify additional paths to directories following the standard libXXX.so
 #	or libXXX.a naming scheme. You can specify full paths or paths relative
 #	to the Makefile. The paths included are not parsed recursively, so
 #	include all of the paths where libraries must be found. Directories where
 #	source files were specified are	automatically included.
-LIBPATHS =  /boot/system/lib/x86
+LIBPATHS =
 
 #	Additional paths to look for system headers. These use the form
 #	"#include <header>". Directories that contain the files in SRCS are
 #	NOT auto-included here.
-SYSTEM_INCLUDE_PATHS = /boot/system/develop/headers/x86/sword
+SYSTEM_INCLUDE_PATHS = /system/develop/headers/x86/sword \
+		/system/develop/headers/private/interface
 
 #	Additional paths paths to look for local headers. These use the form
 #	#include "header". Directories that contain the files in SRCS are
