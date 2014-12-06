@@ -38,6 +38,8 @@ SGMApp::~SGMApp(void)
 {
 }
 
+#define EXEC(dir, cmd) system("cd " dir " && " cmd)
+
 void SGMApp::SetupPackageList(void)
 {
 	// The package info is kept in a subfolder of the regular scripture guide settings
@@ -64,28 +66,28 @@ void SGMApp::SetupPackageList(void)
 		create_directory(SG_PKGINFO_PATH,0777);
 	
 	// Check for the index file
-	entry.SetTo("./index.html");
+	entry.SetTo(SG_PKGINFO_PATH "index.html");
 	if(!entry.Exists())
-		system("wget " SG_DOWNLOAD_PKGS);
+		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_PKGS);
 		
-	entry.SetTo("./packagelist.txt");
+	entry.SetTo(SG_PKGINFO_PATH "packagelist.txt");
 	if(!entry.Exists())
 	{
 		// Now we get the package data from the directory index file
-		system("grep -o -E rawzip/.*\\.zip\\\" index.html > packagelist.txt");
-		system("grep -o -E [0-9]+\\.[0-9]\\ kb index.html > packagesizes.txt");
+		EXEC(SG_PKGINFO_PATH, "grep -o -E rawzip/.*\\.zip\\\" index.html > packagelist.txt");
+		EXEC(SG_PKGINFO_PATH, "grep -o -E [0-9]+\\.[0-9]\\ kb index.html > packagesizes.txt");
 	}
 	
-	entry.SetTo("mods.d.tar.gz");
+	entry.SetTo(SG_PKGINFO_PATH "mods.d.tar.gz");
 	if(!entry.Exists())
-		system("wget " SG_DOWNLOAD_MODS);
+		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_MODS);
 	
 	entry.SetTo(SG_PKGINFO_PATH "configfiles");
 	if(!entry.Exists())
 	{
 		// Get and unpack the compressed list of config files. There should be more config
 		// files than there are modules or at least just as many.
-		system("tar -xvpzf mods.d.tar.gz -C " SG_PKGINFO_PATH);
+		EXEC(SG_PKGINFO_PATH, "tar -xvpzf mods.d.tar.gz -C " SG_PKGINFO_PATH);
 		
 		entry.SetTo(SG_PKGINFO_PATH "mods.d");
 		entry.Rename("configfiles");
@@ -94,7 +96,7 @@ void SGMApp::SetupPackageList(void)
 	dir.SetTo(SG_PKGINFO_PATH);
 	if(dir.CountEntries()==1)
 	{
-		BFile file("packagelist.txt",B_READ_ONLY);
+		BFile file(SG_PKGINFO_PATH "packagelist.txt",B_READ_ONLY);
 		off_t filesize;
 		BString filedata;
 		

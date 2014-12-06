@@ -6,10 +6,10 @@
 #include <Archivable.h>
 #include <Message.h>
 
-#define SG_SETTINGS_PATH "/boot/home/config/settings/scripture-guide/"
-#define SG_PKGCACHE_PATH "/boot/home/config/settings/scripture-guide/packages/"
-#define SG_PKGINFO_PATH "/boot/home/config/settings/scripture-guide/package-info/"
-#define SG_MODULEBASE_PATH "/boot/home/config/add-ons/scripture-guide/"
+#define SG_SETTINGS_PATH "/boot/home/config/settings/scriptureguide/"
+#define SG_PKGCACHE_PATH "/boot/home/config/settings/scriptureguide/packages/"
+#define SG_PKGINFO_PATH "/boot/home/config/settings/scriptureguide/package-info/"
+#define SG_MODULEBASE_PATH "/boot/home/config/non-packaged/add-ons/scriptureguide/"
 
 class ConfigFile : public BArchivable
 {
