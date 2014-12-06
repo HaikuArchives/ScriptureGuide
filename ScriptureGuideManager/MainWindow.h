@@ -9,7 +9,7 @@
 #include <TextView.h>
 #include <ScrollView.h>
 #include <Button.h>
-#include "BStringList.h"
+#include <StringList.h>
 
 class MainWindow : public BWindow
 {

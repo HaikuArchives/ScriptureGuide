@@ -137,13 +137,13 @@ void MainWindow::MessageReceived(BMessage *msg)
 					{
 						// uncheck item: uninstall
 						item->SetMarked(false);
-						fUninstallList.AddItem(item->File()->fZipFileName);
+						fUninstallList.Add(item->File()->fZipFileName);
 					}
 					else
 					{
 						// check item: remove from uninstall list - make no changes
 						item->SetMarked(true);
-						fUninstallList.RemoveItem(item->File()->fZipFileName);
+						fUninstallList.Remove(item->File()->fZipFileName);
 					}
 				}
 				else
@@ -152,18 +152,18 @@ void MainWindow::MessageReceived(BMessage *msg)
 					{
 						// uncheck item: make no changes to system
 						item->SetMarked(false);
-						fInstallList.RemoveItem(item->File()->fZipFileName);
+						fInstallList.Remove(item->File()->fZipFileName);
 					}
 					else
 					{
 						// check item: install module
 						item->SetMarked(true);
-						fInstallList.AddItem(item->File()->fZipFileName);
+						fInstallList.Add(item->File()->fZipFileName);
 					}
 				}
 				fListView->InvalidateItem(fListView->CurrentSelection());
 			}
-			if(fInstallList.CountItems()==0 && fUninstallList.CountItems()==0)
+			if(fInstallList.CountStrings()==0 && fUninstallList.CountStrings()==0)
 			{
 				if(fApplyButton->IsEnabled())
 					fApplyButton->SetEnabled(false);
@@ -203,8 +203,8 @@ int32 MainWindow::ApplyThread(void *data)
 	win->fApplyButton->SetEnabled(false);
 	win->fTextView->SetText("");
 	
-	installcount=win->fInstallList.CountItems();
-	removecount=win->fUninstallList.CountItems();
+	installcount=win->fInstallList.CountStrings();
+	removecount=win->fUninstallList.CountStrings();
 	
 	win->Unlock();
 	
@@ -212,7 +212,7 @@ int32 MainWindow::ApplyThread(void *data)
 	{
 		win->Lock();
 		
-		zipfilename=*win->fInstallList.ItemAt(i);
+		zipfilename=*win->fInstallList.StringAt(i);
 		configpath=zipfilename;
 		configpath.ToLower();
 		configpath+=".conf";
@@ -251,7 +251,7 @@ int32 MainWindow::ApplyThread(void *data)
 	{
 		win->Lock();
 		
-		zipfilename=*win->fUninstallList.ItemAt(i);
+		zipfilename=*win->fUninstallList.StringAt(i);
 		configpath=zipfilename;
 		configpath.ToLower();
 		configpath+=".conf";
