@@ -166,7 +166,7 @@ status_t SGApp::StartupCheck(void)
 	{
 		// This is either an upgrade or the modules don't exist. 
 		entry.SetTo("/boot/home/.sword/mods.d");
-		if (entry.Exists())
+		if (!entry.Exists())
 		{
 			// This is an upgrade from 0.7, so we're going to get into the moving business --
 			// and to think that I was just a codemonkey. :P
@@ -182,7 +182,7 @@ status_t SGApp::StartupCheck(void)
 	if (!entry.Exists())
 	{
 		entry.SetTo("/boot/home/.sword/modules");
-		if (entry.Exists())
+		if (!entry.Exists())
 		{
 			dir.SetTo(MODULES_PATH);
 			entry.MoveTo(&dir,NULL,true);
@@ -200,15 +200,14 @@ status_t SGApp::StartupCheck(void)
 			"Install Notes","Quit");
 		int32 value=alert->Go();
 		
-		if (value==0)
-			system("/boot/beos/apps/NetPositive http://www.crosswire.org/sword/index.jsp &");
-		else
-		if (value==1)
-		{
-			BString string("/boot/beos/apps/StyledEdit ");
-			string+=GetAppPath();
-			string+="INSTALL";
-			system(string.String());
+		if (value==0) {
+			const char* url = "http://www.crosswire.org/sword/";
+			be_roster->Launch("text/html", 1, (char**)&url);
+		} else if (value==1) {
+			BString string(GetAppPath());
+			string+="INSTALL.htm";
+			const char* file = string.String();
+			be_roster->Launch("text/html", 1, (char**)&file);
 		}
 		return B_ERROR;
 	}

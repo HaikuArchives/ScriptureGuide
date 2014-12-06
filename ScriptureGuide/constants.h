@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 
 // the help files, the website and the notes to be moved in a configuration file
-#define HELPDIR "/boot/home/config/settings/scriptureguide/docs/help/index.html"
+#define HELPDIR "docs/index.html"
 #define NOTEDIR "/boot/home/config/settings/scriptureguide/notes/Notes.txt"
 
 // the currently detected fonts for greek and hebrew
