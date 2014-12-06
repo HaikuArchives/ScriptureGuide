@@ -214,7 +214,7 @@ int32 MainWindow::ApplyThread(void *data)
 	{
 		win->Lock();
 		
-		zipfilename=*win->fInstallList.StringAt(i);
+		zipfilename = win->fInstallList.StringAt(i);
 		configpath=zipfilename;
 		configpath.ToLower();
 		configpath+=".conf";
@@ -227,7 +227,7 @@ int32 MainWindow::ApplyThread(void *data)
 		win->fTextView->Insert(displaystring.String());
 		win->Unlock();
 		
-		syscmd="wget --directory-prefix=" SG_PKGCACHE_PATH " " SG_DOWNLOAD_PKGS;
+		syscmd="wget -P " SG_PKGCACHE_PATH " " SG_DOWNLOAD_PKGS;
 		syscmd+=zipfilename;
 		syscmd+=".zip";
 		

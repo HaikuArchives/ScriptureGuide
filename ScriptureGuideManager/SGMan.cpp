@@ -68,23 +68,17 @@ void SGMApp::SetupPackageList(void)
 	// Check for the index file
 	entry.SetTo(SG_PKGINFO_PATH "index.html");
 	if(!entry.Exists())
-		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_PKGS);
-		
-	entry.SetTo(SG_PKGINFO_PATH "packagelist.txt");
-	if(!entry.Exists())
 	{
-		// Now we get the package data from the directory index file
-		EXEC(SG_PKGINFO_PATH, "grep -o -E rawzip/.*\\.zip\\\" index.html > packagelist.txt");
-		EXEC(SG_PKGINFO_PATH, "grep -o -E [0-9]+\\.[0-9]\\ kb index.html > packagesizes.txt");
+		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_PKGS);
+		EXEC(SG_PKGINFO_PATH, "awk -F\" '{print $8}' index.html | awk 'NF' >packagelist.txt");
+		EXEC(SG_PKGINFO_PATH, "awk -F'[<>]' '{print $23}' index.html | awk 'NF' >packagesizes.txt");
 	}
 	
 	entry.SetTo(SG_PKGINFO_PATH "mods.d.tar.gz");
 	if(!entry.Exists())
-		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_MODS);
-	
-	entry.SetTo(SG_PKGINFO_PATH "configfiles");
-	if(!entry.Exists())
 	{
+		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_MODS);
+		
 		// Get and unpack the compressed list of config files. There should be more config
 		// files than there are modules or at least just as many.
 		EXEC(SG_PKGINFO_PATH, "tar -xvpzf mods.d.tar.gz -C " SG_PKGINFO_PATH);
@@ -94,7 +88,7 @@ void SGMApp::SetupPackageList(void)
 	}
 	
 	dir.SetTo(SG_PKGINFO_PATH);
-	if(dir.CountEntries()==1)
+	if(dir.CountEntries() != 1)
 	{
 		BFile file(SG_PKGINFO_PATH "packagelist.txt",B_READ_ONLY);
 		off_t filesize;
@@ -157,12 +151,18 @@ void SGMApp::SetupPackageList(void)
 			
 			BString filename=*currentfile;
 			filename.RemoveAll(".zip");
-			filename.ToLower();
 			
 			BString conffilename(filename);
 			conffilename+=".conf";
 			conffilename.Prepend(SG_PKGINFO_PATH "configfiles/");
 			
+			entry.SetTo(conffilename.String());
+			if(entry.InitCheck()!=B_OK)
+				continue;
+			
+			if(!entry.Exists())
+				conffilename.ToLower();
+				
 			entry.SetTo(conffilename.String());
 			if(entry.InitCheck()!=B_OK)
 				continue;
