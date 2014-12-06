@@ -18,7 +18,7 @@
 #define PREFERENCES_PATH "/boot/home/config/settings/scriptureguide/"
 #define PREFERENCES_FILE "/boot/home/config/settings/scriptureguide/settings"
 #define MODULES_PATH "/boot/home/config/non-packaged/add-ons/scriptureguide"
-#define WEBSITE_URL "http://www.be-logos.org/"
+#define WEBSITE_URL "http://www.scripture-guide.org/"
 
 #define FONTSIZE 12
 #define LINEBREAK false
