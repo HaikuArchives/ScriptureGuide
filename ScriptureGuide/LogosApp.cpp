@@ -26,7 +26,7 @@ bool gDocsAvailable;
 BRect windowRect(50,50,749,449);
 
 SGApp::SGApp()
-  : BApplication(APP_SIGNATURE)
+  : BApplication("application/x-vnd.Scripture-Guide")
 {
 	if (StartupCheck() == B_OK)
 	{

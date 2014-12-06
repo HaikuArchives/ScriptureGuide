@@ -1,7 +1,6 @@
 #ifndef __TWCONSTANTS_H__
 #define __TWCONSTANTS_H__
 
-#include <vector>
 #include <InterfaceDefs.h>
 
 //-----------------------------------------------------------------------------
@@ -9,25 +8,22 @@
 //-----------------------------------------------------------------------------
 
 // the help files, the website and the notes to be moved in a configuration file
-#define HELPDIR "/boot/home/config/settings/scripture-guide/docs/help/index.html"
-#define NOTEDIR "/boot/home/config/settings/scripture-guide/notes/Notes.txt"
+#define HELPDIR "/boot/home/config/settings/scriptureguide/docs/help/index.html"
+#define NOTEDIR "/boot/home/config/settings/scriptureguide/notes/Notes.txt"
 
 // the currently detected fonts for greek and hebrew
 #define GREEK "Aristarcoj"
 #define HEBREW "SBL Hebrew"
 
-#define PREFERENCES_PATH "/boot/home/config/settings/scripture-guide/"
-#define PREFERENCES_FILE "/boot/home/config/settings/scripture-guide/settings"
-#define MODULES_PATH "/boot/home/config/non-packaged/data/sword"
+#define PREFERENCES_PATH "/boot/home/config/settings/scriptureguide/"
+#define PREFERENCES_FILE "/boot/home/config/settings/scriptureguide/settings"
+#define MODULES_PATH "/boot/home/config/non-packaged/add-ons/scriptureguide"
 #define WEBSITE_URL "http://www.be-logos.org/"
 
 #define FONTSIZE 12
 #define LINEBREAK false
 #define BIBLE "Webster"
 #define KEY "Gen 1:1"
-
-// Application's signature
-#define APP_SIGNATURE "application/x-vnd.Scripture-Guide"
 
 const rgb_color BLACK = {0,0,0,255};
 const rgb_color BLUE = {50,0,200,255};
