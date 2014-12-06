@@ -8,7 +8,7 @@
 #include "FontPanel.h"
 #include "ColumnListView.h"
 #include "ColumnTypes.h"
-#include "ColorTools.h"
+//#include "ColorTools.h"
 #include "Spinner.h"
 #include <Invoker.h>
 #include <String.h>
@@ -75,7 +75,7 @@ private:
 };
 
 FontColumn::FontColumn(const char *title, float width,float minWidth,float maxWidth,
-		uint32 truncate, alignment align = B_ALIGN_LEFT)
+		uint32 truncate, alignment align)
  :BTitledColumn(title, width, minWidth, maxWidth, align)
 {
 	fText="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";

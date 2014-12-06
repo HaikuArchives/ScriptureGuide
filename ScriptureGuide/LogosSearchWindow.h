@@ -1,63 +1,62 @@
-#ifndef __LSEARCHWINDOW_H__
-#define __LSEARCHWINDOW_H__
-
-/* Scripture Guide - LogosSearchWindow.h
- *
- * Published under the GNU General Public License
- * see LICENSE for details
- *
- */
+#ifndef SEARCH_WINDOW_H
+#define SEARCH_WINDOW_H
 
 #include <CheckBox.h>
 #include <StringView.h>
 #include <ListView.h>
-#include <vector.h>
-#include "SwordBackend.h"
+#include <vector>
 #include <Button.h>
+#include <Messenger.h>
+#include <StatusBar.h>
 
 class VersePreview;
+class SGModule;
 
-class LogosSearchWindow : public BWindow
+#define FIND_QUIT			'FTqu'
+#define M_ACTIVATE_WINDOW	'ACwn'
+
+enum
+{
+	SEARCH_WORDS = -2,
+	SEARCH_PHRASE = -1,
+	SEARCH_REGEX = 0
+};
+
+class SGSearchWindow : public BWindow
 {
 public:
-	LogosSearchWindow(BRect frame, const char* module); 
-	~LogosSearchWindow();
-    	virtual bool QuitRequested();
-    	virtual void MessageReceived(BMessage *message);
+					SGSearchWindow(BRect frame, const char *module,
+									BMessenger *owner);
+					~SGSearchWindow();
+	virtual bool	QuitRequested();
+	virtual void	MessageReceived(BMessage *message);
 
 private:
-	void _initWindow();
-    	void Register(bool need_id);
-    	void Unregister(void);
-
-	vector<const char*> books;
-	SwordBackend *myBible;
-	const char* curModule;
-    
-    	BMenuField *bookField;
-    	BMenuField *sndBookField;
-	BTextControl *searchString;
-	BListView *searchResults;
-	VersePreview *verseSelected;
-	BCheckBox *caseSensitiveCheckBox;
-	BStatusBar *searchStatus;
-	BButton* findButton;
+	void			BuildGUI(void);
 	
-	BFont romanFont;
-	BFont greekFont;
-	BFont *curFont;
-
-	int mySearchStyle;
-	int mySearchFlags;
-	int myFrom;
-	int myTo;
-	char* myTxt;
-	char oldtxt[100];
-	vector<const char*> verseList;
-	int curFontSize;
-	bool isLineBreak;
-    	
-	int32 window_id;
+	vector<const char*>	books;
+	SwordBackend		*myBible;
+	const char			*curModule;
+	
+	BMenuField			*bookField;
+	BMenuField			*sndBookField;
+	BTextControl		*searchString;
+	BListView			*searchResults;
+	VersePreview		*verseSelected;
+	BCheckBox			*caseSensitiveCheckBox;
+	BStatusBar			*searchStatus;
+	BButton				*findButton;
+	
+	SGModule			*fCurrentModule;
+	
+	int					fSearchMode;
+	int					fSearchFlags;
+	int					fSearchStart;
+	int					fSearchEnd;
+	BString				fSearchString;
+	vector<const char*>	verseList;
+	
+	BMessenger			*fMessenger;
 };
 
 #endif

@@ -1,13 +1,7 @@
-#ifndef __LMAINWINDOW_H__
-#define __LMAINWINDOW_H__
+#ifndef SGMAINWINDOW_H
+#define SGMAINWINDOW_H
 
-/* Scripture Guide - LogosApp.h
- *
- * Published under the GNU General Public License
- * see LICENSE for details
- *
- */
-
+#include <Window.h>
 #include <Font.h>
 #include <Menu.h>
 #include <MenuItem.h>
@@ -17,9 +11,15 @@
 #include <TextView.h>
 #include <String.h>
 #include <MessageFilter.h>
-#include <vector.h>
+#include <Messenger.h>
 #include "SwordBackend.h"
-#include "FontPanel.h"
+#include <vector>
+
+class FontPanel;
+class SGModule;
+
+#define M_WINDOW_CLOSED 'wcls'
+using namespace std;
 
 
 class EndKeyFilter : public BMessageFilter
@@ -30,60 +30,65 @@ public:
 	virtual filter_result Filter(BMessage *msg, BHandler **target);
 };
 
-class LogosMainWindow : public BWindow 
+class SGMainWindow : public BWindow 
 {
-	public:
-		LogosMainWindow(BRect frame, const char *module, const char* key, bool mark);
-		~LogosMainWindow();
-		virtual bool QuitRequested();
-		virtual void MessageReceived(BMessage *message);
-		virtual void FrameResized(float width, float height);
+public:
+	SGMainWindow(BRect frame, const char *module, const char* key);
+	~SGMainWindow();
+	virtual bool QuitRequested();
+	virtual void MessageReceived(BMessage *message);
+	virtual void FrameResized(float width, float height);
 
-	private:
-		void _InitWindow(void);
-		void Register(bool need_id);
-		void Unregister(void);
-		void insertVerseNumber(int verse);
-		void parseText(void);
-		void LoadPrefs(void);
-		void SavePrefs(void);
-		bool NeedsLineBreaks(void);
+private:
+	void BuildGUI(void);
+	void InsertVerseNumber(int verse);
+	void InsertChapter(void);
+	void LoadPrefsForModule(void);
+	void SavePrefsForModule(void);
+	bool NeedsLineBreaks(void);
+	
+	void SetModule(const TextType &module, const int32 &index);
+	void SetModuleFromString(const char *name);
+	void SetChapter(const int16 &chapter);
 
-		BMenuBar *menubar;
-		BTextView *textview;
-		BView *toolbar;
-		BScrollView *scrollview;
-		BMenuField *moduleField;
-		BMenuField *bookField;
-		BTextControl *chapterChoice;
-		BTextControl *verseChoice;
-		BButton *noteButton;
-		BMenuItem *manualItem;
-		BMenuItem *showVerseNumItem;
+	BMenuBar		*fMenuBar;
+	
+	BMenuField		*fModuleField;
+	
+	BMenuItem		*fShowParallelItem,
+					*fShowVerseNumItem,
+					*fShowParallelContextItem;
 
-		BFont greekFont;
-		BFont romanFont;
-		BFont hebrewFont;
-		BFont *curFont;
-		
-		BFont displayFont;
-		int16 curFontSize;
-		FontPanel *fontPanel;
-
-		int32 window_id;
-
-		SwordBackend *myBible;
-		vector<const char*> modules;
-		vector<const char*> books;    
-		BString curModule;
-		BString curBook;
-		int16 curChapter;
-		int16 curVerse;
-		bool setMark;
-
-		bool isLineBreak;
-		bool showVerseNumbers;
-		int versePos[177];
+	BMenu			*fBookMenu,
+					*fBibleMenu,
+					*fCommentaryMenu,
+					*fLexiconMenu,
+					*fGeneralMenu;
+	
+	BTextControl	*fChapterBox;
+	BButton			*fNoteButton;
+	
+	BTextView		*fVerseView;
+	BScrollView		*fScrollView;
+	
+	FontPanel		*fFontPanel;
+	
+	
+	SwordBackend	*fModManager;
+	SGModule		*fCurrentModule;
+	uint16			fCurrentChapter;
+	
+	int16			fFontSize;
+	BFont			*fCurrentFont;
+	BFont			fDisplayFont,
+					fGreekFont,
+					fHebrewFont,
+					fRomanFont;
+	
+	bool			fIsLineBreak,
+					fShowVerseNumbers;
+	
+	BMessenger		*fFindMessenger;
 };
 
 #endif

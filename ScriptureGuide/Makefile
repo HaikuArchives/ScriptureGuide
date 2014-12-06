@@ -33,8 +33,6 @@ SRCS =	SwordBackend.cpp \
 		LogosApp.cpp \
 		Preferences.cpp \
 		FontPanel.cpp \
-		ColumnListView.cpp \
-		ColumnTypes.cpp \
 		Spinner.cpp \
 		BitmapView.cpp \
 		CTextView.cpp \
