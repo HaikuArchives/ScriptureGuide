@@ -37,7 +37,6 @@ SRCS =	SwordBackend.cpp \
 		FontPanel.cpp \
 		Spinner.cpp \
 		BitmapView.cpp \
-		HAboutWindow.cpp \
 		URLView.cpp
 		
 #	Specify the resource definition files to use. Full or relative paths can be
