@@ -1,29 +1,18 @@
 <html>
-<body bgcolor="#FFFFFF">
+<head><title>Installing ScriptureGuide</title></head>
+<body>
 <h2>Scripture Guide Installation</h2>
 This is for the installation from the sources. The sources are released under <a href="LICENSE">GNU Public License</a>.
 <P>
 This version is meant for developers. If you only want to use Scripture Guide, then get the binary package from the <a href="http://www.scripture-guide.org/">Scripture Guide Website</a>.
 
 <h3>I. Compiling and installing Scripture Guide</h3>
-This program is for BeOS, Zeta, and Haiku. It will not compile on any other platform. It also requires the Sword library.
-<ol>
-<li>Building the SWORD Library (written for 1.5.7)</li>
-	<ol type="a">
-	<li>Download the source archive from the SWORD Project's web page at <a href="http://www.crosswire.org/">www.crosswire.org</a></li>
+This software is only for Haiku. It will not compile on any other platform. It also requires the SWORD library (which can be built using <a href="https://bitbucket.org/haikuports/haikuporter">haikuporter</a>.
 
-	<li>Unzip the archive to /boot/home</li>
-	<li>Edit src/utilfuns/zlib/untgz.c: change line 14 from #ifdef unix to #ifndef unix</li>
-	<li>Edit usrinst.sh line 8 from OPTIONS="--enable-debug $OPTIONS" to #OPTIONS="--enable-debug $OPTIONS"</li>
-	<li>Create a symlink in /boot/develop/lib called libstdc++.so which points to libstdc++.r4.so</li>
-	<li>run userinst.sh from the Terminal</li>
-	<li>run make; make install</li>
-	</ol>
-
-<li>Go to the Scripture Guide directory, run make, and move the directory, complete with sources, to wherever you want on the hard drive, and run make.</li>
-<li>Download the modules you like from <a href="http://www.crosswire.org/sword/modules">http://www.crosswire.org/sword/modules</a></li>
-<li>Create the folder /boot/home/config/add-ons/scripture-guide and extract all modules to this folder</li>
+<li>Run <code>make</code> in the <code>ScriptureGuide</code> and <code>ScriptureGuideManager</code> directories and copy the <code>App</code> directory to wherever you want.</li>
+<li>Use ScriptureGuideManager to download books.</li>
 </ol>
+
 <h3>II. Other Notes</h3>
 
 You will need to have a special font if you would like to use modules written in Greek. Here are links to some Greek fonts which are free for the download:<P>

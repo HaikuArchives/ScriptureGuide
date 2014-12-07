@@ -5,10 +5,10 @@ resource app_signature "application/x-vnd.wgp.ScriptureGuideManager";
 
 resource app_version {
 	major  = 0,
-	middle = 7,
+	middle = 9,
 	minor  = 0,
 
-	variety = B_APPV_DEVELOPMENT,
+	variety = B_APPV_FINAL,
 	internal = 0,
 
 	short_info = "ScriptureGuideManager",
