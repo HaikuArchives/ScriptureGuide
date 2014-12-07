@@ -220,7 +220,7 @@ int32 MainWindow::ApplyThread(void *data)
 		win->fTextView->Insert(displaystring.String());
 		win->Unlock();
 		
-		syscmd="unzip ";
+		syscmd="unzip -o ";
 		syscmd << SG_PKGCACHE_PATH << zipfilename << ".zip -d " << SG_MODULEBASE_PATH;
 		
 		system(syscmd.String());
