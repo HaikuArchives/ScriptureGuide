@@ -222,7 +222,7 @@ void SGMainWindow::BuildGUI(void)
 	modulemenu->AddItem(fCommentaryMenu);
 	
 	// Add the toolbar view	
-	BBox *toolbar = new BBox("toolbar_view", B_FOLLOW_LEFT_RIGHT);
+	BBox *toolbar = new BBox("toolbar_view");
 	
 	fModuleField = new BMenuField("modulefield", "Text:", modulemenu);
 	fModuleField->SetDivider(be_plain_font->StringWidth("Text:") + 5);
