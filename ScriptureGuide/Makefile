@@ -35,8 +35,7 @@ SRCS =	SwordBackend.cpp \
 		LogosApp.cpp \
 		Preferences.cpp \
 		FontPanel.cpp \
-		Spinner.cpp \
-		BitmapView.cpp
+		Spinner.cpp
 		
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
