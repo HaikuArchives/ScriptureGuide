@@ -18,6 +18,8 @@
 #include <View.h>
 #include <Window.h>
 
+#include <LayoutBuilder.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,33 +32,16 @@
 #include "SwordBackend.h"
 #include "Preferences.h"
 
-/*enum
-{
-	FIND_BUTTON_OK = 'FBok',
-	FIND_BUTTON_HELP,
-	FIND_CHECK_CASE_SENSITIVE,
-	FIND_SELECT_FROM,
-	FIND_SELECT_TO,
-	FIND_SEARCH_STR,
-	FIND_RADIO1,
-	FIND_RADIO2,
-	FIND_RADIO3,
-	FIND_LIST_CLICK,
-	FIND_LIST_DCLICK,
-	FIND_TMP
-};*/
-
 class VersePreview : public BTextView
 {
 public:
-	VersePreview(BRect r, const char *name, BRect textrect, int32 resize, int32 flags);
+	VersePreview(const char *name, int32 flags);
 	virtual ~VersePreview(void);
 	virtual void FrameResized(float width, float height);
 };
 
-VersePreview::VersePreview(BRect r, const char *name, BRect textrect, int32 resize,
-							int32 flags)
- :	BTextView(r,name,textrect,resize,flags)
+VersePreview::VersePreview(const char *name,int32 flags)
+ :	BTextView(name,flags)
 {
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	SetStylable(true);
@@ -77,23 +62,16 @@ void VersePreview::FrameResized(float width, float height)
 }
 
 SGSearchWindow::SGSearchWindow(BRect frame, const char *module, BMessenger *owner)
- :	BWindow(frame,"", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_NOT_ZOOMABLE),
+ :	BWindow(frame, "", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_NOT_ZOOMABLE),
  	fMessenger(owner)
 {
 	float minw,minh,maxw,maxh;
 	GetSizeLimits(&minw,&maxw,&minh,&maxh);
 	minw = 325;
-	minh = 410;
+	minh = 300;
 	SetSizeLimits(minw,maxw,minh,maxh);
 	
-	int8 myFontSize;
-	bool myLineBreak;
-	
 	prefsLock.Lock();
-	if(preferences.FindInt8("fontsize",&myFontSize)!=B_OK)
-		myFontSize = 12;
-	if(preferences.FindBool("linebreaks",&myLineBreak)!=B_OK)
-		myLineBreak = false;
 	if(preferences.FindString("module",&curModule)!=B_OK)
 		curModule = "WEB";
 	prefsLock.Unlock();
@@ -132,161 +110,95 @@ SGSearchWindow::~SGSearchWindow(void)
 
 void SGSearchWindow::BuildGUI(void)
 {
-	BRect r(Bounds());
-	
-	// for holding preferred width values
-	float pwidth,pheight;
-	
-	// searchWindow is the main view
-	BView *searchWindow = new BView(r, "search_window",  B_FOLLOW_ALL, B_WILL_DRAW); 
-	searchWindow->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-
 	// The find button
-	findButton = new BButton(BRect(0,0,0,0), "find_button", "Find", 
-							new BMessage(FIND_BUTTON_OK), B_FOLLOW_RIGHT, B_WILL_DRAW);
-	findButton->GetPreferredSize(&pwidth,&pheight);
-	findButton->ResizeToPreferred();
-	findButton->MoveTo(Bounds().Width() - 10 - pwidth,10);
-	searchWindow->AddChild(findButton); 
+	findButton = new BButton("find_button", "Find", 
+							new BMessage(FIND_BUTTON_OK), B_WILL_DRAW);
 	SetDefaultButton(findButton);
 	
 	// The search query box
-	r.Set(10,10,findButton->Frame().left - 10,35);
-	searchString = new BTextControl(r, "searchstring", "Find: ", "", 
+	searchString = new BTextControl("searchstring", "Find: ", "", 
 									new BMessage(FIND_SEARCH_STR),
-									B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW | B_NAVIGABLE);
+									B_WILL_DRAW | B_NAVIGABLE);
 	searchString->SetDivider(searchString->StringWidth("Find: ") + 5);
-	
-	// We do this craziness because a BTextControl has a fixed height. Given two of them with
-	// the same width, one with a height of 100 and one with a height of 40, both will end up
-	// looking exactly the same size.
-	searchString->GetPreferredSize(&pwidth,&pheight);
-	
-	// we reset the width because ResizeToPreferred takes the current text into account when
-	// calculating its width.
-	r.bottom=r.top+pheight;
-	searchString->ResizeTo(r.Width(),r.Height());
-	
-	searchWindow->AddChild(searchString);
-	
-	// The Options box
-	r.top=searchString->Frame().bottom+5;
-	if(findButton->Frame().bottom+5>r.top)
-		r.top=findButton->Frame().bottom+5;
-	r.right=searchWindow->Bounds().Width()-10;
-	r.bottom=r.top+120;
-	
-	BBox *box1 = new BBox(r,"search_scope_box",B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-	box1->SetLabel("Options");
-	
 	
 	// First, we will set up the two menu fields for the search range
 	
 	// The first book in the scope
 	BPopUpMenu *bookChoice = new BPopUpMenu("biblebook");
-	r.Set(5,15,(box1->Bounds().Width()/2)-5,40);
-	bookField = new BMenuField(r, "book_field", "Start in ", bookChoice);
+	bookField = new BMenuField("book_field", "Start in ", bookChoice);
 	bookField->SetDivider(bookField->StringWidth("Start at ")+5);
  	BMenuItem* firstBook = new BMenuItem(books[0], new BMessage(FIND_SELECT_FROM)); 
 	firstBook->SetMarked(true);
 	bookChoice->AddItem(firstBook);
 	for(unsigned int i=1; i<books.size(); i++)
 		bookChoice->AddItem(new BMenuItem(books[i], new BMessage(FIND_SELECT_FROM)));
-	box1->AddChild(bookField);
-
-	r.OffsetBy(0,r.Height()+5);
 	
 	// The last book in the scope
 	BPopUpMenu *sndBookChoice = new BPopUpMenu("biblebook2");
-	sndBookField = new BMenuField(r, "book_field", "End in ", sndBookChoice);
+	sndBookField = new BMenuField("book_field", "End in ", sndBookChoice);
 	sndBookField->SetDivider(sndBookField->StringWidth("End in ") + 5);
  	BMenuItem *lastBook = new BMenuItem(books[books.size()-1], new BMessage(FIND_SELECT_TO)); 
 	lastBook->SetMarked(true);
 	for (uint16 i = 0; i < books.size() - 1; i++)
 		sndBookChoice->AddItem(new BMenuItem(books[i], new BMessage(FIND_SELECT_TO)));
 	sndBookChoice->AddItem(lastBook);
-	box1->AddChild(sndBookField);
-
-	searchWindow->AddChild(box1);
-	
-	// Now we will add the radio buttons for the search method
-	
-	r.left=box1->Bounds().Width()-box1->StringWidth("Regular Expression")-20;
-	r.top=15;
-	r.right=box1->Bounds().Width()-5;
-	r.bottom=25;
 	
 	// The radio buttons
-	BRadioButton *wordsRadio = new BRadioButton(r, "exactwords", "Find Words", 
-			new BMessage(FIND_RADIO1),B_FOLLOW_RIGHT);
-	box1->AddChild(wordsRadio);
+	BRadioButton *wordsRadio = new BRadioButton("exactwords", "Find Words", 
+			new BMessage(FIND_RADIO1));
 	
-	r.OffsetBy(0,wordsRadio->Bounds().Height());
-	BRadioButton *phraseRadio = new BRadioButton(r, "phrase", "Find Phrase", 
-			new BMessage(FIND_RADIO2),B_FOLLOW_RIGHT);
-	box1->AddChild(phraseRadio);
+	BRadioButton *phraseRadio = new BRadioButton("phrase", "Find Phrase", 
+			new BMessage(FIND_RADIO2));
 
-	r.OffsetBy(0,phraseRadio->Bounds().Height());
-	BRadioButton *regexRadio = new BRadioButton(r, "regex", "Regular Expression", 
-			new BMessage(FIND_RADIO3),B_FOLLOW_RIGHT);
-	box1->AddChild(regexRadio);
+	BRadioButton *regexRadio = new BRadioButton("regex", "Regular Expression", 
+			new BMessage(FIND_RADIO3));
 	
 	wordsRadio->SetValue(B_CONTROL_ON);
 
  	// The case sensitivity checkbox
- 	r.OffsetBy(0,regexRadio->Bounds().Height()+5);
- 	caseSensitiveCheckBox = new BCheckBox(r, "case_sensitive", "Match Case",  
- 			new BMessage(FIND_CHECK_CASE_SENSITIVE), B_FOLLOW_RIGHT | B_FOLLOW_TOP, 
- 			B_WILL_DRAW | B_NAVIGABLE);
- 	
-	box1->AddChild(caseSensitiveCheckBox);
+ 	caseSensitiveCheckBox = new BCheckBox("case_sensitive", "Match Case",  
+ 			new BMessage(FIND_CHECK_CASE_SENSITIVE), B_WILL_DRAW | B_NAVIGABLE);
 	
+	searchStatus = new BStatusBar("statusbar", "Search Progress:",NULL);
 	
-	// Now that we have the options taken care of, we can add the progress bar
-	
-	// This should become the status bar in future.
-	r.Set(10,box1->Frame().bottom+5,searchWindow->Bounds().Width()-10,box1->Frame().bottom+25);
-	
-	searchStatus = new BStatusBar(r, "statusbar", "Search Progress:",NULL);
-	searchStatus->SetResizingMode(B_FOLLOW_LEFT_RIGHT | B_FOLLOW_TOP);
-	searchWindow->AddChild(searchStatus);
-	
-	r.Set(10,searchStatus->Frame().bottom+20,
-			searchWindow->Bounds().Width()-10,
-			searchStatus->Frame().bottom+40);
-	
-	BStringView *resultsLabel=new BStringView(r,"resultslabel","Search Results:", B_FOLLOW_LEFT | B_FOLLOW_TOP);
-	searchWindow->AddChild(resultsLabel);
+	BStringView *resultsLabel=new BStringView("resultslabel","Search Results:");
 	
 	// The listview for the results
-	r.Set(10,resultsLabel->Frame().bottom+5,
-			searchWindow->Bounds().Width()-B_V_SCROLL_BAR_WIDTH-10,
-			resultsLabel->Frame().bottom+105);
-	
-	searchResults = new BListView(r, "searchresults", B_SINGLE_SELECTION_LIST,B_FOLLOW_ALL);
+	searchResults = new BListView("searchresults", B_SINGLE_SELECTION_LIST);
 	searchResults->SetInvocationMessage(new BMessage(FIND_LIST_DCLICK));
 	searchResults->SetSelectionMessage(new BMessage(FIND_LIST_CLICK));
 	
-	BScrollView *scrollView=new BScrollView("scroll_sresults", searchResults, B_FOLLOW_ALL,
+	BScrollView *scrollView=new BScrollView("scroll_sresults", searchResults,
 			0, false, true);
-	searchWindow->AddChild(scrollView); 
 	
-	// The unamed box to display the selected verse
-	r.Set(10,scrollView->Frame().bottom+3,searchWindow->Bounds().Width()-5,
-			searchWindow->Bounds().bottom-5);
-	
-	BBox *box5 = new BBox(r,"previewbox",B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM);
-
 	// The textview for the selected verse
-	r.Set(5,5,box5->Bounds().Width()-5,box5->Bounds().Height()-5);
-	BRect textrect = r;
-	textrect.OffsetTo(B_ORIGIN);
-	verseSelected = new VersePreview(r, "verse", textrect,  B_FOLLOW_LEFT_RIGHT | B_FOLLOW_BOTTOM,
-			 B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE); 
-	box5->AddChild(verseSelected);
-
-	searchWindow->AddChild(box5);
-	AddChild(searchWindow);
+	verseSelected = new VersePreview("verse", B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE);
+	
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_SMALL_INSETS)
+		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
+			.Add(searchString)
+			.Add(findButton)
+		.End()
+		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
+			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+				.Add(wordsRadio)
+				.Add(phraseRadio)
+				.Add(regexRadio)
+				//.AddGlue()
+			.End()
+			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING)
+				.Add(bookField)
+				.Add(sndBookField)
+				.Add(caseSensitiveCheckBox)
+				//.AddGlue()
+			.End()
+		.End()
+		.Add(searchStatus)
+		.Add(resultsLabel)
+		.Add(scrollView)
+		.Add(verseSelected)
+	.End();
 }
 
 void SGSearchWindow::MessageReceived(BMessage *message) 
