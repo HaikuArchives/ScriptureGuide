@@ -1,4 +1,6 @@
 #include <Application.h>
+#include <LayoutBuilder.h>
+
 #include <stdlib.h>
 
 #include "MainWindow.h"
@@ -17,41 +19,22 @@ enum
 };
 
 MainWindow::MainWindow(BRect frame)
- :BWindow(frame,"Scripture-Guide Book Manager",B_DOCUMENT_WINDOW_LOOK,
-  B_NORMAL_WINDOW_FEEL,0,0)
+	: BWindow(frame, "ScriptureGuide Book Manager",B_DOCUMENT_WINDOW_LOOK,
+ 		B_NORMAL_WINDOW_FEEL, 0)
 {
-	BRect r(Bounds());
-	
 	fApplyThread=-1;
 	
-	BView *bgview=new BView(r,"background",B_FOLLOW_ALL,B_WILL_DRAW);
-	bgview->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-	AddChild(bgview);
-	
-	r.bottom=20;
-	
 	// Set up menu
-	
-	BMenuBar *mbar=new BMenuBar(r,NULL);
-	bgview->AddChild(mbar);
+	BMenuBar *mbar=new BMenuBar("menu_bar");
 	
 	BMenu *menu=new BMenu("Program");
 	menu->AddItem(new BMenuItem("Quit",new BMessage(B_QUIT_REQUESTED),'Q',0));
 	mbar->AddItem(menu);
 	
-	r.top=mbar->Frame().bottom+1;
-	r.bottom=Bounds().bottom;
-	r.right=200;
-	
-	r.bottom-=B_H_SCROLL_BAR_HEIGHT+2;
-	
 	// Set up the module list
-	
-	fListView=new BListView(r,"modlist",B_SINGLE_SELECTION_LIST,B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM);
-	fListScrollView=new BScrollView("listscrollview",fListView,
-		B_FOLLOW_LEFT|B_FOLLOW_TOP_BOTTOM,0,true,true);
+	fListView=new BListView("modlist",B_SINGLE_SELECTION_LIST);
+	fListScrollView=new BScrollView("listscrollview",fListView,0,true,true);
 	fListScrollView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-	bgview->AddChild(fListScrollView);
 	fListView->SetSelectionMessage(new BMessage(M_SELECT_MODULE));
 	fListView->SetInvocationMessage(new BMessage(M_MARK_MODULE));
 	
@@ -68,31 +51,29 @@ MainWindow::MainWindow(BRect frame)
 	}
 	
 	// Add the box we use for descriptions
-	r.left=fListScrollView->Frame().right+1;
-	r.right=Bounds().right-B_V_SCROLL_BAR_WIDTH;
-	r.top=mbar->Frame().bottom+1;
-	r.bottom=Bounds().bottom/2;
-	
-	fTextView=new BTextView(r,"descriptionview",r.OffsetToCopy(0,0).InsetByCopy(5,5),
-		B_FOLLOW_ALL);
+	fTextView=new BTextView("descriptionview");
 	fTextView->MakeEditable(false);
-	fTextScrollView=new BScrollView("textscrollview",fTextView,B_FOLLOW_LEFT|B_FOLLOW_TOP,
-		0,false,true);
+	fTextScrollView=new BScrollView("textscrollview",fTextView,0,false,true);
 	fTextScrollView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-	bgview->AddChild(fTextScrollView);
 	
-	fApplyButton=new BButton(BRect(0,0,0,0),"apply button", "Apply", 
-		new BMessage(M_SET_PACKAGES), B_FOLLOW_NONE);
-	fApplyButton->ResizeToPreferred();
-	r=fApplyButton->Frame();
-	
-	float panelwidth=Bounds().right-fListScrollView->Frame().right;
-	float panelheight=Bounds().bottom-fTextScrollView->Frame().bottom;
-	fApplyButton->MoveTo(fListScrollView->Frame().right+ ((panelwidth-r.Width())*.8),
-		fTextScrollView->Frame().bottom+ ((panelheight-r.Height())*2)/3 );
+	fApplyButton=new BButton("apply button", "Apply",
+			new BMessage(M_SET_PACKAGES));
 	fApplyButton->SetEnabled(false);
 	
-	bgview->AddChild(fApplyButton);
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+		.Add(mbar)
+		.AddSplit(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
+			.Add(fListScrollView, 1)
+			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING, 2)
+				.Add(fTextScrollView)
+				.AddGroup(B_HORIZONTAL)
+					.AddGlue()
+					.Add(fApplyButton)
+					.AddGlue()
+				.End()
+			.End()
+		.End()
+	.End();
 }
 
 bool MainWindow::QuitRequested(void)
