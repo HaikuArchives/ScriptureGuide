@@ -13,7 +13,7 @@
 #include <ListItem.h>
 #include <Font.h>
 #include <Message.h>
-#include <Messenger.h>
+#include <Handler.h>
 
 class FontWindow;
 
@@ -25,7 +25,7 @@ enum
 class FontPanel
 {
 public:
-	FontPanel(BMessenger *target = NULL,
+	FontPanel(BHandler* target = NULL,
 		BMessage *message = NULL,
 		float size = 12,
 		bool modal = false,
@@ -35,11 +35,7 @@ public:
 	void Show();
 	void Hide();
 	bool IsShowing(void) const;
-	void SetTarget(BMessenger msgr);
-	void SetMessage(BMessage *msg);
 	BWindow *Window(void) const;
-	void SetHideWhenDone(bool value);
-	bool HideWhenDone(void) const;
 	void SetFontSize(uint16 size);
 private:
 	FontWindow *fWindow;

@@ -729,9 +729,8 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 		{
 			if (fFontPanel)
 				delete fFontPanel;
-			
-			BMessenger msgr(this);				
-			fFontPanel = new FontPanel(&msgr,NULL,fFontSize);
+							
+			fFontPanel = new FontPanel(this,NULL,fFontSize);
 			fFontPanel->SelectFont(fDisplayFont);
 			fFontPanel->Show();
 			break;
@@ -751,10 +750,10 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			
 			fFontSize = (int)size;
 			fCurrentFont->SetSize(size);
-		//	fCurrentFont->SetFamilyAndStyle((font_family)(family.String()),(font_family)(style.String()));
+			fCurrentFont->SetFamilyAndStyle(family.String(),style.String());
 			
 			fDisplayFont.SetSize(size);
-		//	fDisplayFont.SetFamilyAndStyle((font_family)(family.String()),(font_family)(style.String()));
+			fDisplayFont.SetFamilyAndStyle(family.String(),style.String());
 			
 			fVerseView->Delete(0,fVerseView->TextLength());
 			fVerseView->SetFontAndColor(fCurrentFont,B_FONT_ALL,&BLACK);

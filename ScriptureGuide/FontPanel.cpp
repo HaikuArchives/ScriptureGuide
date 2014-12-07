@@ -154,45 +154,45 @@ bool FontColumn::AcceptsField(const BField* field) const
 	return static_cast<bool>(dynamic_cast<const FontField*>(field));
 }
 
-class FontView : public BView
+class FontWindow : public BWindow
 {
 public:
+	FontWindow(const BRect& frame, float fontsize, BHandler* target,BMessage *msg);
+	~FontWindow() {}
 	
-	FontView(const BRect &frame, float size);
-	~FontView(void);
-	void AttachedToWindow(void);
-	void MessageReceived(BMessage *msg);
-	
-	void SetHideWhenDone(bool value);
-	bool HideWhenDone(void) const;
-	void SetTarget(BMessenger msgr);
-	void SetMessage(BMessage *msg);
+	virtual void MessageReceived(BMessage* msg);
+
 	void SetFontSize(uint16 size);
 	void SelectFont(const BFont &font);
+
+	bool QuitRequested(void);
+	void ReallyQuit(void) { fReallyQuit=true; }
 	
 private:
-	
-	BMessenger *fMessenger;
+	bool fReallyQuit;
+	BHandler* fTarget;
 	BMessage fMessage;
-	bool fHideWhenDone;
 	
 	BColumnListView *fFontList;
 	BButton *fOK, *fCancel;
 	Spinner *fSpinner;
 };
 
-FontView::FontView(const BRect &frame, float size)
- : BView(frame, "fontview", B_FOLLOW_ALL, B_WILL_DRAW)
+FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target,BMessage *msg)
+ : BWindow(frame, "Choose a Font", B_TITLED_WINDOW_LOOK,B_NORMAL_WINDOW_FEEL, B_NOT_CLOSABLE)
 {
-	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-	
-	fMessenger=new BMessenger(be_app_messenger);
-	fMessage.what=M_FONT_SELECTED;
-	fHideWhenDone=true;
+	//SetSizeLimits(400,2400,300,2400);
+	fReallyQuit=false;
+	fTarget = target;
+
+	if (msg == NULL)
+		fMessage.what=M_FONT_SELECTED;
+	else
+		fMessage = *msg;
 	
 	fFontList=new BColumnListView("fontlist", B_WILL_DRAW|B_NAVIGABLE);
 
-	float width = StringWidth("Font Name");
+	float width = fFontList->StringWidth("Font Name");
 	BStringColumn *col=new BStringColumn("Font Name", width*3, width,
 			width*20,B_TRUNCATE_END);
 	fFontList->AddColumn(col,0);
@@ -204,19 +204,19 @@ FontView::FontView(const BRect &frame, float size)
 	fFontList->SetColor(B_COLOR_SELECTION,make_color(230,230,230,255));
 	fFontList->SetInvocationMessage(new BMessage(M_OK));
 
-	width = StringWidth("Preview");
-	float previewWidth = StringWidth(PREVIEW_STR);
+	width = fFontList->StringWidth("Preview");
+	float previewWidth = fFontList->StringWidth(PREVIEW_STR);
 	FontColumn *fcol=new FontColumn("Preview", previewWidth, width, previewWidth*2,
 			B_TRUNCATE_END);
-	fcol->SetFontSize(size);
+	fcol->SetFontSize(fontsize);
 	fFontList->AddColumn(fcol,1);
 	fFontList->SetColumnFlags(B_ALLOW_COLUMN_RESIZE);
 	
 	fSpinner=new Spinner("spinner","Font Size: ", new BMessage(M_SIZE_CHANGE));
 	BTextControl *tcontrol=fSpinner->TextControl();
-	tcontrol->SetDivider(StringWidth("Font Size: ")+5);
+	tcontrol->SetDivider(fFontList->StringWidth("Font Size: ")+5);
 	fSpinner->SetRange(6,999);
-	fSpinner->SetValue(32);
+	fSpinner->SetValue(fontsize);
 	
 	fCancel=new BButton("Cancel","Cancel",new BMessage(M_CANCEL));
 	fOK=new BButton("OK","OK",new BMessage(M_OK));
@@ -231,11 +231,18 @@ FontView::FontView(const BRect &frame, float size)
 		.End()
 	.End();
 	
+	fOK->SetTarget(this);
+	fCancel->SetTarget(this);
+	fFontList->SetTarget(this);
+	fSpinner->SetTarget(this);
+	
+	fFontList->MakeFocus(true);
+	
 	//Available fonts
 	font_family plain_family;
 	font_style plain_style;
 	be_plain_font->GetFamilyAndStyle(&plain_family,&plain_style);
-	int32 rowsize= int32(4*size)/3;
+	int32 rowsize= int32(4*fontsize)/3;
 	BRow *selectionrow;
 	
 	int32 numFamilies = count_font_families();
@@ -271,47 +278,56 @@ FontView::FontView(const BRect &frame, float size)
 	fFontList->SetFocusRow(selectionrow,true);
 }
 
-FontView::~FontView(void)
+void FontWindow::MessageReceived(BMessage* msg)
 {
-	delete fMessenger;
+	switch(msg->what)
+	{
+		case M_SIZE_CHANGE:
+		{
+			SetFontSize(fSpinner->Value());
+			break;
+		}
+		case M_CANCEL:
+		{
+			BMessage *cancel=new BMessage(B_CANCEL);
+			cancel->AddPointer("source",this);
+			Hide();
+			
+			break;
+		}
+		case M_OK:
+		{
+			BMessage *ok=new BMessage;
+			ok = &fMessage;
+			
+			BRow *row=fFontList->FocusRow();
+			FontField *field=(FontField*)row->GetField(1);
+			BFont font=field->Font();
+			
+			font_family family;
+			font_style style;
+			
+			font.GetFamilyAndStyle(&family, &style);
+			
+			ok->AddString("family",family);
+			ok->AddString("style",style);
+			ok->AddFloat("size",fSpinner->Value());
+			
+			fTarget->Looper()->PostMessage(ok, fTarget);
+			Hide();
+			break;
+		}
+		default:
+		{
+			BWindow::MessageReceived(msg);
+			break;
+		}
+	}
 }
 
-void FontView::AttachedToWindow(void)
+void FontWindow::SetFontSize(uint16 size)
 {
-	Window()->SetDefaultButton(fOK);
-	fOK->SetTarget(this);
-	fCancel->SetTarget(this);
-	fFontList->SetTarget(this);
-	fSpinner->SetTarget(this);
-	
-	fFontList->MakeFocus(true);
-}
-
-void FontView::SetHideWhenDone(bool value)
-{
-	fHideWhenDone=value;
-}
-
-bool FontView::HideWhenDone(void) const
-{
-	return fHideWhenDone;
-}
-
-void FontView::SetTarget(BMessenger msgr)
-{
-	delete fMessenger;
-	fMessenger=new BMessenger(msgr);
-}
-
-void FontView::SetMessage(BMessage *msg)
-{
-	fMessage=(msg)? *msg : BMessage(M_FONT_SELECTED);
-}
-
-void FontView::SetFontSize(uint16 size)
-{
-	if(Window())
-		Window()->DisableUpdates();
+	DisableUpdates();
 	
 	fSpinner->SetValue(size);
 	
@@ -327,12 +343,10 @@ void FontView::SetFontSize(uint16 size)
 	}
 	
 	fFontList->ScrollTo(fFontList->FocusRow());
-	
-	if(Window())
-		Window()->EnableUpdates();
+	EnableUpdates();
 }
 
-void FontView::SelectFont(const BFont &font)
+void FontWindow::SelectFont(const BFont &font)
 {
 	font_family fam;
 	font_style sty;
@@ -360,84 +374,6 @@ void FontView::SelectFont(const BFont &font)
 	}
 }
 
-void FontView::MessageReceived(BMessage *msg)
-{
-	switch(msg->what)
-	{
-		case M_SIZE_CHANGE:
-		{
-			SetFontSize(fSpinner->Value());
-			break;
-		}
-		case M_CANCEL:
-		{
-			BMessage *cancel=new BMessage(B_CANCEL);
-			cancel->AddPointer("source",this);
-			fMessenger->SendMessage(cancel);
-			
-			if(fHideWhenDone)
-				Window()->Hide();
-			
-			break;
-		}
-		case M_OK:
-		{
-			BMessage *ok=new BMessage;
-			*ok=fMessage;
-			
-			BRow *row=fFontList->FocusRow();
-			FontField *field=(FontField*)row->GetField(1);
-			BFont font=field->Font();
-			
-			font_family family;
-			font_style style;
-			
-			font.GetFamilyAndStyle(&family, &style);
-			
-			ok->AddString("family",family);
-			ok->AddString("style",style);
-			ok->AddFloat("size",fSpinner->Value());
-			
-			fMessenger->SendMessage(ok);
-			
-			if(fHideWhenDone)
-				Window()->Hide();
-				
-			break;
-		}
-		default:
-		{
-			BView::MessageReceived(msg);
-			break;
-		}
-	}
-}
-
-class FontWindow : public BWindow
-{
-public:
-	FontWindow(const BRect &frame, float fontsize);
-	~FontWindow(void) {}
-	bool QuitRequested(void);
-	
-	void ReallyQuit(void) { fReallyQuit=true; }
-	
-	FontView *fView;
-
-private:
-	bool fReallyQuit;
-};
-
-FontWindow::FontWindow(const BRect &frame, float fontsize)
- : BWindow(frame,"Choose a Font", B_TITLED_WINDOW_LOOK,B_NORMAL_WINDOW_FEEL, B_NOT_CLOSABLE)
-{
-	SetSizeLimits(400,2400,300,2400);
-	fReallyQuit=false;
-	
-	fView=new FontView(Bounds(), fontsize);
-	AddChild(fView);
-}
-
 bool FontWindow::QuitRequested(void)
 {
 	if(fReallyQuit)
@@ -446,23 +382,13 @@ bool FontWindow::QuitRequested(void)
 	return false;
 }
  
-FontPanel::FontPanel(BMessenger *target,BMessage *msg, float size, bool modal,
+FontPanel::FontPanel(BHandler* target,BMessage *msg, float size, bool modal,
 		bool hide_when_done)
 {
-	fWindow=new FontWindow(BRect(200,200,600,500),size);
-	
-	if(target)
-		fWindow->fView->SetTarget(*target);
-	
-	if(msg)
-		fWindow->fView->SetMessage(msg);
-	
+	fWindow=new FontWindow(BRect(200,200,600,500), size, target, msg);
+
 	if(modal)
 		fWindow->SetFeel(B_MODAL_APP_WINDOW_FEEL);
-	
-	
-	fWindow->fView->SetFontSize(size);
-	fWindow->fView->SetHideWhenDone(hide_when_done);
 }
 
 FontPanel::~FontPanel(void)
@@ -473,7 +399,7 @@ FontPanel::~FontPanel(void)
 
 void FontPanel::SelectFont(const BFont &font)
 {
-	fWindow->fView->SelectFont(font);
+	fWindow->SelectFont(font);
 }
 
 void FontPanel::Show()
@@ -495,29 +421,3 @@ BWindow *FontPanel::Window(void) const
 {
 	return fWindow;
 }
-
-void FontPanel::SetTarget(BMessenger msgr)
-{
-	fWindow->fView->SetTarget(msgr);
-}
-
-void FontPanel::SetMessage(BMessage *msg)
-{
-	fWindow->fView->SetMessage(msg);
-}
-
-void FontPanel::SetHideWhenDone(bool value)
-{
-	fWindow->fView->SetHideWhenDone(value);
-}
-
-bool FontPanel::HideWhenDone(void) const
-{
-	return fWindow->fView->HideWhenDone();
-}
-
-void FontPanel::SetFontSize(uint16 size)
-{
-	fWindow->fView->SetFontSize(size);
-}
-
