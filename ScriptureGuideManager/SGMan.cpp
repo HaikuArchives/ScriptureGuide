@@ -70,7 +70,7 @@ void SGMApp::SetupPackageList(void)
 	if(!entry.Exists())
 	{
 		EXEC(SG_PKGINFO_PATH, "wget " SG_DOWNLOAD_PKGS);
-		EXEC(SG_PKGINFO_PATH, "awk -F\" '{print $8}' index.html | awk 'NF' >packagelist.txt");
+		EXEC(SG_PKGINFO_PATH, "awk -F'[<>]' '{print $13}' index.html | awk 'NF' >packagelist.txt");
 		EXEC(SG_PKGINFO_PATH, "awk -F'[<>]' '{print $23}' index.html | awk 'NF' >packagesizes.txt");
 	}
 	
