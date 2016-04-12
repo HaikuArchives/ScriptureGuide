@@ -9,7 +9,7 @@
 
 // the help files, the website and the notes to be moved in a configuration file
 #define HELPDIR "docs/index.html"
-#define NOTEDIR "/boot/home/config/settings/scriptureguide/notes/Notes.txt"
+#define NOTESPATH "/boot/home/config/settings/scriptureguide/notes/"
 
 // the currently detected fonts for greek and hebrew
 #define GREEK "Aristarcoj"
@@ -17,7 +17,7 @@
 
 #define PREFERENCES_PATH "/boot/home/config/settings/scriptureguide/"
 #define PREFERENCES_FILE "/boot/home/config/settings/scriptureguide/settings"
-#define MODULES_PATH "/boot/home/config/non-packaged/add-ons/scriptureguide"
+#define MODULES_PATH "/boot/home/config/settings/sword/"
 #define WEBSITE_URL "http://www.scripture-guide.org/"
 
 #define FONTSIZE 12

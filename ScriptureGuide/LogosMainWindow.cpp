@@ -699,8 +699,8 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 		}
 		case MENU_EDIT_NOTE:
 		{
-			BString notespath(GetAppPath());
-			notespath += "notes/Notes.txt";
+			BString notespath(NOTESPATH);
+			notespath += "Notes.txt";
 			
 			BEntry entry;
 			if (entry.SetTo(notespath.String())!=B_OK)
@@ -709,10 +709,10 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 				// re-create them
 				create_directory(notespath.String(),0777);
 				
-				notespath += "/Notes.txt";
+				notespath += "Notes.txt";
 				BFile file(notespath.String(), B_READ_WRITE | B_CREATE_FILE);
 				const char notes[]="Scripture Guide Study Notes\n-------------------------------\n";
-				file.Write(notes,strlen(notes));
+				file.Write(notes,strlen(notes));				
 				file.Unset();
 				
 				break;
