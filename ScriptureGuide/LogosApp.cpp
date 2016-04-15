@@ -158,7 +158,7 @@ status_t SGApp::StartupCheck(void)
 	if (!entry.Exists())
 		create_directory(MODULES_PATH,0777);
 
-	entry.SetTo("/boot/home/config/non-packaged/data/sword/mods.d");
+	entry.SetTo(MODULES_PATH "mods.d");
 	if (!entry.Exists())
 	{
 		// This is either an upgrade or the modules don't exist. 
@@ -175,7 +175,7 @@ status_t SGApp::StartupCheck(void)
 			modfail=true;
 	}
 	
-	entry.SetTo("/boot/home/config/non-packaged/data/sword/modules");
+	entry.SetTo(MODULES_PATH "modules");
 	if (!entry.Exists())
 	{
 		entry.SetTo("/boot/home/.sword/modules");
@@ -227,8 +227,7 @@ status_t SGApp::StartupCheck(void)
 		gDocsAvailable=false;
 	
 	// Ensure that the study notes exist
-	BString notespath(gAppPath);
-	notespath+="notes";
+	BString notespath(NOTESPATH);
 	entry.SetTo(notespath.String());
 	if (!entry.Exists())
 	{
@@ -236,16 +235,16 @@ status_t SGApp::StartupCheck(void)
 		// and a new default notes file.
 		create_directory(notespath.String(),0777);
 		
-		notespath+="/Notes.txt";
+		notespath+="Notes.txt";
 		BFile file(notespath.String(), B_READ_WRITE | B_CREATE_FILE);
 		const char notes[]="Scripture Guide Study Notes\n-------------------------------\n";
-		file.Write(notes,strlen(notes)+1);
+		file.Write(notes,strlen(notes));
 		file.Unset();
 	}
 	else
 	{
 		// folder exists, but does the notefile exist?
-		notespath+="/Notes.txt";
+		notespath+="Notes.txt";
 		entry.SetTo(notespath.String());
 		if (!entry.Exists())
 		{
