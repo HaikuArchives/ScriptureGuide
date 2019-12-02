@@ -319,9 +319,9 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			if (i < verseList.size())
 			{
 				verseSelected->Delete(0,verseSelected->TextLength());
-				verseSelected->Insert(verseList[i]);
+			//	verseSelected->Insert(verseList[i]);
 				verseSelected->Insert("   ");
-				verseSelected->Insert(fCurrentModule->GetVerse(verseList[i]));
+				verseSelected->Insert(fCurrentModule->GetParagraph(verseList[i]));
 				verseSelected->Select(0,0);
 			}
 			break;
