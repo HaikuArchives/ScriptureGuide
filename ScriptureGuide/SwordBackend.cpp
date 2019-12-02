@@ -138,9 +138,38 @@ const char *SGModule::GetVerse(const char *book, int chapter, int verse)
 
 const char *SGModule::GetVerse(const char *key)
 {
-	VerseKey myKey(key);
-	fModule->setKey(myKey);
-	return fModule->renderText();
+	 VerseKey myKey(key);
+     fModule->setKey(myKey);
+     return fModule->renderText();
+}
+
+
+const char *SGModule::GetParagraph(const char *key){
+	BString bibleText=BString(key);
+	bibleText << "\n";
+	VerseKey minKey(key);
+	minKey.decrement();
+	VerseKey maxKey(key);
+	maxKey.increment();
+	VerseKey paragraph;
+	paragraph.setLowerBound(minKey);
+	paragraph.setUpperBound(maxKey);
+	fModule->setKey(paragraph);
+	printf("MinKey = %s\n", minKey.getText());
+	printf("MaxKey = %s\n", maxKey.getText());
+	if(paragraph.isBoundSet()) {
+		VerseKey temp(paragraph);
+		for(int i = paragraph.getLowerBound().getIndex(); i <= paragraph.getUpperBound().getIndex(); ++i) {
+			temp.setIndex(i);
+			fModule->setKey(temp);
+			bibleText << temp.getVerse();
+			bibleText << " ";
+			bibleText.Append(fModule->renderText());
+			bibleText.Append("\n");
+		}
+	}
+	return bibleText.String();
+
 }
 
 const char *SGModule::GetKey(void)
