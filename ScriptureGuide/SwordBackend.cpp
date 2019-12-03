@@ -145,8 +145,7 @@ const char *SGModule::GetVerse(const char *key)
 
 
 const char *SGModule::GetParagraph(const char *key){
-	BString bibleText=BString(key);
-	bibleText << "\n";
+	BString bibleText=BString();
 	VerseKey minKey(key);
 	minKey.decrement();
 	VerseKey maxKey(key);
@@ -155,8 +154,8 @@ const char *SGModule::GetParagraph(const char *key){
 	paragraph.setLowerBound(minKey);
 	paragraph.setUpperBound(maxKey);
 	fModule->setKey(paragraph);
-	printf("MinKey = %s\n", minKey.getText());
-	printf("MaxKey = %s\n", maxKey.getText());
+	bibleText << paragraph.getRangeText();
+	bibleText << "\n";
 	if(paragraph.isBoundSet()) {
 		VerseKey temp(paragraph);
 		for(int i = paragraph.getLowerBound().getIndex(); i <= paragraph.getUpperBound().getIndex(); ++i) {
@@ -165,11 +164,10 @@ const char *SGModule::GetParagraph(const char *key){
 			bibleText << temp.getVerse();
 			bibleText << " ";
 			bibleText.Append(fModule->renderText());
-			bibleText.Append("\n");
+			//bibleText.Append("\n");
 		}
 	}
 	return bibleText.String();
-
 }
 
 const char *SGModule::GetKey(void)
