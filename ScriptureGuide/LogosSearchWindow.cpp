@@ -174,6 +174,9 @@ void SGSearchWindow::BuildGUI(void)
 	// The textview for the selected verse
 	verseSelected = new VersePreview("verse", B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE);
 	
+	BScrollView *scrollVerse=new BScrollView("scroll_verse", verseSelected,
+			0, false, true);
+	
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_SMALL_INSETS)
 		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
@@ -197,7 +200,7 @@ void SGSearchWindow::BuildGUI(void)
 		.Add(searchStatus)
 		.Add(resultsLabel)
 		.Add(scrollView)
-		.Add(verseSelected)
+		.Add(scrollVerse)
 	.End();
 }
 
@@ -319,8 +322,6 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			if (i < verseList.size())
 			{
 				verseSelected->Delete(0,verseSelected->TextLength());
-			//	verseSelected->Insert(verseList[i]);
-				verseSelected->Insert("   ");
 				verseSelected->Insert(fCurrentModule->GetParagraph(verseList[i]));
 				verseSelected->Select(0,0);
 			}
