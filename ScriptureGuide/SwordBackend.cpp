@@ -421,6 +421,7 @@ int ChaptersInBook(const char *book)
 int VersesInChapter(const char *book, int chapter)
 {
 	VerseKey myKey(book);
+	myKey.setChapter(chapter);
 /**old
 	int i = myKey.getTestament() - 1;
 	int j = myKey.getBook() - 1;
