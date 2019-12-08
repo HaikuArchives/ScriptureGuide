@@ -11,7 +11,7 @@
 		<td valign=top >
 			<center><h1>Scripture Guide Manual</h1></center>
 			<a href="index.html#text">The Text View</a><br>
-			<a href="index.html#toolbar"> The Toolbar</a><br>
+			<a href="index.html#toolbar">The Toolbar</a><br>
 			<a href="index.html#menu">The Menu</a><br>
 			<a href="index.html#find">The Find Window</a><br>
 			<a href="index.html#install">Installing</a><br>
@@ -30,7 +30,7 @@
 <h2><a name="toolbar">The Toolbar</a></h2>
 <img src="pics/toolbar.png">
 
-<p> With the toolbar you can select any installed Bible or commentary. Additionally, it also allows you to choose a particular book, chapter, and verse. The selected verse will be highlighted for you, as well. Also, there is a Notes button which will open a document to hold any study notes you might want to enter. Should you need to find this file, they are stored in the Notes folder in the folder where Scripture Guide was installed. For most people, this is <tt>/boot/apps/Scripture-Guide/notes</tt>.</p>
+<p> With the toolbar you can select any installed Bible or commentary. Additionally, it also allows you to choose a particular book, chapter, and verse. The selected verse will be highlighted for you, as well. Also, there is a Notes button which will open a document to hold any study notes you might want to enter. Should you need to find this file, they are stored in the notes folder of the settings directory from scriptureguide. Cou can find it at <tt>/boot/home/config/settings/scriptureguide/notes</tt>. This folder will be generated once you start the Scripture Guide app.</p>
 
 <h2><a name="menu">The Menu</a></h2>
 
@@ -51,15 +51,18 @@
 
 <img src="pics/search1.png" align="right">
 
-<p>Scripture Guide possesses considerable flexibility and power in its ability to search for text. In the pictured example, we have done a search for the name Abraham in all books of the Bible. Search results are displayed in the white box, and the entire verse is visible in the bottom box. Double-clicking on any search result will open a new window displaying that verse.</p>
+<p>Scripture Guide possesses considerable flexibility and power in its ability to search for text. In the pictured example, we have done a search for the name Abraham in all books of the Bible. Search results are displayed in the white box, and the entire verse and the two surrounding verses are visible in the bottom box. Double-clicking on any search result will open a new window displaying that verse.</p>
 
 <h4>Search Options</h4>
 
 <p> Within this box, you can choose search settings to make your search more specific. You can choose a range of books within a text, such as choosing Matthew through Acts. Checking the box marked 'Match Case' will make the search pay attention to capitalization. You can also choose to search for any verses having any of the words, the exact phrase, or something called a Regular Expression.</p>
 
-<h4>Regular Expression Searches</h5>
+<h4>Regular Expression Searches</h4>
 
 <p>Regular Expressions are a complex way of searching for patterns which were developed for the UNIX operating system. By using a string of characters (which looks like little more than gibberish to those unfamiliar), it is possible to search for just about anything. For example, to look for all words beginning with P, the search term would be <tt>P[^ ]+</tt> . Entire books have been written on Regular Expressions and, as such, are beyond the scope of this manual. If you would like to learn more about them, <a href="http://gnosis.cx/publish/programming/regular_expressions.html">click here</a> As a quick aside, the forward slashes used on both sides of a regular expression (i.e. '/') are not needed when searching in Scripture Guide.</p>
+
+<h4>ShortCuts</h4>
+<p>You can select multiple verses and use alt+c to copied the selcted verses.</p>
 
 <h2><a name="install">Installing Bibles and Commentaries</a></h2>
 
@@ -75,7 +78,7 @@
 <ol>
 <li>Go to <a href="http://www.crosswire.org/sword/modules">http://www.crosswire.org/sword/modules</a> and choose a module. (Remember to select a Raw download, as Windows downloads will not work in Haiku.)</li>
 <li>Once it is downloaded, double-click on your module to start Expander if it does not start by itself.</li>
-<li> Change the Destination box to <tt>/boot/home/config/non-packaged/add-ons/scripture-guide</tt> and click 'Expand'.</li>
+<li> Change the Destination box to <tt>/boot/home/config/settings/sword</tt> and click 'Expand'.</li>
 <li>Restart ScriptureGuide if it is currently running and your new text will show up in the menu.</li>
 </ol>
 </p>
