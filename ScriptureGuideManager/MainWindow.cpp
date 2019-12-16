@@ -124,46 +124,46 @@ void MainWindow::MessageReceived(BMessage *msg)
 			if(fApplyThread!=-1)
 				break;
 			
-			BookRow *item=(BookRow*)fBookListView->CurrentSelection();
-			if(item)
+			BookRow *row=(BookRow*)fBookListView->CurrentSelection();
+			if(row)
 			{	
 				// Installed: 	uncheck=uninstall
 				//				check=remove from uninstall list
 				
 				// Not installed: 	uncheck=remove from install list
 				// 					check=add to isntall list
-				
-				if(IsInstalled(item->File()->fFileName.String()))
+				BStringField *install_field = dynamic_cast<BStringField*>(row->GetField(0));
+				if(IsInstalled(row->File()->fFileName.String()))
 				{
-					if(item->IsMarked())
+					if(strchr(install_field->String(),'*')!=NULL)
 					{
 						// uncheck item: uninstall
-						item->SetMarked(false);
-						fUninstallList.Add(item->File()->fZipFileName);
+						install_field->SetString("X");
+						fUninstallList.Add(row->File()->fZipFileName);
 					}
 					else
 					{
 						// check item: remove from uninstall list - make no changes
-						item->SetMarked(true);
-						fUninstallList.Remove(item->File()->fZipFileName);
+						install_field->SetString("*");
+						fUninstallList.Remove(row->File()->fZipFileName);
 					}
 				}
 				else
 				{
-					if(item->IsMarked())
+					if(strchr(install_field->String(),'i')!=NULL)
 					{
 						// uncheck item: make no changes to system
-						item->SetMarked(false);
-						fInstallList.Remove(item->File()->fZipFileName);
+						install_field->SetString(" ");
+						fInstallList.Remove(row->File()->fZipFileName);
 					}
 					else
 					{
 						// check item: install module
-						item->SetMarked(true);
-						fInstallList.Add(item->File()->fZipFileName);
+						install_field->SetString("i");
+						fInstallList.Add(row->File()->fZipFileName);
 					}
 				}
-				//fListView->InvalidateItem(fListView->CurrentSelection());
+				row->Invalidate();
 			}
 			if(fInstallList.CountStrings()==0 && fUninstallList.CountStrings()==0)
 			{
