@@ -1,4 +1,6 @@
 #include <StatusBar.h>
+#include <Locale.h>
+#include <Language.h>
 
 #include <swmgr.h>
 #include <swtext.h>
@@ -392,6 +394,8 @@ vector<const char*> GetBookNames(void)
 			books.push_back((const char*)VerseKey::builtin_books[i][j].name);
 	*/
 	VerseKey myKey=VerseKey();
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
 	int i = 1;
 	int j = 0;
 	for (i = 1; i<=2; i++)
@@ -402,6 +406,7 @@ vector<const char*> GetBookNames(void)
 		{
 			myKey.setTestament(i);
 			myKey.setBook(j);
+			myKey.setLocale(language.Code());
 			books.push_back(myKey.getBookName());
 		}
 	}
