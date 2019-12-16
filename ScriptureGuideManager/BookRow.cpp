@@ -1,8 +1,8 @@
 #include <Font.h>
 #include <View.h>
-#include "MarkableItem.h"
+#include "BookRow.h"
 
-MarkableItem::MarkableItem(const char *text, bool marked, uint32 level, bool expanded)
+/*MarkableItem::MarkableItem(const char *text, bool marked, uint32 level, bool expanded)
  :BStringItem(text,level,expanded)
 {
 	fMarked=marked;
@@ -19,35 +19,21 @@ void MarkableItem::DrawItem(BView *owner,BRect frame, bool complete)
 	else
 		owner->SetFont(be_plain_font);
 	BStringItem::DrawItem(owner,frame,complete);
-}
+}*/
 
-void MarkableItem::SetMarked(bool value)
+BookRow::BookRow(ConfigFile *file, bool marked)
+	: BRow()
 {
-	fMarked=value;
-}
-
-BookItem::BookItem(const char *text, ConfigFile *file, bool marked, 
-	uint32 level, bool expanded)
-	: MarkableItem(text,marked,level,expanded)
-{
+	
 	SetFile(file);
 }
 
-BookItem::~BookItem(void)
+BookRow::~BookRow(void)
 {
 }
 
-void BookItem::DrawItem(BView *owner,BRect frame, bool complete)
+
+void BookRow::SetMarked(bool value)
 {
-	if(IsMarked())
-	{
-		owner->SetHighColor(0,0,200);
-		owner->SetFont(be_bold_font);
-	}
-	else
-	{
-		owner->SetHighColor(0,0,0);
-		owner->SetFont(be_plain_font);
-	}
-	BStringItem::DrawItem(owner,frame,complete);
+	fMarked=value;
 }
