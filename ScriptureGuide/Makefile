@@ -73,8 +73,14 @@ LIBPATHS =
 #	Additional paths to look for system headers. These use the form
 #	"#include <header>". Directories that contain the files in SRCS are
 #	NOT auto-included here.
-SYSTEM_INCLUDE_PATHS = /system/develop/headers/sword \
-		/system/develop/headers/private/interface
+MACHINE=$(shell uname -m)
+ifeq ($(MACHINE), BePC)
+	SYSTEM_INCLUDE_PATHS =  /system/develop/headers/x86/sword \
+							/system/develop/headers/private/interface
+else
+	SYSTEM_INCLUDE_PATHS =  /system/develop/headers/sword \
+							/system/develop/headers/private/interface
+endif
 
 #	Additional paths paths to look for local headers. These use the form
 #	#include "header". Directories that contain the files in SRCS are
@@ -97,7 +103,7 @@ LOCALES =
 #	use. For example, setting DEFINES to "DEBUG=1" will cause the compiler
 #	option "-DDEBUG=1" to be used. Setting DEFINES to "DEBUG" would pass
 #	"-DDEBUG" on the compiler's command line.
-DEFINES =
+DEFINES = DEBUG=1
 
 #	Specify the warning level. Either NONE (suppress all warnings),
 #	ALL (enable all warnings), or leave blank (enable default warnings).
@@ -105,11 +111,11 @@ WARNINGS = ALL
 
 #	With image symbols, stack crawls in the debugger are meaningful.
 #	If set to "TRUE", symbols will be created.
-SYMBOLS :=
+SYMBOLS := TRUE
 
 #	Includes debug information, which allows the binary to be debugged easily.
 #	If set to "TRUE", debug info will be created.
-DEBUGGER :=
+DEBUGGER := TRUE
 
 #	Specify any additional compiler flags to be used.
 COMPILER_FLAGS = 
