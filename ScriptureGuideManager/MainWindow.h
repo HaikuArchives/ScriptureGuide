@@ -1,15 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <Window.h>
+#include <Button.h>
+#include <ColumnListView.h>
+#include <ListView.h>
 #include <MenuBar.h>
 #include <Menu.h>
 #include <MenuItem.h>
-#include <ListView.h>
-#include <TextView.h>
 #include <ScrollView.h>
-#include <Button.h>
 #include <StringList.h>
+#include <TextView.h>
+#include <Window.h>
+
 
 class MainWindow : public BWindow
 {
@@ -20,7 +22,7 @@ public:
 private:
 	static int32 ApplyThread(void *data);
 	BListView *fListView;
-	BScrollView *fListScrollView;
+	BColumnListView	*fBookListView;
 	BScrollView *fTextScrollView;
 	BTextView *fTextView;
 	BButton *fApplyButton;

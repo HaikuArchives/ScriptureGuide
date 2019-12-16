@@ -2,10 +2,11 @@
 #include <LayoutBuilder.h>
 
 #include <stdlib.h>
+#include <ColumnTypes.h>
 
 #include "MainWindow.h"
 #include "ModUtils.h"
-#include "MarkableItem.h"
+#include "BookRow.h"
 #include "DownloadLocations.h"
 
 extern BList gFileNameList;
@@ -32,21 +33,39 @@ MainWindow::MainWindow(BRect frame)
 	mbar->AddItem(menu);
 	
 	// Set up the module list
-	fListView=new BListView("modlist",B_SINGLE_SELECTION_LIST);
-	fListScrollView=new BScrollView("listscrollview",fListView,0,true,true);
-	fListScrollView->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-	fListView->SetSelectionMessage(new BMessage(M_SELECT_MODULE));
-	fListView->SetInvocationMessage(new BMessage(M_MARK_MODULE));
-	
+	fBookListView = new BColumnListView("booklist",0);
+	BStringColumn *installed_column = new BStringColumn("Installed",25,50,50,0);
+	BStringColumn *book_column = new BStringColumn("Book",200,50,1000,0);
+	BStringColumn *language_column = new BStringColumn("Language",75,50,1000,0);
+	fBookListView->AddColumn(installed_column,0);
+	fBookListView->AddColumn(book_column,1);
+	fBookListView->AddColumn(language_column,2);
+	fBookListView->SetSelectionMessage(new BMessage(M_SELECT_MODULE));
+	fBookListView->SetInvocationMessage(new BMessage(M_MARK_MODULE));	
 	for(int32 i=0; i<fConfFileList.CountItems(); i++)
 	{
 		ConfigFile *cfile=(ConfigFile*)fConfFileList.ItemAt(i);
 		if(cfile)
 		{
-			BookItem *bookitem=new BookItem(cfile->fDescription.String(),cfile);
-			fListView->AddItem(bookitem);
+			BookRow *row = new BookRow(cfile);
+			BStringField *install_field = NULL;
 			if(IsInstalled(cfile->fFileName.String()))
-				bookitem->SetMarked(true);
+				 install_field = new BStringField("*");
+			else
+				install_field = new BStringField(" ");
+			BStringField *book_field = new BStringField(cfile->fDescription.String());
+			BStringField *lang_field = new BStringField(cfile->fLanguage.String());
+			
+				
+			row->SetField(install_field,0);
+			row->SetField(book_field,1);
+			row->SetField(lang_field,2);
+			fBookListView->AddRow(row);
+			
+			//	row->SetMarked(true);
+			/*BookRow *BookRow=new BookRow(cfile->fDescription.String(),cfile);
+			fListView->AddItem(BookRow);*/
+			
 		}
 	}
 	
@@ -63,7 +82,7 @@ MainWindow::MainWindow(BRect frame)
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.Add(mbar)
 		.AddSplit(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
-			.Add(fListScrollView, 1)
+			.Add(fBookListView, 1)
 			.AddGroup(B_VERTICAL, B_USE_HALF_ITEM_SPACING, 2)
 				.Add(fTextScrollView)
 				.AddGroup(B_HORIZONTAL)
@@ -91,7 +110,7 @@ void MainWindow::MessageReceived(BMessage *msg)
 			if(fApplyThread!=-1)
 				break;
 			
-			BookItem *item=(BookItem*)fListView->ItemAt(fListView->CurrentSelection());
+			BookRow *item=(BookRow*)fBookListView->CurrentSelection();
 			if(item && item->File())
 			{
 				BString str(item->File()->fAbout);
@@ -105,7 +124,7 @@ void MainWindow::MessageReceived(BMessage *msg)
 			if(fApplyThread!=-1)
 				break;
 			
-			BookItem *item=(BookItem*)fListView->ItemAt(fListView->CurrentSelection());
+			BookRow *item=(BookRow*)fBookListView->CurrentSelection();
 			if(item)
 			{	
 				// Installed: 	uncheck=uninstall
@@ -144,7 +163,7 @@ void MainWindow::MessageReceived(BMessage *msg)
 						fInstallList.Add(item->File()->fZipFileName);
 					}
 				}
-				fListView->InvalidateItem(fListView->CurrentSelection());
+				//fListView->InvalidateItem(fListView->CurrentSelection());
 			}
 			if(fInstallList.CountStrings()==0 && fUninstallList.CountStrings()==0)
 			{
