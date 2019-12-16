@@ -1,6 +1,7 @@
 #include <Application.h>
 #include <Alert.h>
 #include <Box.h>
+#include <Clipboard.h>
 #include <Entry.h>
 #include <MenuBar.h>
 #include <MenuField.h>
@@ -164,7 +165,7 @@ void SGSearchWindow::BuildGUI(void)
 	BStringView *resultsLabel=new BStringView("resultslabel","Search Results:");
 	
 	// The listview for the results
-	searchResults = new BListView("searchresults", B_SINGLE_SELECTION_LIST);
+	searchResults = new BListView("searchresults", B_MULTIPLE_SELECTION_LIST);
 	searchResults->SetInvocationMessage(new BMessage(FIND_LIST_DCLICK));
 	searchResults->SetSelectionMessage(new BMessage(FIND_LIST_CLICK));
 	
@@ -342,6 +343,35 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 		{
 			fSearchMode = SEARCH_REGEX;
 			break;
+		}
+		case B_COPY:
+		{
+			BListItem*	item = NULL;
+			BString		clipBoardString= BString();
+			int32 selected;
+			int32 i=0;
+			while ( (selected = searchResults->CurrentSelection(i)) >= 0 ) {
+				item = searchResults->ItemAt(selected);
+				i++;
+				if (i < verseList.size())
+				{
+					clipBoardString << verseList[i];
+					clipBoardString << "   " << fCurrentModule->GetVerse(verseList[i]);
+				}
+			}
+			BMessage* clip = NULL;
+			if (be_clipboard->Lock()) {
+				be_clipboard->Clear();
+    			if (clip = be_clipboard->Data()) {
+    				clip->AddData("text/plain", B_MIME_TYPE, clipBoardString.String(),clipBoardString.Length());
+    				be_clipboard->Commit();
+    			}
+    			else
+    				printf("ERROR couldnt get clipboard Data");
+    			be_clipboard->Unlock();
+ 			}
+ 			else
+ 				printf("ERROR couldnt lock clipboard\n");
 		}
 		default:
 			BWindow::MessageReceived(message);
