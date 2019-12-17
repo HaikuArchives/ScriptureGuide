@@ -318,6 +318,10 @@ void SGMainWindow::InsertChapter(void)
 	BString currentbook(fBookMenu->FindMarked()->Label());
 	
 	uint16 versecount = VersesInChapter(currentbook.String(),fCurrentChapter);
+	if (fCurrentModule == NULL){
+		fVerseView->Insert(B_TRANSLATE("No Modules installed\n\n Please use ScriptureGuideManager to download the books you want."));
+		return;
+	}
 	if (fCurrentModule->Type() == TEXT_BIBLE) 
 	{
 		BString text(fCurrentModule->GetVerse(currentbook.String(),fCurrentChapter,1));
