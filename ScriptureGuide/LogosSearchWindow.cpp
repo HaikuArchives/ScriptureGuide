@@ -1,6 +1,7 @@
 #include <Application.h>
 #include <Alert.h>
 #include <Box.h>
+#include <Catalog.h>
 #include <Clipboard.h>
 #include <Entry.h>
 #include <MenuBar.h>
@@ -32,6 +33,9 @@
 #include "LogosSearchWindow.h"
 #include "SwordBackend.h"
 #include "Preferences.h"
+
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "SearchWindow"
 
 class VersePreview : public BTextView
 {
@@ -112,12 +116,12 @@ SGSearchWindow::~SGSearchWindow(void)
 void SGSearchWindow::BuildGUI(void)
 {
 	// The find button
-	findButton = new BButton("find_button", "Find", 
+	findButton = new BButton("find_button", B_TRANSLATE("Find"), 
 							new BMessage(FIND_BUTTON_OK), B_WILL_DRAW);
 	SetDefaultButton(findButton);
 	
 	// The search query box
-	searchString = new BTextControl("searchstring", "Find: ", "", 
+	searchString = new BTextControl("searchstring", B_TRANSLATE("Find: "), "", 
 									new BMessage(FIND_SEARCH_STR),
 									B_WILL_DRAW | B_NAVIGABLE);
 	searchString->SetDivider(searchString->StringWidth("Find: ") + 5);
@@ -126,8 +130,8 @@ void SGSearchWindow::BuildGUI(void)
 	
 	// The first book in the scope
 	BPopUpMenu *bookChoice = new BPopUpMenu("biblebook");
-	bookField = new BMenuField("book_field", "Start in ", bookChoice);
-	bookField->SetDivider(bookField->StringWidth("Start at ")+5);
+	bookField = new BMenuField("book_field", B_TRANSLATE("Start in "), bookChoice);
+	bookField->SetDivider(bookField->StringWidth( B_TRANSLATE("Start in "))+5);
  	BMenuItem* firstBook = new BMenuItem(books[0], new BMessage(FIND_SELECT_FROM)); 
 	firstBook->SetMarked(true);
 	bookChoice->AddItem(firstBook);
@@ -136,8 +140,8 @@ void SGSearchWindow::BuildGUI(void)
 	
 	// The last book in the scope
 	BPopUpMenu *sndBookChoice = new BPopUpMenu("biblebook2");
-	sndBookField = new BMenuField("book_field", "End in ", sndBookChoice);
-	sndBookField->SetDivider(sndBookField->StringWidth("End in ") + 5);
+	sndBookField = new BMenuField("book_field", B_TRANSLATE("End in "), sndBookChoice);
+	sndBookField->SetDivider(sndBookField->StringWidth( B_TRANSLATE("End in ")) + 5);
  	BMenuItem *lastBook = new BMenuItem(books[books.size()-1], new BMessage(FIND_SELECT_TO)); 
 	lastBook->SetMarked(true);
 	for (uint16 i = 0; i < books.size() - 1; i++)
@@ -145,24 +149,24 @@ void SGSearchWindow::BuildGUI(void)
 	sndBookChoice->AddItem(lastBook);
 	
 	// The radio buttons
-	BRadioButton *wordsRadio = new BRadioButton("exactwords", "Find Words", 
+	BRadioButton *wordsRadio = new BRadioButton("exactwords",  B_TRANSLATE("Find Words"), 
 			new BMessage(FIND_RADIO1));
 	
-	BRadioButton *phraseRadio = new BRadioButton("phrase", "Find Phrase", 
+	BRadioButton *phraseRadio = new BRadioButton("phrase",  B_TRANSLATE("Find Phrase"), 
 			new BMessage(FIND_RADIO2));
 
-	BRadioButton *regexRadio = new BRadioButton("regex", "Regular Expression", 
+	BRadioButton *regexRadio = new BRadioButton("regex",  B_TRANSLATE("Regular Expression"), 
 			new BMessage(FIND_RADIO3));
 	
 	wordsRadio->SetValue(B_CONTROL_ON);
 
  	// The case sensitivity checkbox
- 	caseSensitiveCheckBox = new BCheckBox("case_sensitive", "Match Case",  
+ 	caseSensitiveCheckBox = new BCheckBox("case_sensitive",  B_TRANSLATE("Match Case"),  
  			new BMessage(FIND_CHECK_CASE_SENSITIVE), B_WILL_DRAW | B_NAVIGABLE);
 	
-	searchStatus = new BStatusBar("statusbar", "Search Progress:",NULL);
+	searchStatus = new BStatusBar("statusbar",  B_TRANSLATE("Search Progress:"),NULL);
 	
-	BStringView *resultsLabel=new BStringView("resultslabel","Search Results:");
+	BStringView *resultsLabel=new BStringView("resultslabel", B_TRANSLATE("Search Results:"));
 	
 	// The listview for the results
 	searchResults = new BListView("searchresults", B_MULTIPLE_SELECTION_LIST);

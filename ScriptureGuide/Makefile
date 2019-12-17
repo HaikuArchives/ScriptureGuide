@@ -16,7 +16,7 @@ TARGET_DIR = ../App
 TYPE = APP
 
 # 	If you plan to use localization, specify the application's MIME signature.
-APP_MIME_SIG = 
+APP_MIME_SIG = application/x-vnd.Scripture-Guide
 
 #	The following lines tell Pe and Eddie where the SRCS, RDEFS, and RSRCS are
 #	so that Pe and Eddie can fill them in for you.
@@ -61,7 +61,7 @@ RSRCS =
 #	- 	if your library does not follow the standard library naming scheme,
 #		you need to specify the path to the library and it's name.
 #		(e.g. for mylib.a, specify "mylib.a" or "path/mylib.a")
-LIBS = be $(STDCPPLIBS) sword icuuc z columnlistview icui18n
+LIBS = be $(STDCPPLIBS) sword icuuc z columnlistview icui18n localestub
 
 #	Specify additional paths to directories following the standard libXXX.so
 #	or libXXX.a naming scheme. You can specify full paths or paths relative

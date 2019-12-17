@@ -66,6 +66,8 @@ private:
 					*fGeneralMenu;
 	
 	BTextControl	*fChapterBox;
+	//BTextControl	*fVerseBox;
+
 	BButton			*fNoteButton;
 	
 	BTextView		*fVerseView;

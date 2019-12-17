@@ -4,7 +4,9 @@
 #include <Application.h>
 #include <AboutWindow.h>
 #include <Button.h>
+#include <Catalog.h>
 #include <Entry.h>
+#include <Locale.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
 #include <Message.h>
@@ -30,6 +32,8 @@
 #include "FontPanel.h"
 #include "Preferences.h"
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "MainWindow"
 
 SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key)
  :	BWindow(frame, "Scripture Guide", B_DOCUMENT_WINDOW, 0),
@@ -151,38 +155,38 @@ void SGMainWindow::BuildGUI(void)
 	BMenu *menu;
 	fMenuBar = new BMenuBar("menubar");
 	
-	menu = new BMenu("Program");
-	menu->AddItem(new BMenuItem("About Scripture Guide…", new BMessage(MENU_HELP_ABOUT)));
+	menu = new BMenu(B_TRANSLATE("Program"));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("About Scripture Guide…"), new BMessage(MENU_HELP_ABOUT)));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Duplicate This Window…", new BMessage(MENU_FILE_NEW), 'D'));
-	menu->AddItem(new BMenuItem("Close This Window", new BMessage(B_QUIT_REQUESTED), 'W'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Duplicate This Window…"), new BMessage(MENU_FILE_NEW), 'D'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Close This Window"), new BMessage(B_QUIT_REQUESTED), 'W'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Quit", new BMessage(MENU_FILE_QUIT), 'Q'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Quit"), new BMessage(MENU_FILE_QUIT), 'Q'));
 	fMenuBar->AddItem(menu);
 
-	menu = new BMenu("Navigation");
-	menu->AddItem(new BMenuItem("Find Verse…", new BMessage(MENU_EDIT_FIND), 'F'));
+	menu = new BMenu(B_TRANSLATE("Navigation"));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Find Verse…"), new BMessage(MENU_EDIT_FIND), 'F'));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Next Book", new BMessage(NEXT_BOOK), B_RIGHT_ARROW, B_OPTION_KEY));
-	menu->AddItem(new BMenuItem("Previous Book", new BMessage(PREV_BOOK), B_LEFT_ARROW, B_OPTION_KEY));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Next Book"), new BMessage(NEXT_BOOK), B_RIGHT_ARROW, B_OPTION_KEY));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Previous Book"), new BMessage(PREV_BOOK), B_LEFT_ARROW, B_OPTION_KEY));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("Next Chapter", new BMessage(NEXT_CHAPTER), B_RIGHT_ARROW));
-	menu->AddItem(new BMenuItem("Previous Chapter", new BMessage(PREV_CHAPTER), B_LEFT_ARROW));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Next Chapter"), new BMessage(NEXT_CHAPTER), B_RIGHT_ARROW));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Previous Chapter"), new BMessage(PREV_CHAPTER), B_LEFT_ARROW));
 	menu->AddSeparatorItem();
 	
-	BMenuItem *copyitem = new BMenuItem("Copy Verses", new BMessage(B_COPY), 'C');
+	BMenuItem *copyitem = new BMenuItem(B_TRANSLATE("Copy Verses"), new BMessage(B_COPY), 'C');
 	menu->AddItem(copyitem);
 	
-	BMenuItem *selectallitem = new BMenuItem("Select All", new BMessage(B_SELECT_ALL), 'A');
+	BMenuItem *selectallitem = new BMenuItem(B_TRANSLATE("Select All"), new BMessage(B_SELECT_ALL), 'A');
 	menu->AddItem(selectallitem);
 	fMenuBar->AddItem(menu);
 	
-	menu = new BMenu("Options");
+	menu = new BMenu(B_TRANSLATE("Options"));
 	
-	menu->AddItem(new BMenuItem("Choose Font...", new BMessage(SELECT_FONT)));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Choose Font..."), new BMessage(SELECT_FONT)));
 	menu->AddSeparatorItem();
 	
-	fShowVerseNumItem = new BMenuItem("Show Verse Numbers", new BMessage(MENU_OPTIONS_VERSENUMBERS));
+	fShowVerseNumItem = new BMenuItem(B_TRANSLATE("Show Verse Numbers"), new BMessage(MENU_OPTIONS_VERSENUMBERS));
 	if (fShowVerseNumbers)
 		fShowVerseNumItem->SetMarked(true);
 	menu->AddItem(fShowVerseNumItem);
@@ -196,7 +200,7 @@ void SGMainWindow::BuildGUI(void)
 	int32 count = fModManager->CountBibles();
 	
 	// Add Bibles
-	fBibleMenu = new BMenu("Bibles");
+	fBibleMenu = new BMenu(B_TRANSLATE("Bibles"));
 	for(int32 i = 0; i < count; i++)
 	{
 		BString modname = fModManager->BibleAt(i)->FullName();
@@ -210,7 +214,7 @@ void SGMainWindow::BuildGUI(void)
 	count = fModManager->CountCommentaries();
 	
 	// Add Commentaries
-	fCommentaryMenu = new BMenu("Commentaries");
+	fCommentaryMenu = new BMenu(B_TRANSLATE("Commentaries"));
 	for(int32 i = 0; i < count; i++)
 	{
 		BString modname = fModManager->CommentaryAt(i)->FullName();
@@ -224,12 +228,12 @@ void SGMainWindow::BuildGUI(void)
 	// Add the toolbar view	
 	BBox *toolbar = new BBox("toolbar_view");
 	
-	fModuleField = new BMenuField("modulefield", "Text:", modulemenu);
+	fModuleField = new BMenuField("modulefield", B_TRANSLATE("Text:"), modulemenu);
 	fModuleField->SetDivider(be_plain_font->StringWidth("Text:") + 5);
 	
 	// Prepare the book menu
 	fBookMenu = new BMenu("book");
-	BMenuField *bookfield = new BMenuField("bookfield", "Book:", fBookMenu);
+	BMenuField *bookfield = new BMenuField("bookfield",B_TRANSLATE("Book:"), fBookMenu);
 	bookfield->SetDivider(be_plain_font->StringWidth("Book:") + 5);
 	
 	fBookMenu->SetLabelFromMarked(true);
@@ -241,17 +245,22 @@ void SGMainWindow::BuildGUI(void)
 	fBookMenu->ItemAt(0)->SetMarked(true);
 	
 	// Prepare the notes button
-	BButton *fNoteButton = new BButton("note_button", "Notes…", new BMessage(MENU_EDIT_NOTE));
+	BButton *fNoteButton = new BButton("note_button", B_TRANSLATE("Notes…"), new BMessage(MENU_EDIT_NOTE));
 	
 	// Prepare the Chapter intput box
 	BString alphaChars("qwertyuiop[]\\asdfghjkl;'zxcvbnm,./QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?`~!@#$%^&*()-_=+");
-	fChapterBox = new BTextControl("chapter_choice", "Chapter", NULL,
+	fChapterBox = new BTextControl("chapter_choice", B_TRANSLATE("Chapter"), NULL,
 									new BMessage(SELECT_CHAPTER));
+	/*fVerseBox = new BTextControl("verse_choice", B_TRANSLATE("Verse"), NULL,
+									new BMessage(SELECT_VERSE));
+	BTextView *verseView = fVerseBox->TextView();*/
 	BTextView *chapterView = fChapterBox->TextView();
+	
 	for(int32 i=0; i < alphaChars.CountChars(); i++)
 	{
 		char c = alphaChars.ByteAt(i);
 		chapterView->DisallowChar(c);
+	//	verseView->DisallowChar(c);
 	}
 	
 	//prepare the TextFrame
@@ -282,6 +291,7 @@ void SGMainWindow::BuildGUI(void)
 			.Add(bookfield)
 			.AddGlue()
 			.Add(fChapterBox)
+			//.Add(fVerseBox)
 			.Add(fNoteButton)
 		.End()
 		.AddSplit(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
@@ -316,7 +326,7 @@ void SGMainWindow::InsertChapter(void)
 		{
 			// this condition will only happen if the module is only one particular
 			// testament.
-			fVerseView->Insert("This module does not have this section.");
+			fVerseView->Insert(B_TRANSLATE("This module does not have this section."));
 			return;
 		}
 		
@@ -332,6 +342,7 @@ void SGMainWindow::InsertChapter(void)
 			// Remove <P> tags and 0xc2 0xb6 sequences to carriage returns. The crazy hex sequence
 			// is actually the UTF-8 encoding for the paragraph symbol. If we convert them to \n's,
 			// output looks funky
+			text.RemoveAll("\x0a\x0a");
 			text.RemoveAll("\xc2\xb6 ");
 			text.RemoveAll("<P> ");
 			
@@ -358,6 +369,7 @@ void SGMainWindow::InsertChapter(void)
 				// Remove <P> tags and 0xc2 0xb6 sequences to carriage returns. The crazy hex sequence
 				// is actually the UTF-8 encoding for the paragraph symbol. If we convert them to \n's,
 				// output looks funky
+				newtxt.RemoveAll("\x0a\x0a");
 				newtxt.RemoveAll("\xc2\xb6 ");
 				newtxt.RemoveAll("<P> ");
 				
@@ -668,7 +680,7 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 				NULL
 			};
 
-			window->AddCopyright(2014, "Scripture Guide Team");
+			window->AddCopyright(2019, "Scripture Guide Team");
 			window->AddAuthors(authors);
 
 			window->Show();

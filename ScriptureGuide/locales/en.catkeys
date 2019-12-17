@@ -1,0 +1,38 @@
+1	English	application/x-vnd.Scripture-Guide	1787343184
+Find Verse…	MainWindow		Find Verse…
+Program	MainWindow		Program
+Font Name	FontPanel		Font Name
+Next Chapter	MainWindow		Next Chapter
+About Scripture Guide…	MainWindow		About Scripture Guide…
+Regular Expression	SearchWindow		Regular Expression
+This module does not have this section.	MainWindow		This module does not have this section.
+Previous Book	MainWindow		Previous Book
+Select All	MainWindow		Select All
+Search Progress:	SearchWindow		Search Progress:
+Quit	MainWindow		Quit
+Preview	FontPanel		Preview
+Find Phrase	SearchWindow		Find Phrase
+Match Case	SearchWindow		Match Case
+Chapter	MainWindow		Chapter
+OK	FontPanel		OK
+Options	MainWindow		Options
+Search Results:	SearchWindow		Search Results:
+Find	SearchWindow		Find
+End in 	SearchWindow		End in 
+Copy Verses	MainWindow		Copy Verses
+Duplicate This Window…	MainWindow		Duplicate This Window…
+Choose Font...	MainWindow		Choose Font...
+Commentaries	MainWindow		Commentaries
+Font Size: 	FontPanel		Font Size: 
+Start in 	SearchWindow		Start in 
+Close This Window	MainWindow		Close This Window
+Show Verse Numbers	MainWindow		Show Verse Numbers
+Text:	MainWindow		Text:
+Navigation	MainWindow		Navigation
+Find Words	SearchWindow		Find Words
+Bibles	MainWindow		Bibles
+Notes…	MainWindow		Notes…
+Next Book	MainWindow		Next Book
+Previous Chapter	MainWindow		Previous Chapter
+Find: 	SearchWindow		Find: 
+Book:	MainWindow		Book:

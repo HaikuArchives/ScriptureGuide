@@ -8,6 +8,7 @@
 #include "Spinner.h"
 
 #include <Application.h>
+#include <Catalog.h>
 #include <ColumnListView.h>
 #include <ColumnTypes.h>
 #include <Invoker.h>
@@ -16,6 +17,9 @@
 #include <ScrollView.h>
 
 #include <stdio.h>
+
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "FontPanel"
 
 // TODO: Add Escape key as a shortcut for cancelling
 
@@ -192,8 +196,8 @@ FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target,BMes
 	
 	fFontList=new BColumnListView("fontlist", B_WILL_DRAW|B_NAVIGABLE);
 
-	float width = fFontList->StringWidth("Font Name");
-	BStringColumn *col=new BStringColumn("Font Name", width*3, width,
+	float width = fFontList->StringWidth(B_TRANSLATE("Font Name"));
+	BStringColumn *col=new BStringColumn(B_TRANSLATE("Font Name"), width*3, width,
 			width*20,B_TRUNCATE_END);
 	fFontList->AddColumn(col,0);
 	fFontList->SetSortColumn(col,true,true);
@@ -204,22 +208,22 @@ FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target,BMes
 	fFontList->SetColor(B_COLOR_SELECTION,make_color(230,230,230,255));
 	fFontList->SetInvocationMessage(new BMessage(M_OK));
 
-	width = fFontList->StringWidth("Preview");
+	width = fFontList->StringWidth(B_TRANSLATE("Preview"));
 	float previewWidth = fFontList->StringWidth(PREVIEW_STR);
-	FontColumn *fcol=new FontColumn("Preview", previewWidth, width, previewWidth*2,
+	FontColumn *fcol=new FontColumn(B_TRANSLATE("Preview"), previewWidth, width, previewWidth*2,
 			B_TRUNCATE_END);
 	fcol->SetFontSize(fontsize);
 	fFontList->AddColumn(fcol,1);
 	fFontList->SetColumnFlags(B_ALLOW_COLUMN_RESIZE);
 	
-	fSpinner=new Spinner("spinner","Font Size: ", new BMessage(M_SIZE_CHANGE));
+	fSpinner=new Spinner("spinner",B_TRANSLATE("Font Size: "), new BMessage(M_SIZE_CHANGE));
 	BTextControl *tcontrol=fSpinner->TextControl();
-	tcontrol->SetDivider(fFontList->StringWidth("Font Size: ")+5);
+	tcontrol->SetDivider(fFontList->StringWidth(B_TRANSLATE("Font Size: "))+5);
 	fSpinner->SetRange(6,999);
 	fSpinner->SetValue(fontsize);
 	
 	fCancel=new BButton("Cancel","Cancel",new BMessage(M_CANCEL));
-	fOK=new BButton("OK","OK",new BMessage(M_OK));
+	fOK=new BButton("OK",B_TRANSLATE("OK"),new BMessage(M_OK));
 	
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.Add(fFontList)

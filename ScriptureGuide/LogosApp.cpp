@@ -19,6 +19,7 @@
 #include "LogosMainWindow.h"
 #include "Preferences.h"
 
+
 // Global containing the startup path. Accessed via GetAppPath()
 BString gAppPath;
 bool gDocsAvailable;
