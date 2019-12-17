@@ -1,0 +1,38 @@
+1	German	application/x-vnd.Scripture-Guide	1787343184
+Find Verse…	MainWindow		Vers finden…
+Program	MainWindow		Programm
+Next Chapter	MainWindow		nächstes Kapitel
+About Scripture Guide…	MainWindow		About Scripture Guide…
+This module does not have this section.	MainWindow		Abschnitt in diesem Modul nicht vorhanden
+Previous Book	MainWindow		vorheriges Buch
+Select All	MainWindow		Alles Auswählen
+Quit	MainWindow		Beenden
+Chapter	MainWindow		Kapitel
+Options	MainWindow		Einstellungen
+Copy Verses	MainWindow		Vers kopieren
+Duplicate This Window…	MainWindow		Fenster duplizieren
+Choose Font...	MainWindow		Schrift...
+Commentaries	MainWindow		Kommentare
+Close This Window	MainWindow		Fenster schließen
+Show Verse Numbers	MainWindow		Zeige Versnummerierung
+Text:	MainWindow		Text:
+Navigation	MainWindow		Navigation
+Bibles	MainWindow		Bibel
+Notes…	MainWindow		Notizen...
+Next Book	MainWindow		nächstes Buch
+Previous Chapter	MainWindow		vorheriges Kapitel
+Book:	MainWindow		Buch:
+Font Name	FontPanel		Schriftname
+Preview	FontPanel		Vorschau
+OK	FontPanel		OK
+Font Size: 	FontPanel		Schriftgröße
+Regular Expression	SearchWindow		Regular Expression
+Search Progress:	SearchWindow		Search Progress:
+Find Phrase	SearchWindow		Finde Phrase
+Match Case	SearchWindow		Match Case
+Search Results:	SearchWindow		Search Results:
+Find	SearchWindow		Finde
+End in 	SearchWindow		End in
+Start in 	SearchWindow		Start in 
+Find Words	SearchWindow		Find Words
+Find: 	SearchWindow		Find: 
