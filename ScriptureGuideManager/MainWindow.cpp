@@ -248,12 +248,13 @@ int32 MainWindow::ApplyThread(void *data)
 		win->fTextView->Insert("Done\n");
 		win->Unlock();
 	}
-	
+	// ToDo make thiw waaaay more secure.. one error and all modules are gone.. like it happens now...
 	for(i=0; i<removecount; i++)
 	{
+		printf("removing %s\n ",win->fUninstallList.StringAt(i).String());
 		win->Lock();
 		
-		zipfilename=*win->fUninstallList.StringAt(i);
+		zipfilename=win->fUninstallList.StringAt(i);
 		configpath=zipfilename;
 		configpath.ToLower();
 		configpath+=".conf";
@@ -276,17 +277,17 @@ int32 MainWindow::ApplyThread(void *data)
 		
 		syscmd="rm ";
 		syscmd << SG_MODULEBASE_PATH << "mods.d/" << configpath << ".conf";
-//		printf("%s\n",syscmd.String());
+		printf("%s\n",syscmd.String());
 		system(syscmd.String());
 
 		syscmd="rm -r ";
 		syscmd << SG_MODULEBASE_PATH << cfile.fDataPath << "*";
-//		printf("%s\n",syscmd.String());
+		printf("%s\n",syscmd.String());
 		system(syscmd.String());
 		
 		syscmd="rmdir ";
 		syscmd << SG_MODULEBASE_PATH << cfile.fDataPath;
-//		printf("%s\n",syscmd.String());
+		printf("%s\n",syscmd.String());
 		system(syscmd.String());
 		
 		win->Lock();
