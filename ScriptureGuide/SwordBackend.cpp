@@ -455,3 +455,8 @@ int VerseFromKey(const char *key)
 	return VerseKey(key).getVerse();
 }
 
+
+int UpperVerseFromKey(const char *key)
+{
+	return VerseKey(key).getUpperBound().getVerse();
+}
