@@ -35,7 +35,7 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "MainWindow"
 
-SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key)
+SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key, uint16 selectVers, uint16 selectVersEnd )
  :	BWindow(frame, "Scripture Guide", B_DOCUMENT_WINDOW, 0),
  	fFontPanel(NULL),
  	fModManager(NULL),
@@ -49,6 +49,8 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key)
 	minw = 580;
 	minh = 420;
 	SetSizeLimits(minw,maxw,minh,maxh);
+	fCurrentVerse = selectVers;
+	fCurrentVerseEnd = selectVersEnd;
 	
 	if (key)
 		fCurrentChapter = ChapterFromKey(key);
@@ -316,6 +318,8 @@ void SGMainWindow::InsertChapter(void)
 {
 	BString oldtxt("1"), newtxt("2");
 	BString currentbook(fBookMenu->FindMarked()->Label());
+	int32	highlightStart=0;
+	int32	highlightEnd=0;
 	
 	uint16 versecount = VersesInChapter(currentbook.String(),fCurrentChapter);
 	if (fCurrentModule == NULL){
@@ -342,7 +346,8 @@ void SGMainWindow::InsertChapter(void)
 			if (text.CountChars() < 1)
 				continue;
 			
-			
+			if ((fCurrentVerse!=0) && (fCurrentVerse == currentverse))
+				 fVerseView->GetSelection(&highlightStart,&highlightStart);
 			// Remove <P> tags and 0xc2 0xb6 sequences to carriage returns. The crazy hex sequence
 			// is actually the UTF-8 encoding for the paragraph symbol. If we convert them to \n's,
 			// output looks funky
@@ -356,6 +361,9 @@ void SGMainWindow::InsertChapter(void)
 			if (fShowVerseNumbers)
 				InsertVerseNumber(currentverse);
 			fVerseView->Insert(text.String());
+			if ((fCurrentVerseEnd!=0) && (fCurrentVerseEnd=currentverse));
+				fVerseView->GetSelection(&highlightEnd,&highlightEnd);
+
 		}
 	}
 	else
@@ -387,6 +395,7 @@ void SGMainWindow::InsertChapter(void)
 			}
 		}
 	}
+	fVerseView->Highlight(highlightStart,highlightEnd);
 }
 
 void SGMainWindow::LoadPrefsForModule(void)

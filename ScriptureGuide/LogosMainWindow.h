@@ -33,7 +33,7 @@ public:
 class SGMainWindow : public BWindow 
 {
 public:
-	SGMainWindow(BRect frame, const char *module, const char* key);
+	SGMainWindow(BRect frame, const char *module, const char* key,uint16 selectVers = 0, uint16 selectVersEnd = 0);
 	~SGMainWindow();
 	virtual bool QuitRequested();
 	virtual void MessageReceived(BMessage *message);
@@ -79,6 +79,8 @@ private:
 	SwordBackend	*fModManager;
 	SGModule		*fCurrentModule;
 	uint16			fCurrentChapter;
+	uint16			fCurrentVerse;
+	uint16			fCurrentVerseEnd;	
 	
 	int16			fFontSize;
 	BFont			*fCurrentFont;
