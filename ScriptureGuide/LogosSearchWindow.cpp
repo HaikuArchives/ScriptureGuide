@@ -4,6 +4,7 @@
 #include <Catalog.h>
 #include <Clipboard.h>
 #include <Entry.h>
+#include <Locale.h>
 #include <MenuBar.h>
 #include <MenuField.h>
 #include <MenuItem.h>
@@ -26,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <versekey.h>
 
 #include "constants.h"
 #include "LogosApp.h"
@@ -286,7 +288,11 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 				searchResults->RemoveItems(0,searchResults->CountItems());
 				for(uint32 i = 0; i < verseList.size(); i++)
        			{
-					BString tmpstr(verseList[i]);
+					BLanguage language;
+					BLocale::Default()->GetLanguage(&language);
+					sword::VerseKey myKey=sword::VerseKey(verseList[i]);
+					myKey.setLocale(language.Code());
+					BString tmpstr(myKey.getText());
 					tmpstr << "   " << fCurrentModule->GetVerse(verseList[i]);
 					searchResults->AddItem(new BStringItem(tmpstr.String()));
        			}   
