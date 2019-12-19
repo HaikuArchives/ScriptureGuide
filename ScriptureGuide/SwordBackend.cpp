@@ -132,7 +132,6 @@ const char *SGModule::GetVerse(const char *book, int chapter, int verse)
 	
 	myKey.setChapter(chapter);
 	myKey.setVerse(verse);
-	
 	fModule->setKey(myKey);
 	
 	return fModule->renderText();
@@ -226,14 +225,18 @@ vector<const char*> SGModule::SearchModule(int searchType, int flags, const char
 		const char *startbook, const char *endbook, BStatusBar* statusBar)
 {
 	vector<const char*> results;
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
 	
 	int chapter = ChaptersInBook(endbook);
 	int verse = VersesInChapter(endbook,chapter);
 	
 	BString searchstr;
 	searchstr << startbook << " 1:1-" << endbook << " " << chapter << ":" << verse;
-	
+	printf("Searching %s in %s\n",searchText,searchstr.String());
 	VerseKey parse = "Gen 1:1";
+	parse.setLocale(language.Code());
+
 	ListKey scope = parse.parseVerseList(searchstr.String(), parse, true);
 	ListKey &listkey = fModule->search(searchText,searchType, flags, &scope, 0, &percentUpdate, statusBar);
 	
