@@ -1,5 +1,4 @@
 #include <StatusBar.h>
-#include <Locale.h>
 #include <Language.h>
 
 #include <swmgr.h>
@@ -34,6 +33,8 @@ SGModule::SGModule(sword::SWModule *module)
  	fHasOT(false),
  	fHasNT(false)
 {
+	BLocale::Default()->GetLanguage(&language);	
+
 	if(strcmp(fModule->getType(), "Biblical Texts")==0)
 		fType = TEXT_BIBLE;
 	else
@@ -128,12 +129,12 @@ const char *SGModule::Language(void)
 
 const char *SGModule::GetVerse(const char *book, int chapter, int verse)
 {
-	VerseKey myKey=VerseKey(book);
-	
+	VerseKey myKey=VerseKey();
+	myKey.setLocale(language.Code());
+	myKey.setBookName(book);
 	myKey.setChapter(chapter);
 	myKey.setVerse(verse);
 	fModule->setKey(myKey);
-	
 	return fModule->renderText();
 }
 
@@ -146,6 +147,8 @@ const char *SGModule::GetVerse(const char *key)
 
 
 const char *SGModule::GetParagraph(const char *key){
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
 	BString bibleText=BString();
 	VerseKey minKey(key);
 	minKey.decrement();
@@ -154,6 +157,7 @@ const char *SGModule::GetParagraph(const char *key){
 	VerseKey paragraph;
 	paragraph.setLowerBound(minKey);
 	paragraph.setUpperBound(maxKey);
+	paragraph.setLocale(language.Code());
 	fModule->setKey(paragraph);
 	bibleText << paragraph.getRangeText();
 	bibleText << "\n";
@@ -178,6 +182,7 @@ const char *SGModule::GetKey(void)
 	if(!key)
 		return NULL;
 	
+	key->setLocale(language.Code());
 	return key->getText();
 }
 
@@ -188,8 +193,8 @@ void SGModule::SetKey(const char *key)
 	// when sword::SWModule::SetKey fails and succeeds
 	if(!key)
 		return;
-	
 	VerseKey vkey(key);
+	vkey.setLocale(language.Code());
 	fModule->setKey(vkey);
 }
 
@@ -198,7 +203,9 @@ void SGModule::SetVerse(const char *book, int chapter, int verse)
 	// TODO: Convert this to return a status_t - B_ERROR on failure.
 	// This will depend on finding out what kinds of error codes are returned
 	// when sword::SWModule::SetKey fails and succeeds
-	VerseKey myKey(book);
+	VerseKey myKey=VerseKey();;
+	myKey.setLocale(language.Code());
+	myKey.setBookName(book);
 	myKey.setChapter(chapter);
 	myKey.setVerse(verse);
 	fModule->setKey(myKey);
@@ -225,8 +232,7 @@ vector<const char*> SGModule::SearchModule(int searchType, int flags, const char
 		const char *startbook, const char *endbook, BStatusBar* statusBar)
 {
 	vector<const char*> results;
-	BLanguage language;
-	BLocale::Default()->GetLanguage(&language);
+	
 	
 	int chapter = ChaptersInBook(endbook);
 	int verse = VersesInChapter(endbook,chapter);
@@ -235,6 +241,8 @@ vector<const char*> SGModule::SearchModule(int searchType, int flags, const char
 	searchstr << startbook << " 1:1-" << endbook << " " << chapter << ":" << verse;
 	printf("Searching %s in %s\n",searchText,searchstr.String());
 	VerseKey parse = "Gen 1:1";
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);	
 	parse.setLocale(language.Code());
 
 	ListKey scope = parse.parseVerseList(searchstr.String(), parse, true);
@@ -404,8 +412,7 @@ vector<const char*> GetBookNames(void)
 	for (i = 1; i<=2; i++)
 	{
 		myKey.setTestament(i);
-		const char *oSISBookName =myKey.getOSISBookName();
-		for (j=0;j<myKey.getBookMax();j++)
+		for (j=0;j<=myKey.getBookMax();j++)
 		{
 			myKey.setTestament(i);
 			myKey.setBook(j);
@@ -418,7 +425,10 @@ vector<const char*> GetBookNames(void)
 
 int ChaptersInBook(const char *book)
 {
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
 	VerseKey myKey(book);
+	myKey.setLocale(language.Code());
 /** old
 	int i = myKey.getTestament() - 1;
 	int j = myKey.getBook() - 1;
@@ -428,7 +438,11 @@ int ChaptersInBook(const char *book)
 
 int VersesInChapter(const char *book, int chapter)
 {
-	VerseKey myKey(book);
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
+	VerseKey myKey=VerseKey();;
+	myKey.setLocale(language.Code());
+	myKey.setBookName(book);
 	myKey.setChapter(chapter);
 /**old
 	int i = myKey.getTestament() - 1;
@@ -440,7 +454,10 @@ int VersesInChapter(const char *book, int chapter)
 
 const char *BookFromKey(const char *key)
 {
-	VerseKey myKey(key);
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
+	VerseKey myKey=VerseKey(key);
+	myKey.setLocale(language.Code());
 /**old
 	int i = myKey.getTestament() - 1;
 	int j = myKey.getBook() - 1;
@@ -450,16 +467,28 @@ const char *BookFromKey(const char *key)
 
 int ChapterFromKey(const char *key)
 {
-	return VerseKey(key).getChapter();
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
+	VerseKey myKey(key);
+	myKey.setLocale(language.Code());
+	return myKey.getChapter();
 }
 
 int VerseFromKey(const char *key)
 {
-	return VerseKey(key).getVerse();
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
+	VerseKey myKey(key);
+	myKey.setLocale(language.Code());
+	return myKey.getVerse();
 }
 
 
 int UpperVerseFromKey(const char *key)
 {
-	return VerseKey(key).getUpperBound().getVerse();
+	BLanguage language;
+	BLocale::Default()->GetLanguage(&language);
+	VerseKey myKey(key);
+	myKey.setLocale(language.Code());
+	return myKey.getUpperBound().getVerse();
 }

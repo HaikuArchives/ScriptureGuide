@@ -4,8 +4,10 @@
 #include <swmgr.h>
 #include <swtext.h>
 #include <vector>
+#include <Locale.h>
 #include <String.h>
 #include <StatusBar.h>
+
 #include "ObjectList.h"
 
 // Type for a particular module
@@ -80,6 +82,8 @@ private:
 	bool				fDetectOTNT,
 						fHasOT,
 						fHasNT;
+	BLanguage			language;
+
 };
 
 typedef BObjectList<SGModule> SGModuleList;
