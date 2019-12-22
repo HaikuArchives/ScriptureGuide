@@ -51,16 +51,9 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key, uin
 	SetSizeLimits(minw,maxw,minh,maxh);
 	fCurrentVerse = selectVers;
 	fCurrentVerseEnd = selectVersEnd;
-	
-	if (key)
-		fCurrentChapter = ChapterFromKey(key);
 		
 	fModManager = new SwordBackend();
 	BuildGUI();
-	
-	BMenuItem *item = fBookMenu->FindItem(BookFromKey(key));
-	if (item)
-		item->SetMarked(true);
 	
 	// More voodoo hackerdom to work around a bug. :)
 	AddCommonFilter(new EndKeyFilter);
@@ -122,6 +115,13 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key, uin
 	
 	// Load the preferences for the individual module
 	LoadPrefsForModule();
+	
+	if (key)
+		fCurrentChapter = ChapterFromKey(key);
+		
+	BMenuItem *item = fBookMenu->FindItem(BookFromKey(key));
+	if (item)
+		item->SetMarked(true);
 	
 	fCurrentFont = &fDisplayFont;
 	
