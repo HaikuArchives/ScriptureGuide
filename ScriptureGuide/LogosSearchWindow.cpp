@@ -319,7 +319,7 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			{
 				// TODO: Spawn with a frame obtained from preferences
 				BRect windowRect(50,50,599,399); 
-				SGMainWindow *win = new SGMainWindow(windowRect, curModule, verseList[i]);
+				SGMainWindow *win = new SGMainWindow(windowRect, curModule, verseList[i],VerseFromKey(verseList[i]), UpperVerseFromKey(verseList[i]));
 				win->Show();
 			}
 			break;
