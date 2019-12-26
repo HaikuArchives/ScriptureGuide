@@ -74,8 +74,8 @@ SGSearchWindow::SGSearchWindow(BRect frame, const char *module, BMessenger *owne
 {
 	float minw,minh,maxw,maxh;
 	GetSizeLimits(&minw,&maxw,&minh,&maxh);
-	minw = 325;
-	minh = 300;
+	minw = 500;
+	minh = 480;
 	SetSizeLimits(minw,maxw,minh,maxh);
 	
 	prefsLock.Lock();
