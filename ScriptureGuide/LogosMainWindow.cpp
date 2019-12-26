@@ -110,7 +110,7 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key, uin
 			}
 		}
 		else
-			return; // Shound never happen.
+			return; // Shoud never happen.
 	}
 	
 	// Load the preferences for the individual module
@@ -337,7 +337,8 @@ void SGMainWindow::InsertChapter(void)
 			fVerseView->Insert(B_TRANSLATE("This module does not have this section."));
 			return;
 		}
-		
+		if ((fCurrentVerseEnd == 0) && (fCurrentVerseEnd < fCurrentVerse))
+			fCurrentVerseEnd=fCurrentVerse;
 		for(uint16 currentverse = 1; currentverse <= versecount; currentverse++)
 		{
 			// Get the verse for processing
@@ -361,7 +362,7 @@ void SGMainWindow::InsertChapter(void)
 			if (fShowVerseNumbers)
 				InsertVerseNumber(currentverse);
 			fVerseView->Insert(text.String());
-			if ((fCurrentVerseEnd!=0) && (fCurrentVerseEnd=currentverse));
+			if ((fCurrentVerseEnd!=0) && (fCurrentVerseEnd == currentverse))
 				fVerseView->GetSelection(&highlightEnd,&highlightEnd);
 
 		}
@@ -395,7 +396,8 @@ void SGMainWindow::InsertChapter(void)
 			}
 		}
 	}
-	fVerseView->Highlight(highlightStart,highlightEnd);
+	fVerseView->Select(highlightStart,highlightEnd);
+	fVerseView->ScrollToSelection();
 }
 
 void SGMainWindow::LoadPrefsForModule(void)
@@ -599,7 +601,6 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 				InsertChapter();
 				
 				fChapterBox->SetText("1");
-				fVerseView->Select(0,0);
 				fVerseView->MakeFocus();
 			}
 			break;
@@ -625,7 +626,6 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 				InsertChapter();
 				
 				fChapterBox->SetText("1");
-				fVerseView->Select(0,0);
 				fVerseView->MakeFocus();
 			}
 			break;
@@ -637,7 +637,6 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			fVerseView->Delete(0,fVerseView->TextLength());
 			InsertChapter();
 			fChapterBox->SetText("1");
-			fVerseView->Select(0,0);
 			fVerseView->MakeFocus();
 			break;
 		}
@@ -783,7 +782,6 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			fVerseView->Delete(0,fVerseView->TextLength());
 			fVerseView->SetFontAndColor(fCurrentFont,B_FONT_ALL,&BLACK);
 			InsertChapter();
-			fVerseView->Select(0,0);
 			fVerseView->MakeFocus();
 			break;
 		}
@@ -896,7 +894,6 @@ void SGMainWindow::SetModule(const TextType &module, const int32 &index)
 	fChapterBox->SetText(chapterstring.String());
 	
 	InsertChapter();
-	fVerseView->Select(0,0);
 	fVerseView->MakeFocus();
 }
 
@@ -959,7 +956,6 @@ void SGMainWindow::SetChapter(const int16 &chapter)
 	BString text;
 	text << fCurrentChapter;
 	fChapterBox->SetText(text.String());
-	fVerseView->Select(0,0);
 	fVerseView->MakeFocus();
 }
 
