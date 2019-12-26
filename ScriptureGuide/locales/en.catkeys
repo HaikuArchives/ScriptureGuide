@@ -1,4 +1,4 @@
-1	English	application/x-vnd.Scripture-Guide	1787343184
+1	English	application/x-vnd.Scripture-Guide	740233707
 Find Verse…	MainWindow		Find Verse…
 Program	MainWindow		Program
 Font Name	FontPanel		Font Name
@@ -6,6 +6,8 @@ Next Chapter	MainWindow		Next Chapter
 About Scripture Guide…	MainWindow		About Scripture Guide…
 Regular Expression	SearchWindow		Regular Expression
 This module does not have this section.	MainWindow		This module does not have this section.
+Verse	MainWindow		Verse
+No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.	MainWindow		No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.
 Previous Book	MainWindow		Previous Book
 Select All	MainWindow		Select All
 Search Progress:	SearchWindow		Search Progress:
@@ -33,6 +35,6 @@ Find Words	SearchWindow		Find Words
 Bibles	MainWindow		Bibles
 Notes…	MainWindow		Notes…
 Next Book	MainWindow		Next Book
-Previous Chapter	MainWindow		Previous Chapter
 Find: 	SearchWindow		Find: 
+Previous Chapter	MainWindow		Previous Chapter
 Book:	MainWindow		Book:

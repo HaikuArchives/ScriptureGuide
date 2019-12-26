@@ -33,7 +33,7 @@ public:
 class SGMainWindow : public BWindow 
 {
 public:
-	SGMainWindow(BRect frame, const char *module, const char* key,uint16 selectVers = 0, uint16 selectVersEnd = 0);
+	SGMainWindow(BRect frame, const char *module, const char* key,uint16 selectVers = 1, uint16 selectVersEnd = 0);
 	~SGMainWindow();
 	virtual bool QuitRequested();
 	virtual void MessageReceived(BMessage *message);
@@ -50,6 +50,7 @@ private:
 	void SetModule(const TextType &module, const int32 &index);
 	void SetModuleFromString(const char *name);
 	void SetChapter(const int16 &chapter);
+	void SetVerse(const int16 &verse);
 
 	BMenuBar		*fMenuBar;
 	
@@ -66,7 +67,7 @@ private:
 					*fGeneralMenu;
 	
 	BTextControl	*fChapterBox;
-	//BTextControl	*fVerseBox;
+	BTextControl	*fVerseBox;
 
 	BButton			*fNoteButton;
 	

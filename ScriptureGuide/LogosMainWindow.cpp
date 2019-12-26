@@ -116,12 +116,18 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key, uin
 	// Load the preferences for the individual module
 	LoadPrefsForModule();
 	
-	if (key)
-		fCurrentChapter = ChapterFromKey(key);
 		
 	BMenuItem *item = fBookMenu->FindItem(BookFromKey(key));
 	if (item)
 		item->SetMarked(true);
+	
+	if (key)
+	{
+		fCurrentChapter = ChapterFromKey(key);
+		fCurrentVerse = VerseFromKey(key);
+		SetChapter(fCurrentChapter);
+		SetVerse(fCurrentVerse);
+	}	
 	
 	fCurrentFont = &fDisplayFont;
 	
@@ -253,16 +259,16 @@ void SGMainWindow::BuildGUI(void)
 	BString alphaChars("qwertyuiop[]\\asdfghjkl;'zxcvbnm,./QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?`~!@#$%^&*()-_=+");
 	fChapterBox = new BTextControl("chapter_choice", B_TRANSLATE("Chapter"), NULL,
 									new BMessage(SELECT_CHAPTER));
-	/*fVerseBox = new BTextControl("verse_choice", B_TRANSLATE("Verse"), NULL,
+	fVerseBox = new BTextControl("verse_choice", B_TRANSLATE("Verse"), NULL,
 									new BMessage(SELECT_VERSE));
-	BTextView *verseView = fVerseBox->TextView();*/
+	BTextView *verseView = fVerseBox->TextView();
 	BTextView *chapterView = fChapterBox->TextView();
 	
 	for(int32 i=0; i < alphaChars.CountChars(); i++)
 	{
 		char c = alphaChars.ByteAt(i);
 		chapterView->DisallowChar(c);
-	//	verseView->DisallowChar(c);
+		verseView->DisallowChar(c);
 	}
 	
 	//prepare the TextFrame
@@ -291,9 +297,9 @@ void SGMainWindow::BuildGUI(void)
 			.SetInsets(B_USE_SMALL_SPACING,0)
 			.Add(fModuleField)
 			.Add(bookfield)
-			.AddGlue()
 			.Add(fChapterBox)
-			//.Add(fVerseBox)
+			.Add(fVerseBox)
+			.AddGlue()
 			.Add(fNoteButton)
 		.End()
 		.AddSplit(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
@@ -337,7 +343,7 @@ void SGMainWindow::InsertChapter(void)
 			fVerseView->Insert(B_TRANSLATE("This module does not have this section."));
 			return;
 		}
-		if ((fCurrentVerseEnd == 0) && (fCurrentVerseEnd < fCurrentVerse))
+		if ((fCurrentVerseEnd != 0) && (fCurrentVerseEnd < fCurrentVerse))
 			fCurrentVerseEnd=fCurrentVerse;
 		for(uint16 currentverse = 1; currentverse <= versecount; currentverse++)
 		{
@@ -396,7 +402,10 @@ void SGMainWindow::InsertChapter(void)
 			}
 		}
 	}
-	fVerseView->Select(highlightStart,highlightEnd);
+	if (fCurrentVerseEnd != 0)
+		fVerseView->Select(highlightStart,highlightEnd);
+	else
+		fVerseView->Select(highlightStart,highlightStart);
 	fVerseView->ScrollToSelection();
 }
 
@@ -785,7 +794,12 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 			fVerseView->MakeFocus();
 			break;
 		}
-		
+		case SELECT_VERSE :
+		{
+			int num = atoi(fVerseBox->Text());
+			SetVerse(num);
+			break;
+		}
 		default:
 		{
 			BWindow::MessageReceived(msg);
@@ -915,10 +929,12 @@ void SGMainWindow::SetChapter(const int16 &chapter)
 			
 			currentbook = fBookMenu->ItemAt(index)->Label();
 			fCurrentChapter = 1;
+			fCurrentVerse	= 0;
 		}
 		else
 		{
 			fCurrentChapter = maxchapters;
+			//fCurrentVerse	= 0;
 			return;
 		}
 	}
@@ -940,23 +956,44 @@ void SGMainWindow::SetChapter(const int16 &chapter)
 			
 			currentbook = fBookMenu->ItemAt(index)->Label();
 			fCurrentChapter = ChaptersInBook(fBookMenu->FindMarked()->Label());
+			//fCurrentVerse = 0;
 		}
 		else
 		{
 			fCurrentChapter = 1;
+			//fCurrentVerse	= 0;
 			return;
 		}
 	}
 	else
+	{
+		//fCurrentVerse	= 0;
 		fCurrentChapter = chapter;
+	}
 	
 	fVerseView->Delete(0,fVerseView->TextLength());
 	InsertChapter();
 	
-	BString text;
-	text << fCurrentChapter;
-	fChapterBox->SetText(text.String());
+	BString cText;
+	cText << fCurrentChapter;
+	fChapterBox->SetText(cText.String());
+	BString vText;	
+	vText << fCurrentVerse;
+	fVerseBox->SetText(vText.String());
 	fVerseView->MakeFocus();
+}
+
+
+void SGMainWindow::SetVerse(const int16 &verse)
+{
+	fCurrentVerse = verse;
+	fVerseView->Delete(0,fVerseView->TextLength());
+	// ToDo make a better implemenation since now we redraw everything... just to scroll to the right verse..
+	InsertChapter();
+	BString vText;	
+	vText << fCurrentVerse;
+	fVerseBox->SetText(vText.String());
+	
 }
 
 bool SGMainWindow::QuitRequested() 
