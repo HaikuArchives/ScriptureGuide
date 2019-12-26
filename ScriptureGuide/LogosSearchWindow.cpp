@@ -318,8 +318,12 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			if (i < verseList.size())
 			{
 				// TODO: Spawn with a frame obtained from preferences
-				BRect windowRect(50,50,599,399); 
-				SGMainWindow *win = new SGMainWindow(windowRect, curModule, verseList[i],VerseFromKey(verseList[i]), UpperVerseFromKey(verseList[i]));
+				BRect windowRect(50,50,599,399);
+				BLanguage language;
+				BLocale::Default()->GetLanguage(&language);
+				sword::VerseKey myKey=sword::VerseKey(verseList[i]);
+				myKey.setLocale(language.Code());
+				SGMainWindow *win = new SGMainWindow(windowRect, curModule, myKey,VerseFromKey(myKey), VerseFromKey(myKey));
 				win->Show();
 			}
 			break;
@@ -360,7 +364,8 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			BString		clipBoardString= BString();
 			int32 selected;
 			int32 i=0;
-			while ( (selected = searchResults->CurrentSelection(i)) >= 0 ) {
+			while ( (selected = searchResults->CurrentSelection(i)) >= 0 )
+			{
 				item = searchResults->ItemAt(selected);
 				i++;
 				if (i < verseList.size())
@@ -370,9 +375,11 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 				}
 			}
 			BMessage* clip = NULL;
-			if (be_clipboard->Lock()) {
+			if (be_clipboard->Lock())
+			{
 				be_clipboard->Clear();
-    			if (clip = be_clipboard->Data()) {
+    			if (clip = be_clipboard->Data())
+				{
     				clip->AddData("text/plain", B_MIME_TYPE, clipBoardString.String(),clipBoardString.Length());
     				be_clipboard->Commit();
     			}
