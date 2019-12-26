@@ -52,7 +52,6 @@ SGModule::SGModule(sword::SWModule *module)
 	if (!fModule->hasSearchFramework())
 	{
 		fModule->createSearchFramework();
-//		printf("Created framework for %s\n", fModule->Name());
 	}
 }
 
@@ -214,9 +213,6 @@ void SGModule::SetVerse(const char *book, int chapter, int verse)
 // callback function: sword library calls it with percentage-done during a search
 void percentUpdate(char percent, void *userData)
 {
-//#ifdef DEBUG
-	printf("Search is %d%% done.\n", percent);
-//#endif
 	BStatusBar* bar;
 	bar = (BStatusBar *)userData;
 	bar->Update((float)percent - bar->CurrentValue());
@@ -239,7 +235,6 @@ vector<const char*> SGModule::SearchModule(int searchType, int flags, const char
 	
 	BString searchstr;
 	searchstr << startbook << " 1:1-" << endbook << " " << chapter << ":" << verse;
-	printf("Searching %s in %s\n",searchText,searchstr.String());
 	VerseKey parse = "Gen 1:1";
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);	
@@ -456,8 +451,9 @@ const char *BookFromKey(const char *key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey=VerseKey(key);
+	VerseKey myKey=VerseKey();
 	myKey.setLocale(language.Code());
+	myKey.setText(key);
 /**old
 	int i = myKey.getTestament() - 1;
 	int j = myKey.getBook() - 1;
@@ -469,8 +465,9 @@ int ChapterFromKey(const char *key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey(key);
+	VerseKey myKey=VerseKey();
 	myKey.setLocale(language.Code());
+	myKey.setText(key);
 	return myKey.getChapter();
 }
 
@@ -478,8 +475,9 @@ int VerseFromKey(const char *key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey(key);
+	VerseKey myKey=VerseKey();
 	myKey.setLocale(language.Code());
+	myKey.setText(key);
 	return myKey.getVerse();
 }
 

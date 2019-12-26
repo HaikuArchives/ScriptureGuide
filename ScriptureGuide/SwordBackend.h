@@ -55,6 +55,7 @@ public:
 	const char *		GetKey(void);
 	void 				SetKey(const char *key);
 	
+	const char *		GetVerse();
 	const char *		GetVerse(const char *book, int chapter, int verse);
 	const char *		GetVerse(const char *key);
 	const char *		GetParagraph(const char *key);
@@ -82,6 +83,7 @@ private:
 	bool				fDetectOTNT,
 						fHasOT,
 						fHasNT;
+	
 	BLanguage			language;
 
 };
