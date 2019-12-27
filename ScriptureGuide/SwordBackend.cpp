@@ -87,19 +87,6 @@ void SGModule::DetectTestaments(void)
 	if (fType == TEXT_BIBLE)
 	{
 		// Detect testaments in module
-/*		fModule->SetKey("Gen 1:1");
-		VerseKey key = fModule->getKeyText();
-		BString string = (const char *)*fModule;
-		
-		if (key.Testament() == 1 && string.CountChars() > 0)
-			fHasOT = true;
-		
-		fModule->SetKey("Mat 1:1");
-		key = fModule->KeyText();
-		string = (const char *)*fModule;
-		
-		if (key.Testament() == 2 && string.CountChars() > 0)
-			fHasNT = true;*/
 		fHasOT	= fModule->hasEntry(new SWKey("Gen 1:1"));
 		fHasNT	= fModule->hasEntry(new SWKey("Mat 1:1"));
 	}
@@ -394,11 +381,6 @@ SGModule *SwordBackend::GeneralTextAt(const int32 &index) const
 vector<const char*> GetBookNames(void)
 {
 	vector<const char*> books;
-	/**old
-	for(int i=0; i<2; i++)
-		for(int j=0; j<VerseKey::builtin_BMAX[i]; j++)
-			books.push_back((const char*)VerseKey::builtin_books[i][j].name);
-	*/
 	VerseKey myKey=VerseKey();
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
@@ -424,10 +406,6 @@ int ChaptersInBook(const char *book)
 	BLocale::Default()->GetLanguage(&language);
 	VerseKey myKey(book);
 	myKey.setLocale(language.Code());
-/** old
-	int i = myKey.getTestament() - 1;
-	int j = myKey.getBook() - 1;
-	return VerseKey::builtin_books[i][j].chapmax;*/
 	return myKey.getChapterMax();
 }
 
@@ -439,11 +417,6 @@ int VersesInChapter(const char *book, int chapter)
 	myKey.setLocale(language.Code());
 	myKey.setBookName(book);
 	myKey.setChapter(chapter);
-/**old
-	int i = myKey.getTestament() - 1;
-	int j = myKey.getBook() - 1;
-	return VerseKey::builtin_books[i][j].versemax[chapter-1];
-	**/
 	return myKey.getVerseMax();
 }
 
@@ -454,10 +427,6 @@ const char *BookFromKey(const char *key)
 	VerseKey myKey=VerseKey();
 	myKey.setLocale(language.Code());
 	myKey.setText(key);
-/**old
-	int i = myKey.getTestament() - 1;
-	int j = myKey.getBook() - 1;
-	return (const char*)VerseKey::builtin_books[i][j].name;*/
 	return myKey.getBookName();
 }
 
