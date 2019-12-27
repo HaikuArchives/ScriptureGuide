@@ -297,8 +297,8 @@ void SGMainWindow::BuildGUI(void)
 			.SetInsets(B_USE_SMALL_SPACING,0)
 			.Add(fModuleField)
 			.Add(bookfield)
-			.Add(fChapterBox)
-			.Add(fVerseBox)
+			.Add(fChapterBox, -1)
+			.Add(fVerseBox,-1)
 			.AddGlue()
 			.Add(fNoteButton)
 		.End()
@@ -642,10 +642,13 @@ void SGMainWindow::MessageReceived(BMessage *msg)
 		case SELECT_BOOK:
 		{
 			fCurrentChapter = 1;
-			
+			fCurrentVerse = 1;
+
 			fVerseView->Delete(0,fVerseView->TextLength());
 			InsertChapter();
 			fChapterBox->SetText("1");
+			fVerseBox->SetText("1");
+
 			fVerseView->MakeFocus();
 			break;
 		}
@@ -903,9 +906,13 @@ void SGMainWindow::SetModule(const TextType &module, const int32 &index)
 	fCurrentFont->SetSize(fFontSize);
 	fVerseView->SetFontAndColor(fCurrentFont,B_FONT_ALL,&BLACK);
 	
-	BString chapterstring;
-	chapterstring << fCurrentChapter;
-	fChapterBox->SetText(chapterstring.String());
+	BString chapterString;
+	chapterString << fCurrentChapter;
+	fChapterBox->SetText(chapterString.String());
+	
+	BString verseString;
+	verseString << fCurrentChapter;
+	fVerseBox->SetText(verseString.String());
 	
 	InsertChapter();
 	fVerseView->MakeFocus();
