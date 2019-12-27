@@ -1,8 +1,8 @@
-1	German	application/x-vnd.Scripture-Guide	1787343184
+1	German	application/x-vnd.Scripture-Guide	740233707
 Find Verse…	MainWindow		Vers finden…
 Program	MainWindow		Programm
 Next Chapter	MainWindow		nächstes Kapitel
-About Scripture Guide…	MainWindow		About Scripture Guide…
+About Scripture Guide…	MainWindow		Über Scripture Guide…
 This module does not have this section.	MainWindow		Abschnitt in diesem Modul nicht vorhanden
 Previous Book	MainWindow		vorheriges Buch
 Select All	MainWindow		Alles Auswählen
@@ -22,17 +22,19 @@ Notes…	MainWindow		Notizen...
 Next Book	MainWindow		nächstes Buch
 Previous Chapter	MainWindow		vorheriges Kapitel
 Book:	MainWindow		Buch:
-Font Name	FontPanel		Schriftname
+Verse	MainWindow		Vers
+No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.	MainWindow		Es sind noch keine Module installiert\n\n Bitte benutze ScriptureGuideManager um die Bücher, die du benutzen möchtest, herunterzuladen.
+Font Name	FontPanel		Schrift
 Preview	FontPanel		Vorschau
 OK	FontPanel		OK
 Font Size: 	FontPanel		Schriftgröße
-Regular Expression	SearchWindow		Regular Expression
-Search Progress:	SearchWindow		Search Progress:
-Find Phrase	SearchWindow		Finde Phrase
-Match Case	SearchWindow		Match Case
-Search Results:	SearchWindow		Search Results:
+Regular Expression	SearchWindow		Regulärer Ausdruck
+Search Progress:	SearchWindow		Fortschritt Suche:
+Find Phrase	SearchWindow		Suche Phrase
+Match Case	SearchWindow		Großschreibung beachten
+Search Results:	SearchWindow		Ergebniss der Suche:
 Find	SearchWindow		Finde
 End in 	SearchWindow		End in
-Start in 	SearchWindow		Start in 
-Find Words	SearchWindow		Find Words
-Find: 	SearchWindow		Find: 
+Start in 	SearchWindow		Start in
+Find Words	SearchWindow		Suche Wörter
+Find: 	SearchWindow		Suche:
