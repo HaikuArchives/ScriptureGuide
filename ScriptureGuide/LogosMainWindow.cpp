@@ -44,11 +44,6 @@ SGMainWindow::SGMainWindow(BRect frame, const char *module, const char *key, uin
  	fCurrentFont(NULL),
  	fFindMessenger(NULL)
 {
-	float minw,minh,maxw,maxh;
-	GetSizeLimits(&minw,&maxw,&minh,&maxh);
-	minw = 580;
-	minh = 420;
-	SetSizeLimits(minw,maxw,minh,maxh);
 	fCurrentVerse = selectVers;
 	fCurrentVerseEnd = selectVersEnd;
 		
