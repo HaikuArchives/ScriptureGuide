@@ -6,7 +6,7 @@ class SGApp : public BApplication
 public:
 					SGApp();
 					~SGApp(void);
-	virtual void	MessageReceived(BMessage *message);
+	virtual void	MessageReceived(BMessage* message);
 	status_t		StartupCheck(void);
 };
 

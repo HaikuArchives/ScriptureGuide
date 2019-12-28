@@ -26,19 +26,19 @@ class FontPanel
 {
 public:
 	FontPanel(BHandler* target = NULL,
-		BMessage *message = NULL,
+		BMessage* message = NULL,
 		float size = 12,
 		bool modal = false,
-		bool hide_when_done = true);
+		bool hide_when_done = false);
 	virtual ~FontPanel(void);
 	void SelectFont(const BFont &font);
 	void Show();
 	void Hide();
 	bool IsShowing(void) const;
-	BWindow *Window(void) const;
+	BWindow* Window(void) const;
 	void SetFontSize(uint16 size);
 private:
-	FontWindow *fWindow;
+	FontWindow* fWindow;
 	
 };
 

@@ -24,7 +24,7 @@
 BString gAppPath;
 bool gDocsAvailable;
 
-BRect windowRect(50,50,749,449);
+BRect windowRect(50, 50, 749, 449);
 
 SGApp::SGApp()
   : BApplication("application/x-vnd.Scripture-Guide")
@@ -47,10 +47,10 @@ SGApp::SGApp()
 		prefsLock.Unlock();
 		
 		// opens the main window with the current options
-		SGMainWindow *win = new SGMainWindow(windowRect, module.String(), verseKey.String());
+		SGMainWindow* win = new SGMainWindow(windowRect, module.String(),
+			verseKey.String());
 		win->Show();
-	}
-	else
+	} else
 	{
 		// If we don't have B_OK, it means that StartupCheck found some problems
 		// but couldn't fix them and told the user about it
@@ -58,14 +58,16 @@ SGApp::SGApp()
 	}
 }
 
+
 SGApp::~SGApp(void)
 {
 	SavePreferences(PREFERENCES_FILE);
 }
 
-void SGApp::MessageReceived(BMessage *message) 
+
+void SGApp::MessageReceived(BMessage* message) 
 {
-	switch(message->what) 
+	switch (message->what) 
 	{
 	case M_WINDOW_CLOSED:{
 		if (CountWindows()<2)
@@ -93,15 +95,14 @@ status_t SGApp::StartupCheck(void)
 	
 	if (!prefsFolder.Exists())
 	{
-		useDefaultPrefs=true;
-		create_directory(PREFERENCES_PATH,0777);
-	}
-	else
+		useDefaultPrefs = true;
+		create_directory(PREFERENCES_PATH, 0777);
+	} else
 	if (!prefsFile.Exists())
-		useDefaultPrefs=true;
+		useDefaultPrefs = true;
 	else 
 	if (LoadPreferences(PREFERENCES_FILE)!=B_OK)
-		useDefaultPrefs=true;
+		useDefaultPrefs = true;
 
 	if (useDefaultPrefs)
 	{
@@ -109,11 +110,11 @@ status_t SGApp::StartupCheck(void)
 		
 		preferences.MakeEmpty();
 		
-		preferences.AddBool("linebreaks",false);
-		preferences.AddInt8("fontsize",12);
-		preferences.AddRect("windowframe",BRect(50,50,749,449));
-		preferences.AddInt16("module",0);
-		preferences.AddString("key","Gen 1:1");
+		preferences.AddBool("linebreaks", false);
+		preferences.AddInt8("fontsize", 12);
+		preferences.AddRect("windowframe",BRect(50, 50, 749, 449));
+		preferences.AddInt16("module", 0);
+		preferences.AddString("key", "Gen 1:1");
 		SavePreferences(PREFERENCES_FILE);
 		
 		prefsLock.Unlock();
@@ -138,8 +139,8 @@ status_t SGApp::StartupCheck(void)
 		BPath path;
 		parent.GetPath(&path);
 		
-		gAppPath=path.Path();
-		gAppPath+="/";
+		gAppPath = path.Path();
+		gAppPath += "/";
 	}
 		
 	// Check for the existence of the modules, documentation, and notes
@@ -155,8 +156,8 @@ status_t SGApp::StartupCheck(void)
 	// Check for the existence of the new modules directory
 	BDirectory dir;
 	entry.SetTo(MODULES_PATH);
-	bool modfail=false;
-	BAlert *alert=NULL;
+	bool modfail = false;
+	BAlert*alert = NULL;
 	
 	if (!entry.Exists())
 		create_directory(MODULES_PATH,0777);
@@ -172,10 +173,9 @@ status_t SGApp::StartupCheck(void)
 			// and to think that I was just a codemonkey. :P
 			
 			dir.SetTo(MODULES_PATH);
-			entry.MoveTo(&dir,NULL,true);
-		}
-		else
-			modfail=true;
+			entry.MoveTo(&dir, NULL, true);
+		} else
+			modfail = true;
 	}
 	
 	entry.SetTo(MODULES_PATH "modules");
@@ -185,25 +185,24 @@ status_t SGApp::StartupCheck(void)
 		if (!entry.Exists())
 		{
 			dir.SetTo(MODULES_PATH);
-			entry.MoveTo(&dir,NULL,true);
-		}
-		else
-			modfail=true;
+			entry.MoveTo(&dir, NULL, true);
+		} else
+			modfail = true;
 	}
 	
 	if (modfail)
 	{
-		alert=new BAlert("Scripture Guide","Scripture Guide could not find any books -- no Bibles,"
+		alert=new BAlert("Scripture Guide", "Scripture Guide could not find any books -- no Bibles,"
 			" commentaries, or anything else. You need to have at least one book from the"
 			" SWORD Project in order to run Scripture Guide. Would you like to go to their website"
 			" now, look at Scripture Guide's installation notes, or just quit?\n","Website",
 			"Install Notes","Quit");
-		int32 value=alert->Go();
+		int32 value = alert->Go();
 		
-		if (value==0) {
+		if (value == 0) {
 			const char* url = "http://www.crosswire.org/sword/";
 			be_roster->Launch("text/html", 1, (char**)&url);
-		} else if (value==1) {
+		} else if (value == 1) {
 			BString string(GetAppPath());
 			string+="INSTALL.htm";
 			const char* file = string.String();
@@ -213,7 +212,7 @@ status_t SGApp::StartupCheck(void)
 	}
 	
 	// Check for existence of documentation
-	gDocsAvailable=true;
+	gDocsAvailable = true;
 	
 	BString docspath(gAppPath);
 	docspath+="docs/help";
@@ -224,9 +223,8 @@ status_t SGApp::StartupCheck(void)
 		docspath+="/index.html";
 		entry.SetTo(docspath.String());
 		if (!entry.Exists())
-			gDocsAvailable=false;
-	}
-	else
+			gDocsAvailable = false;
+	} else
 		gDocsAvailable=false;
 	
 	// Ensure that the study notes exist
@@ -240,11 +238,10 @@ status_t SGApp::StartupCheck(void)
 		
 		notespath+="Notes.txt";
 		BFile file(notespath.String(), B_READ_WRITE | B_CREATE_FILE);
-		const char notes[]="Scripture Guide Study Notes\n-------------------------------\n";
+		const char notes[]="Scripture Guide Study Notes\n----------------------\n";
 		file.Write(notes,strlen(notes));
 		file.Unset();
-	}
-	else
+	} else
 	{
 		// folder exists, but does the notefile exist?
 		notespath+="Notes.txt";
@@ -252,7 +249,7 @@ status_t SGApp::StartupCheck(void)
 		if (!entry.Exists())
 		{
 			BFile file(notespath.String(), B_READ_WRITE | B_CREATE_FILE);
-			const char notes[]="Scripture Guide Study Notes\n-------------------------------\n";
+			const char notes[]="Scripture Guide Study Notes\n----------------------\n";
 			file.Write(notes,strlen(notes));
 			file.Unset();
 		}
@@ -261,17 +258,20 @@ status_t SGApp::StartupCheck(void)
 	return B_OK;
 }
 
+
 // An easy function to access the path that the file run from
 const char *GetAppPath(void)
 {
 	return gAppPath.String();
 }
 
+
 // Global read-only access function to know if the help files exist
 bool HelpAvailable(void)
 {
 	return gDocsAvailable;
 }
+
 
 int main(void) 
 {

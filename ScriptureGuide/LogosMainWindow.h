@@ -27,16 +27,17 @@ class EndKeyFilter : public BMessageFilter
 public:
 	EndKeyFilter(void);
 	~EndKeyFilter(void);
-	virtual filter_result Filter(BMessage *msg, BHandler **target);
+	virtual filter_result Filter(BMessage* msg, BHandler **target);
 };
 
 class SGMainWindow : public BWindow 
 {
 public:
-	SGMainWindow(BRect frame, const char *module, const char* key,uint16 selectVers = 1, uint16 selectVersEnd = 0);
+	SGMainWindow(BRect frame, const char* module, const char* key,
+					uint16 selectVers = 1, uint16 selectVersEnd = 0);
 	~SGMainWindow();
 	virtual bool QuitRequested();
-	virtual void MessageReceived(BMessage *message);
+	virtual void MessageReceived(BMessage* message);
 	virtual void FrameResized(float width, float height);
 
 private:
@@ -48,7 +49,7 @@ private:
 	bool NeedsLineBreaks(void);
 	
 	void SetModule(const TextType &module, const int32 &index);
-	void SetModuleFromString(const char *name);
+	void SetModuleFromString(const char* name);
 	void SetChapter(const int16 &chapter);
 	void SetVerse(const int16 &verse);
 

@@ -25,11 +25,11 @@
 #define BIBLE "Webster"
 #define KEY "Gen 1:1"
 
-const rgb_color BLACK = {0,0,0,255};
-const rgb_color BLUE = {50,0,200,255};
-const rgb_color YELLOW = {165,165,00,255};
-const rgb_color RED = {200,0,50,255}; 
-const rgb_color GREEN = {50,200,50,255}; 
+const rgb_color BLACK = {0, 0, 0, 255};
+const rgb_color BLUE = {50, 0, 200, 255};
+const rgb_color YELLOW = {165, 165, 00, 255};
+const rgb_color RED = {200, 0, 50, 255}; 
+const rgb_color GREEN = {50, 200, 50, 255}; 
 
 
 //-----------------------------------------------------------------------------
@@ -90,6 +90,7 @@ const uint32 DOCS_UNAVAILABLE			= 'DCUN';
 
 // search flags
 
-const int REG_ICASE						= 2;  // include "posix/regex.h" instead if more are needed
+const int REG_ICASE						= 2;  
+// include "posix/regex.h" instead if more are needed
 
 #endif

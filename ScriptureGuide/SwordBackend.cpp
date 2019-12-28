@@ -27,7 +27,7 @@ using namespace sword;
 // path for the modules; to be stored in a config file in future
 #define CONFIGPATH MODULES_PATH
 
-SGModule::SGModule(sword::SWModule *module)
+SGModule::SGModule(sword::SWModule* module)
  :	fModule(module),
  	fDetectOTNT(true),
  	fHasOT(false),
@@ -35,16 +35,16 @@ SGModule::SGModule(sword::SWModule *module)
 {
 	BLocale::Default()->GetLanguage(&language);	
 
-	if(strcmp(fModule->getType(), "Biblical Texts")==0)
+	if (strcmp(fModule->getType(), "Biblical Texts")==0)
 		fType = TEXT_BIBLE;
 	else
-	if(strcmp(fModule->getType(), "Commentaries")==0)
+	if (strcmp(fModule->getType(), "Commentaries")==0)
 		fType = TEXT_COMMENTARY;
 	else
-	if(strcmp(fModule->getType(), "Lexicons / Dictionaries")==0)
+	if (strcmp(fModule->getType(), "Lexicons / Dictionaries")==0)
 		fType = TEXT_LEXICON;
 	else
-	if(strcmp(fModule->getType(), "Generic Text")==0)
+	if (strcmp(fModule->getType(), "Generic Text")==0)
 		fType = TEXT_GENERIC;
 	else
 		fType = TEXT_UNKNOWN;
@@ -55,15 +55,19 @@ SGModule::SGModule(sword::SWModule *module)
 	}
 }
 
+
 bool SGModule::IsGreek(void)
 {
-	return ( !strcmp(fModule->getLanguage(), "grc") || !strcmp(fModule->getLanguage(), "el") );
+	return ( !strcmp(fModule->getLanguage(), "grc")
+		|| !strcmp(fModule->getLanguage(), "el") );
 }
+
 
 bool SGModule::IsHebrew(void)
 {
 	return strcmp(fModule->getLanguage(), "he") == 0;
 }
+
 
 bool SGModule::HasOT(void)
 {
@@ -73,6 +77,7 @@ bool SGModule::HasOT(void)
 	return fHasOT;
 }
 
+
 bool SGModule::HasNT(void)
 {
 	if (fDetectOTNT)
@@ -80,6 +85,7 @@ bool SGModule::HasNT(void)
 	
 	return fHasNT;
 }
+
 
 void SGModule::DetectTestaments(void)
 {
@@ -89,33 +95,35 @@ void SGModule::DetectTestaments(void)
 		// Detect testaments in module
 		fHasOT	= fModule->hasEntry(new SWKey("Gen 1:1"));
 		fHasNT	= fModule->hasEntry(new SWKey("Mat 1:1"));
-	}
-	else
-	if (fType == TEXT_COMMENTARY)
+	} else if (fType == TEXT_COMMENTARY)
 	{
 		fHasOT = true;
 		fHasNT = true;
 	}
 }
 
-const char *SGModule::Name(void)
+
+const char* SGModule::Name(void)
 {
 	return fModule->getName();
 }
 
-const char *SGModule::FullName(void)
+
+const char* SGModule::FullName(void)
 {
 	return fModule->getDescription();
 }
 
-const char *SGModule::Language(void)
+
+const char* SGModule::Language(void)
 {
 	return fModule->getLanguage();
 }
 
-const char *SGModule::GetVerse(const char *book, int chapter, int verse)
+
+const char* SGModule::GetVerse(const char* book, int chapter, int verse)
 {
-	VerseKey myKey=VerseKey();
+	VerseKey myKey = VerseKey();
 	myKey.setLocale(language.Code());
 	myKey.setBookName(book);
 	myKey.setChapter(chapter);
@@ -124,18 +132,20 @@ const char *SGModule::GetVerse(const char *book, int chapter, int verse)
 	return fModule->renderText();
 }
 
-const char *SGModule::GetVerse(const char *key)
+
+const char* SGModule::GetVerse(const char* key)
 {
-	 VerseKey myKey(key);
-     fModule->setKey(myKey);
-     return fModule->renderText();
+	VerseKey myKey(key);
+	fModule->setKey(myKey);
+	return fModule->renderText();
 }
 
 
-const char *SGModule::GetParagraph(const char *key){
+const char* SGModule::GetParagraph(const char* key)
+{
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	BString bibleText=BString();
+	BString bibleText = BString();
 	VerseKey minKey(key);
 	minKey.decrement();
 	VerseKey maxKey(key);
@@ -147,49 +157,52 @@ const char *SGModule::GetParagraph(const char *key){
 	fModule->setKey(paragraph);
 	bibleText << paragraph.getRangeText();
 	bibleText << "\n";
-	if(paragraph.isBoundSet()) {
+	if (paragraph.isBoundSet())
+	{
 		VerseKey temp(paragraph);
-		for(int i = paragraph.getLowerBound().getIndex(); i <= paragraph.getUpperBound().getIndex(); ++i) {
+		for (int i = paragraph.getLowerBound().getIndex();
+			i <= paragraph.getUpperBound().getIndex(); ++i)
+		{
 			temp.setIndex(i);
 			fModule->setKey(temp);
 			bibleText << temp.getVerse();
 			bibleText << " ";
 			bibleText.Append(fModule->renderText());
-			//bibleText.Append("\n");
 		}
 	}
 	return bibleText.String();
 }
 
-const char *SGModule::GetKey(void)
+
+const char* SGModule::GetKey(void)
 {
-	VerseKey *key = (VerseKey*)fModule->getKey();
-	
-	if(!key)
+	VerseKey* key = (VerseKey*)fModule->getKey();	
+	if (!key)
 		return NULL;
 	
 	key->setLocale(language.Code());
 	return key->getText();
 }
 
-void SGModule::SetKey(const char *key)
+
+void SGModule::SetKey(const char* key)
 {
 	// TODO: Convert this to return a status_t - B_ERROR on failure.
 	// This will depend on finding out what kinds of error codes are returned
 	// when sword::SWModule::SetKey fails and succeeds
-	if(!key)
+	if (!key)
 		return;
 	VerseKey vkey(key);
 	vkey.setLocale(language.Code());
 	fModule->setKey(vkey);
 }
 
-void SGModule::SetVerse(const char *book, int chapter, int verse)
+void SGModule::SetVerse(const char* book, int chapter, int verse)
 {
 	// TODO: Convert this to return a status_t - B_ERROR on failure.
 	// This will depend on finding out what kinds of error codes are returned
 	// when sword::SWModule::SetKey fails and succeeds
-	VerseKey myKey=VerseKey();;
+	VerseKey myKey = VerseKey();;
 	myKey.setLocale(language.Code());
 	myKey.setBookName(book);
 	myKey.setChapter(chapter);
@@ -197,7 +210,8 @@ void SGModule::SetVerse(const char *book, int chapter, int verse)
 	fModule->setKey(myKey);
 }
 
-// callback function: sword library calls it with percentage-done during a search
+// callback function: sword library calls it with percentage-done
+// during a search
 void percentUpdate(char percent, void *userData)
 {
 	BStatusBar* bar;
@@ -211,14 +225,15 @@ void percentUpdate(char percent, void *userData)
 // searchText: the text to search for
 // scopeFrom: book name to search from
 // scopeTo: book name to search to
-vector<const char*> SGModule::SearchModule(int searchType, int flags, const char *searchText, 
-		const char *startbook, const char *endbook, BStatusBar* statusBar)
+vector<const char*> SGModule::SearchModule(int searchType, int flags, 
+						const char *searchText, const char *startbook,
+						const char *endbook, BStatusBar* statusBar)
 {
 	vector<const char*> results;
 	
 	
 	int chapter = ChaptersInBook(endbook);
-	int verse = VersesInChapter(endbook,chapter);
+	int verse = VersesInChapter(endbook, chapter);
 	
 	BString searchstr;
 	searchstr << startbook << " 1:1-" << endbook << " " << chapter << ":" << verse;
@@ -228,7 +243,8 @@ vector<const char*> SGModule::SearchModule(int searchType, int flags, const char
 	parse.setLocale(language.Code());
 
 	ListKey scope = parse.parseVerseList(searchstr.String(), parse, true);
-	ListKey &listkey = fModule->search(searchText,searchType, flags, &scope, 0, &percentUpdate, statusBar);
+	ListKey &listkey = fModule->search(searchText, searchType, flags,
+								&scope, 0, &percentUpdate, statusBar);
 	
 	listkey.setPersist(true);
 	fModule->setKey(listkey);
@@ -240,7 +256,6 @@ vector<const char*> SGModule::SearchModule(int searchType, int flags, const char
 }
 
 
-
 SwordBackend::SwordBackend(void)
 {
 	fManager = new SWMgr(CONFIGPATH, true, new MarkupFilterMgr(FMT_GBF, ENC_UTF8));
@@ -249,13 +264,13 @@ SwordBackend::SwordBackend(void)
 	// are a little easier to deal with outside the class
 	
 	// First, lists to contain the names of each type of text
-	fBibleList = new SGModuleList(20,true);
-	fCommentList = new SGModuleList(20,true);
-	fLexiconList = new SGModuleList(20,true);
-	fTextList = new SGModuleList(20,true);
+	fBibleList = new SGModuleList(20 true);
+	fCommentList = new SGModuleList(20, true);
+	fLexiconList = new SGModuleList(20, true);
+	fTextList = new SGModuleList(20, true);
 	
 	ModMap::iterator it;
-	SWModule *currentmodule = 0;
+	SWModule* currentmodule = 0;
 	vector<const char*> tmp;
 	
 	for (it = fManager->Modules.begin(); it != fManager->Modules.end(); it++) 
@@ -263,23 +278,25 @@ SwordBackend::SwordBackend(void)
 		currentmodule = (*it).second;
 		currentmodule->addRenderFilter(new GBFPlain());
 		
-		if(!strcmp(currentmodule->getType(), "Biblical Texts"))
+		if (!strcmp(currentmodule->getType(), "Biblical Texts"))
 			fBibleList->AddItem(new SGModule(currentmodule));
 		else
-		if(!strcmp(currentmodule->getType(), "Commentaries"))
+		if (!strcmp(currentmodule->getType(), "Commentaries"))
 			fCommentList->AddItem(new SGModule(currentmodule));
 		else
-		if(!strcmp(currentmodule->getType(), "Lexicons / Dictionaries"))
+		if (!strcmp(currentmodule->getType(), "Lexicons / Dictionaries"))
 			fLexiconList->AddItem(new SGModule(currentmodule));
 		else
-		if(!strcmp(currentmodule->getType(), "Generic Books"))
+		if (!strcmp(currentmodule->getType(), "Generic Books"))
 			fTextList->AddItem(new SGModule(currentmodule));
 		else
 		{
-			printf("Found module %s with type %s\n",currentmodule->getDescription(),currentmodule->getType());
+			printf("Found module %s with type %s\n",
+				currentmodule->getDescription(), currentmodule->getType());
 		}
 	}
 }
+
 
 SwordBackend::~SwordBackend(void)
 {
@@ -291,37 +308,39 @@ SwordBackend::~SwordBackend(void)
 	delete fTextList;
 }
 
-SGModule *SwordBackend::FindModule(const char *name)
+
+SGModule *SwordBackend::FindModule(const char* name)
 {
-	sword::SWModule *module = fManager->Modules[name];
+	sword::SWModule* module = fManager->Modules[name];
 	
 	if (!module)
 		return NULL;
 	
-	SGModuleList *list;
+	SGModuleList* list;
 	
-	if(!strcmp(module->getType(), "Biblical Texts"))
+	if (!strcmp(module->getType(), "Biblical Texts"))
 		list = fBibleList;
 	else
-	if(!strcmp(module->getType(), "Commentaries"))
+	if (!strcmp(module->getType(), "Commentaries"))
 		list = fCommentList;
 	else
-	if(!strcmp(module->getType(), "Lexicons / Dictionaries"))
+	if (!strcmp(module->getType(), "Lexicons / Dictionaries"))
 		list = fLexiconList;
 	else
-	if(!strcmp(module->getType(), "Generic Books"))
+	if (!strcmp(module->getType(), "Generic Books"))
 		list = fTextList;
 	else
 		return NULL;
 	
 	for(int32 i = 0; i < list->CountItems(); i++)
 	{
-		SGModule *mod = list->ItemAt(i);
+		SGModule* mod = list->ItemAt(i);
 		if (mod->GetModule() == module)
 			return mod;
 	}
 	return NULL;
 }
+
 
 status_t SwordBackend::SetModule(SGModule *mod)
 {
@@ -332,47 +351,55 @@ status_t SwordBackend::SetModule(SGModule *mod)
 	return B_OK;
 }
 
+
 int32 SwordBackend::CountModules(void) const
 {
 	return fManager->Modules.size();
 }
+
 
 int32 SwordBackend::CountBibles(void) const
 {
 	return fBibleList->CountItems();
 }
 
+
 int32 SwordBackend::CountCommentaries(void) const
 {
 	return fCommentList->CountItems();
 }
+
 
 int32 SwordBackend::CountLexicons(void) const
 {
 	return fLexiconList->CountItems();
 }
 
+
 int32 SwordBackend::CountGeneralTexts(void) const
 {
 	return fTextList->CountItems();
 }
 
-SGModule *SwordBackend::BibleAt(const int32 &index) const
+
+SGModule* SwordBackend::BibleAt(const int32 &index) const
 {
 	return fBibleList->ItemAt(index);
 }
 
-SGModule *SwordBackend::CommentaryAt(const int32 &index) const
+
+SGModule* SwordBackend::CommentaryAt(const int32 &index) const
 {
 	return fCommentList->ItemAt(index);
 }
 
-SGModule *SwordBackend::LexiconAt(const int32 &index) const
+
+SGModule* SwordBackend::LexiconAt(const int32 &index) const
 {
 	return fLexiconList->ItemAt(index);
 }
 
-SGModule *SwordBackend::GeneralTextAt(const int32 &index) const
+SGModule* SwordBackend::GeneralTextAt(const int32 &index) const
 {
 	return fTextList->ItemAt(index);
 }
@@ -381,7 +408,7 @@ SGModule *SwordBackend::GeneralTextAt(const int32 &index) const
 vector<const char*> GetBookNames(void)
 {
 	vector<const char*> books;
-	VerseKey myKey=VerseKey();
+	VerseKey myKey = VerseKey();
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
 	int i = 1;
@@ -389,7 +416,7 @@ vector<const char*> GetBookNames(void)
 	for (i = 1; i<=2; i++)
 	{
 		myKey.setTestament(i);
-		for (j=0;j<=myKey.getBookMax();j++)
+		for (j = 0; j<=myKey.getBookMax(); j++)
 		{
 			myKey.setTestament(i);
 			myKey.setBook(j);
@@ -400,7 +427,8 @@ vector<const char*> GetBookNames(void)
 	return books;
 }
 
-int ChaptersInBook(const char *book)
+
+int ChaptersInBook(const char* book)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
@@ -409,53 +437,57 @@ int ChaptersInBook(const char *book)
 	return myKey.getChapterMax();
 }
 
+
 int VersesInChapter(const char *book, int chapter)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey=VerseKey();;
+	VerseKey myKey = VerseKey();;
 	myKey.setLocale(language.Code());
 	myKey.setBookName(book);
 	myKey.setChapter(chapter);
 	return myKey.getVerseMax();
 }
 
-const char *BookFromKey(const char *key)
+
+const char* BookFromKey(const char *key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey=VerseKey();
+	VerseKey myKey = VerseKey();
 	myKey.setLocale(language.Code());
 	myKey.setText(key);
 	return myKey.getBookName();
 }
 
-int ChapterFromKey(const char *key)
+
+int ChapterFromKey(const char* key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey=VerseKey();
+	VerseKey myKey = VerseKey();
 	myKey.setLocale(language.Code());
 	myKey.setText(key);
 	return myKey.getChapter();
 }
 
-int VerseFromKey(const char *key)
+int VerseFromKey(const char* key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey=VerseKey();
+	VerseKey myKey = VerseKey();
 	myKey.setLocale(language.Code());
 	myKey.setText(key);
 	return myKey.getVerse();
 }
 
 
-int UpperVerseFromKey(const char *key)
+int UpperVerseFromKey(const char* key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey(key);
+	VerseKey myKey = VerseKey();
 	myKey.setLocale(language.Code());
+	myKey.setText(key);
 	return myKey.getUpperBound().getVerse();
 }

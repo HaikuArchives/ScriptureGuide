@@ -42,13 +42,13 @@
 class VersePreview : public BTextView
 {
 public:
-	VersePreview(const char *name, int32 flags);
+	VersePreview(const char* name, int32 flags);
 	virtual ~VersePreview(void);
 	virtual void FrameResized(float width, float height);
 };
 
-VersePreview::VersePreview(const char *name,int32 flags)
- :	BTextView(name,flags)
+VersePreview::VersePreview(const char* name, int32 flags)
+ :	BTextView(name, flags)
 {
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	SetStylable(true);
@@ -57,29 +57,33 @@ VersePreview::VersePreview(const char *name,int32 flags)
 	SetWordWrap(true);
 }
 
+
 VersePreview::~VersePreview(void)
 {
 }
+
 
 void VersePreview::FrameResized(float width, float height)
 {
 	BTextView::FrameResized(width, height);
 	
-	SetTextRect(Bounds().InsetByCopy(5,5));
+	SetTextRect(Bounds().InsetByCopy(5, 5));
 }
 
-SGSearchWindow::SGSearchWindow(BRect frame, const char *module, BMessenger *owner)
- :	BWindow(frame, "", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_NOT_ZOOMABLE),
+
+SGSearchWindow::SGSearchWindow(BRect frame, const char* module, BMessenger* owner)
+ :	BWindow(frame, "", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL,
+			B_NOT_ZOOMABLE),
  	fMessenger(owner)
 {
-	float minw,minh,maxw,maxh;
-	GetSizeLimits(&minw,&maxw,&minh,&maxh);
+	float minw, minh, maxw, maxh;
+	GetSizeLimits(&minw, &maxw, &minh, &maxh);
 	minw = 500;
 	minh = 480;
-	SetSizeLimits(minw,maxw,minh,maxh);
+	SetSizeLimits(minw, maxw, minh, maxh);
 	
 	prefsLock.Lock();
-	if(preferences.FindString("module",&curModule)!=B_OK)
+	if (preferences.FindString("module", &curModule) != B_OK)
 		curModule = "WEB";
 	prefsLock.Unlock();
 	
@@ -93,8 +97,7 @@ SGSearchWindow::SGSearchWindow(BRect frame, const char *module, BMessenger *owne
 		BString title("Find in ");
 		title << fCurrentModule->FullName();
 		SetTitle(title.String());
-	}
-	else
+	} else
 		SetTitle("Find");
 	
 	fSearchMode = SEARCH_WORDS;
@@ -107,6 +110,7 @@ SGSearchWindow::SGSearchWindow(BRect frame, const char *module, BMessenger *owne
 	searchString->MakeFocus(true);
 }
 
+
 SGSearchWindow::~SGSearchWindow(void)
 {
 	delete myBible;
@@ -114,6 +118,7 @@ SGSearchWindow::~SGSearchWindow(void)
 	fMessenger->SendMessage(FIND_QUIT);
 	delete fMessenger;
 }
+
 
 void SGSearchWindow::BuildGUI(void)
 {
@@ -131,57 +136,60 @@ void SGSearchWindow::BuildGUI(void)
 	// First, we will set up the two menu fields for the search range
 	
 	// The first book in the scope
-	BPopUpMenu *bookChoice = new BPopUpMenu("biblebook");
+	BPopUpMenu* bookChoice = new BPopUpMenu("biblebook");
 	bookField = new BMenuField("book_field", B_TRANSLATE("Start in "), bookChoice);
 	bookField->SetDivider(bookField->StringWidth( B_TRANSLATE("Start in "))+5);
  	BMenuItem* firstBook = new BMenuItem(books[0], new BMessage(FIND_SELECT_FROM)); 
 	firstBook->SetMarked(true);
 	bookChoice->AddItem(firstBook);
-	for(unsigned int i=1; i<books.size(); i++)
+	for (unsigned int i = 1; i<books.size(); i++)
 		bookChoice->AddItem(new BMenuItem(books[i], new BMessage(FIND_SELECT_FROM)));
 	
 	// The last book in the scope
-	BPopUpMenu *sndBookChoice = new BPopUpMenu("biblebook2");
-	sndBookField = new BMenuField("book_field", B_TRANSLATE("End in "), sndBookChoice);
-	sndBookField->SetDivider(sndBookField->StringWidth( B_TRANSLATE("End in ")) + 5);
- 	BMenuItem *lastBook = new BMenuItem(books[books.size()-1], new BMessage(FIND_SELECT_TO)); 
+	BPopUpMenu* sndBookChoice = new BPopUpMenu("biblebook2");
+	sndBookField = new BMenuField("book_field", B_TRANSLATE("End in "),
+						sndBookChoice);
+	sndBookField->SetDivider(sndBookField->StringWidth(
+						B_TRANSLATE("End in ")) + 5);
+ 	BMenuItem *lastBook = new BMenuItem(books[books.size()-1],
+								new BMessage(FIND_SELECT_TO)); 
 	lastBook->SetMarked(true);
 	for (uint16 i = 0; i < books.size() - 1; i++)
 		sndBookChoice->AddItem(new BMenuItem(books[i], new BMessage(FIND_SELECT_TO)));
 	sndBookChoice->AddItem(lastBook);
 	
 	// The radio buttons
-	BRadioButton *wordsRadio = new BRadioButton("exactwords",  B_TRANSLATE("Find Words"), 
-			new BMessage(FIND_RADIO1));
+	BRadioButton *wordsRadio = new BRadioButton("exactwords", 
+						B_TRANSLATE("Find Words"), new BMessage(FIND_RADIO1));
 	
-	BRadioButton *phraseRadio = new BRadioButton("phrase",  B_TRANSLATE("Find Phrase"), 
-			new BMessage(FIND_RADIO2));
+	BRadioButton *phraseRadio = new BRadioButton("phrase",
+						B_TRANSLATE("Find Phrase"),	new BMessage(FIND_RADIO2));
 
-	BRadioButton *regexRadio = new BRadioButton("regex",  B_TRANSLATE("Regular Expression"), 
-			new BMessage(FIND_RADIO3));
+	BRadioButton *regexRadio = new BRadioButton("regex",
+						B_TRANSLATE("Regular Expression"), new BMessage(FIND_RADIO3));
 	
 	wordsRadio->SetValue(B_CONTROL_ON);
 
  	// The case sensitivity checkbox
- 	caseSensitiveCheckBox = new BCheckBox("case_sensitive",  B_TRANSLATE("Match Case"),  
+ 	caseSensitiveCheckBox = new BCheckBox("case_sensitive",  B_TRANSLATE("Match Case"),
  			new BMessage(FIND_CHECK_CASE_SENSITIVE), B_WILL_DRAW | B_NAVIGABLE);
 	
 	searchStatus = new BStatusBar("statusbar",  B_TRANSLATE("Search Progress:"),NULL);
 	
-	BStringView *resultsLabel=new BStringView("resultslabel", B_TRANSLATE("Search Results:"));
+	BStringView* resultsLabel = new BStringView("resultslabel", B_TRANSLATE("Search Results:"));
 	
 	// The listview for the results
 	searchResults = new BListView("searchresults", B_MULTIPLE_SELECTION_LIST);
 	searchResults->SetInvocationMessage(new BMessage(FIND_LIST_DCLICK));
 	searchResults->SetSelectionMessage(new BMessage(FIND_LIST_CLICK));
 	
-	BScrollView *scrollView=new BScrollView("scroll_sresults", searchResults,
+	BScrollView* scrollView = new BScrollView("scroll_sresults", searchResults,
 			0, false, true);
 	
 	// The textview for the selected verse
 	verseSelected = new VersePreview("verse", B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE);
 	
-	BScrollView *scrollVerse=new BScrollView("scroll_verse", verseSelected,
+	BScrollView* scrollVerse = new BScrollView("scroll_verse", verseSelected,
 			0, false, true);
 	
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
@@ -211,9 +219,10 @@ void SGSearchWindow::BuildGUI(void)
 	.End();
 }
 
+
 void SGSearchWindow::MessageReceived(BMessage *message) 
 {
-	switch(message->what) 
+	switch (message->what) 
 	{
 		case M_ACTIVATE_WINDOW:
 		{
@@ -224,8 +233,8 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 		{
 			// first book in search book
 			// Prevent a negative search scope for the last book
-			BMenu *menu = bookField->Menu();
-			BMenu *menu2 = sndBookField->Menu();
+			BMenu* menu = bookField->Menu();
+			BMenu* menu2 = sndBookField->Menu();
 			fSearchStart = menu->IndexOf(menu->FindMarked());
 			
 			for (uint8 i = 0; i < fSearchStart; i++)
@@ -239,7 +248,7 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 				BMenuItem* mi = menu2->ItemAt(i);
 				mi->SetEnabled(true);
 			}
-			BMenuItem *mi = menu->ItemAt(fSearchStart);
+			BMenuItem* mi = menu->ItemAt(fSearchStart);
 			mi->SetMarked(true);
 			break;
 		}
@@ -248,8 +257,8 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 		{
 			// last book in search book
 			// Prevent a negative search scope for the last book
-			BMenu *menu = sndBookField->Menu();
-			BMenu *menu2 = bookField->Menu();
+			BMenu* menu = sndBookField->Menu();
+			BMenu* menu2 = bookField->Menu();
 			fSearchEnd = menu->IndexOf(menu->FindMarked());
 			for (uint8 i = 0; i <= fSearchEnd; i++)
 			{
@@ -261,7 +270,7 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 				BMenuItem* mi = menu2->ItemAt(i);
 				mi->SetEnabled(false);
 			}
-			BMenuItem *mi = menu->ItemAt(fSearchEnd);
+			BMenuItem* mi = menu->ItemAt(fSearchEnd);
 			mi->SetMarked(true);
 			break;
 		}
@@ -275,7 +284,7 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 		case FIND_BUTTON_OK:
 		{
 			fSearchString = searchString->Text();
-			if(fSearchString.CountChars() > 0)
+			if (fSearchString.CountChars() > 0)
 			{
 				findButton->SetEnabled(false);
 				searchString->SetEnabled(false);
@@ -285,18 +294,17 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 														books[fSearchStart],
 														books[fSearchEnd],
 														searchStatus);
-				searchResults->RemoveItems(0,searchResults->CountItems());
-				for(uint32 i = 0; i < verseList.size(); i++)
+				searchResults->RemoveItems(0, searchResults->CountItems());
+				for (uint32 i = 0; i < verseList.size(); i++)
        			{
 					BLanguage language;
 					BLocale::Default()->GetLanguage(&language);
-					sword::VerseKey myKey=sword::VerseKey(verseList[i]);
+					sword::VerseKey myKey = sword::VerseKey(verseList[i]);
 					myKey.setLocale(language.Code());
 					BString tmpstr(myKey.getText());
 					tmpstr << "   " << fCurrentModule->GetVerse(verseList[i]);
 					searchResults->AddItem(new BStringItem(tmpstr.String()));
-       			}   
-       			
+       			}
 				findButton->SetEnabled(true);
 				searchString->SetEnabled(true);
 			}
@@ -306,8 +314,8 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 		case FIND_CHECK_CASE_SENSITIVE:
 		{
 			fSearchFlags = (caseSensitiveCheckBox->Value() == B_CONTROL_ON) ?
-	 					fSearchFlags = 0 :
-	 					REG_ICASE;
+						fSearchFlags = 0 :
+						REG_ICASE;
 			break;
 		}
 
@@ -318,12 +326,13 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			if (i < verseList.size())
 			{
 				// TODO: Spawn with a frame obtained from preferences
-				BRect windowRect(50,50,599,399);
+				BRect windowRect(50, 50, 599, 399);
 				BLanguage language;
 				BLocale::Default()->GetLanguage(&language);
-				sword::VerseKey myKey=sword::VerseKey(verseList[i]);
+				sword::VerseKey myKey = sword::VerseKey(verseList[i]);
 				myKey.setLocale(language.Code());
-				SGMainWindow *win = new SGMainWindow(windowRect, curModule, myKey,VerseFromKey(myKey), VerseFromKey(myKey));
+				SGMainWindow* win = new SGMainWindow(windowRect, curModule,
+										myKey, VerseFromKey(myKey), VerseFromKey(myKey));
 				win->Show();
 			}
 			break;
@@ -333,12 +342,12 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 		{
 			// an item in the list is clicked. Show the verse in the textview
 			uint32 i = searchResults->CurrentSelection();
-			verseSelected->Delete(0,verseSelected->TextLength());
+			verseSelected->Delete(0, verseSelected->TextLength());
 			if (i < verseList.size())
 			{
-				verseSelected->Delete(0,verseSelected->TextLength());
+				verseSelected->Delete(0, verseSelected->TextLength());
 				verseSelected->Insert(fCurrentModule->GetParagraph(verseList[i]));
-				verseSelected->Select(0,0);
+				verseSelected->Select(0, 0);
 			}
 			break;
 		}
@@ -363,7 +372,7 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			BListItem*	item = NULL;
 			BString		clipBoardString= BString();
 			int32 selected;
-			int32 i=0;
+			int32 i = 0;
 			while ( (selected = searchResults->CurrentSelection(i)) >= 0 )
 			{
 				item = searchResults->ItemAt(selected);
@@ -380,14 +389,13 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 				be_clipboard->Clear();
     			if (clip = be_clipboard->Data())
 				{
-    				clip->AddData("text/plain", B_MIME_TYPE, clipBoardString.String(),clipBoardString.Length());
+					clip->AddData("text/plain", B_MIME_TYPE,
+						clipBoardString.String(), clipBoardString.Length());
     				be_clipboard->Commit();
-    			}
-    			else
+    			} else
     				printf("ERROR couldnt get clipboard Data");
     			be_clipboard->Unlock();
- 			}
- 			else
+ 			} else
  				printf("ERROR couldnt lock clipboard\n");
 		}
 		default:
@@ -395,6 +403,7 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 			break;
 	}
 }
+
 
 bool SGSearchWindow::QuitRequested() 
 {

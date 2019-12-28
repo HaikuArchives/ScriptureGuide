@@ -26,10 +26,10 @@ class SGSearchWindow : public BWindow
 {
 public:
 					SGSearchWindow(BRect frame, const char *module,
-									BMessenger *owner);
+									BMessenger* owner);
 					~SGSearchWindow();
 	virtual bool	QuitRequested();
-	virtual void	MessageReceived(BMessage *message);
+	virtual void	MessageReceived(BMessage* message);
 
 private:
 	void			BuildGUI(void);

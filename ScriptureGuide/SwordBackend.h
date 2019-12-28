@@ -30,13 +30,13 @@ enum
 };
 
 // Utility Functions
-int				ChaptersInBook(const char *book); 
-int				VersesInChapter(const char *book, int chapter); 
+int				ChaptersInBook(const char* book); 
+int				VersesInChapter(const char* book, int chapter); 
 
-const char *	BookFromKey(const char *key);
-int 			ChapterFromKey(const char *key);
-int				VerseFromKey(const char *key);
-int				UpperVerseFromKey(const char *key);
+const char*		BookFromKey(const char* key);
+int 			ChapterFromKey(const char* key);
+int				VerseFromKey(const char* key);
+int				UpperVerseFromKey(const char* key);
 
 
 std::vector<const char*>	GetBookNames(void);
@@ -45,25 +45,25 @@ std::vector<const char*>	GetBookNames(void);
 class SGModule
 {
 public:
-						SGModule(sword::SWModule *module);
-	const char *		Name(void);
-	const char *		FullName(void);
-	const char *		Language(void);
+						SGModule(sword::SWModule* module);
+	const char*			Name(void);
+	const char*			FullName(void);
+	const char*			Language(void);
 	
 	TextType			Type(void) { return fType; }
 	
-	const char *		GetKey(void);
-	void 				SetKey(const char *key);
+	const char*			GetKey(void);
+	void 				SetKey(const char* key);
 	
-	const char *		GetVerse();
-	const char *		GetVerse(const char *book, int chapter, int verse);
-	const char *		GetVerse(const char *key);
-	const char *		GetParagraph(const char *key);
+	const char*			GetVerse();
+	const char*			GetVerse(const char* book, int chapter, int verse);
+	const char*			GetVerse(const char* key);
+	const char*			GetParagraph(const char* key);
 	
-	void				SetVerse(const char *book, int chapter, int verse);
+	void				SetVerse(const char* book, int chapter, int verse);
 	
-	std::vector<const char*>	SearchModule(int searchType, int flags, const char *searchText,
-									const char *scopeFrom, const char *scopeTo,
+	std::vector<const char*>	SearchModule(int searchType, int flags, const char* searchText,
+									const char* scopeFrom, const char* scopeTo,
 									BStatusBar* statusBar);
 	
 	bool				IsGreek(void);
@@ -72,12 +72,12 @@ public:
  	bool				HasOT(void);
  	bool				HasNT(void);
 	
-	sword::SWModule	*	GetModule(void) const { return fModule; }
+	sword::SWModule*	GetModule(void) const { return fModule; }
 	
 private:
 	void				DetectTestaments(void);
 	
-	sword::SWModule		*fModule;
+	sword::SWModule*	fModule;
 	TextType			fType;
 	
 	bool				fDetectOTNT,
@@ -102,18 +102,18 @@ public:
 	int32				CountLexicons(void) const;
 	int32				CountGeneralTexts(void) const;
 	
-	SGModule *			BibleAt(const int32 &index) const;
-	SGModule *			CommentaryAt(const int32 &index) const;
-	SGModule *			LexiconAt(const int32 &index) const;
-	SGModule *			GeneralTextAt(const int32 &index) const;
+	SGModule*			BibleAt(const int32 &index) const;
+	SGModule*			CommentaryAt(const int32 &index) const;
+	SGModule*			LexiconAt(const int32 &index) const;
+	SGModule*			GeneralTextAt(const int32 &index) const;
 	
-	SGModule *			FindModule(const char *name);
-	status_t			SetModule(SGModule *mod);
- 	SGModule *			CurrentModule(void);
+	SGModule*			FindModule(const char* name);
+	status_t			SetModule(SGModule* mod);
+ 	SGModule*			CurrentModule(void);
 
 private:
-	sword::SWMgr 		*fManager;
-	SGModule			*fModule;
+	sword::SWMgr* 		fManager;
+	SGModule*			fModule;
 	
 	SGModuleList		*fBibleList,
 						*fCommentList,
