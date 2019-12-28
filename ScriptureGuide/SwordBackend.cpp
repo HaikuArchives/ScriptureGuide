@@ -197,6 +197,7 @@ void SGModule::SetKey(const char* key)
 	fModule->setKey(vkey);
 }
 
+
 void SGModule::SetVerse(const char* book, int chapter, int verse)
 {
 	// TODO: Convert this to return a status_t - B_ERROR on failure.
@@ -210,6 +211,7 @@ void SGModule::SetVerse(const char* book, int chapter, int verse)
 	fModule->setKey(myKey);
 }
 
+
 // callback function: sword library calls it with percentage-done
 // during a search
 void percentUpdate(char percent, void *userData)
@@ -219,6 +221,7 @@ void percentUpdate(char percent, void *userData)
 	bar->Update((float)percent - bar->CurrentValue());
 }
 
+
 // returns a list of search results on the current module with
 // searchType: word search, phrase search, regex search
 // flags: standard regex flags: see regex.h from POSIX
@@ -226,8 +229,8 @@ void percentUpdate(char percent, void *userData)
 // scopeFrom: book name to search from
 // scopeTo: book name to search to
 vector<const char*> SGModule::SearchModule(int searchType, int flags, 
-						const char *searchText, const char *startbook,
-						const char *endbook, BStatusBar* statusBar)
+						const char* searchText, const char* startbook,
+						const char* endbook, BStatusBar* statusBar)
 {
 	vector<const char*> results;
 	
@@ -264,7 +267,7 @@ SwordBackend::SwordBackend(void)
 	// are a little easier to deal with outside the class
 	
 	// First, lists to contain the names of each type of text
-	fBibleList = new SGModuleList(20 true);
+	fBibleList = new SGModuleList(20, true);
 	fCommentList = new SGModuleList(20, true);
 	fLexiconList = new SGModuleList(20, true);
 	fTextList = new SGModuleList(20, true);
@@ -309,7 +312,7 @@ SwordBackend::~SwordBackend(void)
 }
 
 
-SGModule *SwordBackend::FindModule(const char* name)
+SGModule* SwordBackend::FindModule(const char* name)
 {
 	sword::SWModule* module = fManager->Modules[name];
 	
@@ -332,7 +335,7 @@ SGModule *SwordBackend::FindModule(const char* name)
 	else
 		return NULL;
 	
-	for(int32 i = 0; i < list->CountItems(); i++)
+	for (int32 i = 0; i < list->CountItems(); i++)
 	{
 		SGModule* mod = list->ItemAt(i);
 		if (mod->GetModule() == module)
@@ -342,7 +345,7 @@ SGModule *SwordBackend::FindModule(const char* name)
 }
 
 
-status_t SwordBackend::SetModule(SGModule *mod)
+status_t SwordBackend::SetModule(SGModule* mod)
 {
 	if (!mod)
 		return B_ERROR;
@@ -399,6 +402,7 @@ SGModule* SwordBackend::LexiconAt(const int32 &index) const
 	return fLexiconList->ItemAt(index);
 }
 
+
 SGModule* SwordBackend::GeneralTextAt(const int32 &index) const
 {
 	return fTextList->ItemAt(index);
@@ -438,7 +442,7 @@ int ChaptersInBook(const char* book)
 }
 
 
-int VersesInChapter(const char *book, int chapter)
+int VersesInChapter(const char* book, int chapter)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
@@ -450,7 +454,7 @@ int VersesInChapter(const char *book, int chapter)
 }
 
 
-const char* BookFromKey(const char *key)
+const char* BookFromKey(const char* key)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
@@ -470,6 +474,7 @@ int ChapterFromKey(const char* key)
 	myKey.setText(key);
 	return myKey.getChapter();
 }
+
 
 int VerseFromKey(const char* key)
 {

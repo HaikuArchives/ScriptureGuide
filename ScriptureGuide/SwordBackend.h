@@ -62,9 +62,9 @@ public:
 	
 	void				SetVerse(const char* book, int chapter, int verse);
 	
-	std::vector<const char*>	SearchModule(int searchType, int flags, const char* searchText,
-									const char* scopeFrom, const char* scopeTo,
-									BStatusBar* statusBar);
+	std::vector<const char*>	SearchModule(int searchType, int flags,
+								const char* searchText, const char* scopeFrom,
+								const char* scopeTo, BStatusBar* statusBar);
 	
 	bool				IsGreek(void);
 	bool				IsHebrew(void);

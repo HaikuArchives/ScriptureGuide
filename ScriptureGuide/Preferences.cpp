@@ -42,7 +42,7 @@ status_t LoadPreferences(const char* path)
 		return status;
 	
 	status = msg.Unflatten(&file);
-	if (status==B_OK)
+	if (status == B_OK)
 		preferences = msg;
 		
 	prefsLock.Unlock();
@@ -63,8 +63,8 @@ status_t SaveModulePreferences(const char* module, BMessage* msg)
 
 	BFile file(path.String(), B_READ_WRITE | B_ERASE_FILE | B_CREATE_FILE);
 	
-	status_t status=file.InitCheck();
-	if (status!=B_OK)
+	status_t status = file.InitCheck();
+	if (status != B_OK)
 	{
 		modPrefsLock.Unlock();
 		return status;
@@ -97,7 +97,7 @@ status_t LoadModulePreferences(const char* module, BMessage* msg)
 		return status;
 	}
 	
-	status=temp.Unflatten(&file);
+	status = temp.Unflatten(&file);
 	if (status == B_OK)
 		*msg = temp;
 

@@ -71,7 +71,8 @@ void VersePreview::FrameResized(float width, float height)
 }
 
 
-SGSearchWindow::SGSearchWindow(BRect frame, const char* module, BMessenger* owner)
+SGSearchWindow::SGSearchWindow(BRect frame, const char* module,
+					BMessenger* owner)
  :	BWindow(frame, "", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL,
 			B_NOT_ZOOMABLE),
  	fMessenger(owner)
@@ -139,7 +140,8 @@ void SGSearchWindow::BuildGUI(void)
 	BPopUpMenu* bookChoice = new BPopUpMenu("biblebook");
 	bookField = new BMenuField("book_field", B_TRANSLATE("Start in "), bookChoice);
 	bookField->SetDivider(bookField->StringWidth( B_TRANSLATE("Start in "))+5);
- 	BMenuItem* firstBook = new BMenuItem(books[0], new BMessage(FIND_SELECT_FROM)); 
+ 	BMenuItem* firstBook = new BMenuItem(books[0],
+								new BMessage(FIND_SELECT_FROM)); 
 	firstBook->SetMarked(true);
 	bookChoice->AddItem(firstBook);
 	for (unsigned int i = 1; i<books.size(); i++)
@@ -151,7 +153,7 @@ void SGSearchWindow::BuildGUI(void)
 						sndBookChoice);
 	sndBookField->SetDivider(sndBookField->StringWidth(
 						B_TRANSLATE("End in ")) + 5);
- 	BMenuItem *lastBook = new BMenuItem(books[books.size()-1],
+ 	BMenuItem* lastBook = new BMenuItem(books[books.size()-1],
 								new BMessage(FIND_SELECT_TO)); 
 	lastBook->SetMarked(true);
 	for (uint16 i = 0; i < books.size() - 1; i++)
@@ -159,13 +161,13 @@ void SGSearchWindow::BuildGUI(void)
 	sndBookChoice->AddItem(lastBook);
 	
 	// The radio buttons
-	BRadioButton *wordsRadio = new BRadioButton("exactwords", 
+	BRadioButton* wordsRadio = new BRadioButton("exactwords", 
 						B_TRANSLATE("Find Words"), new BMessage(FIND_RADIO1));
 	
-	BRadioButton *phraseRadio = new BRadioButton("phrase",
+	BRadioButton* phraseRadio = new BRadioButton("phrase",
 						B_TRANSLATE("Find Phrase"),	new BMessage(FIND_RADIO2));
 
-	BRadioButton *regexRadio = new BRadioButton("regex",
+	BRadioButton* regexRadio = new BRadioButton("regex",
 						B_TRANSLATE("Regular Expression"), new BMessage(FIND_RADIO3));
 	
 	wordsRadio->SetValue(B_CONTROL_ON);
@@ -220,7 +222,7 @@ void SGSearchWindow::BuildGUI(void)
 }
 
 
-void SGSearchWindow::MessageReceived(BMessage *message) 
+void SGSearchWindow::MessageReceived(BMessage* message) 
 {
 	switch (message->what) 
 	{
@@ -391,10 +393,10 @@ void SGSearchWindow::MessageReceived(BMessage *message)
 				{
 					clip->AddData("text/plain", B_MIME_TYPE,
 						clipBoardString.String(), clipBoardString.Length());
-    				be_clipboard->Commit();
-    			} else
-    				printf("ERROR couldnt get clipboard Data");
-    			be_clipboard->Unlock();
+					be_clipboard->Commit();
+				} else
+					printf("ERROR couldnt get clipboard Data");
+				be_clipboard->Unlock();
  			} else
  				printf("ERROR couldnt lock clipboard\n");
 		}

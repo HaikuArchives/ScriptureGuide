@@ -112,7 +112,7 @@ void FontColumn::DrawField (BField* field, BRect rect, BView* parent)
 		BString	out_string(fText);
 
 		parent->TruncateString(&out_string, B_TRUNCATE_END, width + 2);
-		fClippedText=out_string.String();
+		fClippedText = out_string.String();
 		fWidth = width;
 	}
 	BFont font = ffield->Font();
@@ -120,6 +120,7 @@ void FontColumn::DrawField (BField* field, BRect rect, BView* parent)
 	parent->SetFont(&font);
 	DrawString(fClippedText.String(), parent, rect);
 }
+
 
 // We implement this over the one in BTitledColumn because 
 // the text layout calculations suck for our purposes. 
@@ -169,7 +170,8 @@ bool FontColumn::AcceptsField(const BField* field) const
 class FontWindow : public BWindow
 {
 public:
-	FontWindow(const BRect& frame, float fontsize, BHandler* target, BMessage *msg);
+	FontWindow(const BRect& frame, float fontsize, BHandler* target,
+			BMessage *msg);
 	~FontWindow() {}
 	
 	virtual void MessageReceived(BMessage* msg);
@@ -191,8 +193,10 @@ private:
 	Spinner* fSpinner;
 };
 
-FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target, BMessage *msg)
- : BWindow(frame, "Choose a Font", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_NOT_CLOSABLE)
+FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target,
+				BMessage *msg)
+ : BWindow(frame, "Choose a Font", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL,
+				B_NOT_CLOSABLE)
 {
 	fReallyQuit = false;
 	fTarget = target;
@@ -202,10 +206,10 @@ FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target, BMe
 	else
 		fMessage = *msg;
 	
-	fFontList = new BColumnListView("fontlist", B_WILL_DRAW|B_NAVIGABLE);
+	fFontList = new BColumnListView("fontlist", B_WILL_DRAW | B_NAVIGABLE);
 
 	float width = fFontList->StringWidth(B_TRANSLATE("Font Name"));
-	BStringColumn* col=new BStringColumn(B_TRANSLATE("Font Name"), width*3, width,
+	BStringColumn* col = new BStringColumn(B_TRANSLATE("Font Name"), width*3, width,
 			width*20, B_TRUNCATE_END);
 	fFontList->AddColumn(col, 0);
 	fFontList->SetSortColumn(col, true, true);
@@ -221,7 +225,7 @@ FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target, BMe
 	FontColumn* fcol = new FontColumn(B_TRANSLATE("Preview"), previewWidth, width, previewWidth*2,
 			B_TRUNCATE_END);
 	fcol->SetFontSize(fontsize);
-	fFontList->AddColumn(fcol,1);
+	fFontList->AddColumn(fcol, 1);
 	fFontList->SetColumnFlags(B_ALLOW_COLUMN_RESIZE);
 	
 	fSpinner=new Spinner("spinner", B_TRANSLATE("Font Size: "), new BMessage(M_SIZE_CHANGE));
@@ -268,11 +272,11 @@ FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target, BMe
 			{
 				font_style style;
 				uint32 flags;
-				if (get_font_style(localfamily,j,&style,&flags) == B_OK)
+				if (get_font_style(localfamily, j, &style, &flags) == B_OK)
 				{
 					BRow* row = new BRow(rowsize);
 					fFontList->AddRow(row);
-					if(i == 0)
+					if (i == 0)
 						selectionrow = row;
 					
 					BString string(localfamily);
@@ -315,7 +319,7 @@ void FontWindow::MessageReceived(BMessage* msg)
 			
 			BRow* row = fFontList->FocusRow();
 			FontField* field = (FontField*)row->GetField(1);
-			BFont font=field->Font();
+			BFont font = field->Font();
 			
 			font_family family;
 			font_style style;
@@ -349,7 +353,7 @@ void FontWindow::SetFontSize(uint16 size)
 	col->SetFontSize(fSpinner->Value());
 
 	int32 newheight = (4*fSpinner->Value())/3;
-	for (int32 i=0; i<fFontList->CountRows(); i++)
+	for (int32 i = 0; i<fFontList->CountRows(); i++)
 	{
 		BRow* row = fFontList->RowAt(i);
 //		row->SetHeight(newheight); // TODO
@@ -414,6 +418,7 @@ FontPanel::~FontPanel(void)
 	fWindow->ReallyQuit();
 	fWindow->PostMessage(B_QUIT_REQUESTED);
 }
+
 
 void FontPanel::SelectFont(const BFont &font)
 {

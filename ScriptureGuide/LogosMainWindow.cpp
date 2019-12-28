@@ -181,11 +181,11 @@ void SGMainWindow::BuildGUI(void)
 		new BMessage(PREV_CHAPTER), B_LEFT_ARROW));
 	menu->AddSeparatorItem();
 	
-	BMenuItem *copyitem = new BMenuItem(B_TRANSLATE("Copy Verses"),
+	BMenuItem* copyitem = new BMenuItem(B_TRANSLATE("Copy Verses"),
 		new BMessage(B_COPY), 'C');
 	menu->AddItem(copyitem);
 	
-	BMenuItem *selectallitem = new BMenuItem(B_TRANSLATE("Select All"),
+	BMenuItem* selectallitem = new BMenuItem(B_TRANSLATE("Select All"),
 		new BMessage(B_SELECT_ALL), 'A');
 	menu->AddItem(selectallitem);
 	fMenuBar->AddItem(menu);
@@ -238,7 +238,7 @@ void SGMainWindow::BuildGUI(void)
 	modulemenu->AddItem(fCommentaryMenu);
 	
 	// Add the toolbar view	
-	BBox *toolbar = new BBox("toolbar_view");
+	BBox* toolbar = new BBox("toolbar_view");
 	
 	fModuleField = new BMenuField("modulefield", B_TRANSLATE("Text:"), modulemenu);
 	fModuleField->SetDivider(be_plain_font->StringWidth("Text:") + 5);
@@ -270,7 +270,7 @@ void SGMainWindow::BuildGUI(void)
 	BTextView* verseView = fVerseBox->TextView();
 	BTextView* chapterView = fChapterBox->TextView();
 	
-	for(int32 i=0; i < alphaChars.CountChars(); i++)
+	for (int32 i = 0; i < alphaChars.CountChars(); i++)
 	{
 		char c = alphaChars.ByteAt(i);
 		chapterView->DisallowChar(c);
@@ -285,7 +285,7 @@ void SGMainWindow::BuildGUI(void)
 	textrect.OffsetTo(B_ORIGIN);
 	
 	fVerseView = new BTextView(textframe, "text_view", textrect,
-				B_FOLLOW_ALL_SIDES, B_WILL_DRAW|B_PULSE_NEEDED);
+				B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_PULSE_NEEDED);
 	fScrollView = new BScrollView("scroll_view", fVerseView,
 				B_FOLLOW_ALL_SIDES, 0, false, true, B_NO_BORDER);
 	
@@ -390,7 +390,8 @@ void SGMainWindow::InsertChapter(void)
 		{
 			// for commentaries, avoid doubled output
 			oldtxt.SetTo(newtxt);
-			newtxt.SetTo(fCurrentModule->GetVerse(currentbook.String(), fCurrentChapter, currentverse));
+			newtxt.SetTo(fCurrentModule->GetVerse(currentbook.String(),
+							fCurrentChapter, currentverse));
 			if (oldtxt != newtxt && newtxt.CountChars() > 0)
 			{
 				if (fShowVerseNumbers)
@@ -501,8 +502,7 @@ void SGMainWindow::LoadPrefsForModule(void)
 			msg.AddString("family",fam);
 			msg.AddString("style",sty);
 			saveprefs = true;
-		}
-		else
+		} else
 		{
 			fDisplayFont.SetFamilyAndStyle(sfam.String(),ssty.String());
 			fDisplayFont.SetSize(fFontSize);
@@ -831,12 +831,12 @@ void SGMainWindow::SetModuleFromString(const char* name)
 	if (!name)
 		return;
 	
-	SGModule *current = NULL;
+	SGModule* current = NULL;
 	for (int32 i = 0; i < fModManager->CountBibles(); i++)
 	{
 		current = fModManager->BibleAt(i);
-		if ( strcmp(name,current->Name()) == 0
-			|| strcmp(name,current->FullName()) == 0 )
+		if ( strcmp(name, current->Name()) == 0
+			|| strcmp(name, current->FullName()) == 0 )
 		{
 			SetModule(TEXT_BIBLE, i);
 			return;
@@ -846,8 +846,8 @@ void SGMainWindow::SetModuleFromString(const char* name)
 	for (int32 i = 0; i < fModManager->CountCommentaries(); i++)
 	{
 		current = fModManager->CommentaryAt(i);
-		if ( strcmp(name,current->Name()) == 0
-			|| strcmp(name,current->FullName()) == 0 )
+		if ( strcmp(name, current->Name()) == 0
+			|| strcmp(name, current->FullName()) == 0 )
 		{
 			SetModule(TEXT_COMMENTARY, i);
 			return;
@@ -957,7 +957,6 @@ void SGMainWindow::SetChapter(const int16 &chapter)
 		} else
 		{
 			fCurrentChapter = maxchapters;
-			//fCurrentVerse	= 0;
 			return;
 		}
 	} else if (chapter < 1)
@@ -977,8 +976,7 @@ void SGMainWindow::SetChapter(const int16 &chapter)
 			
 			currentbook = fBookMenu->ItemAt(index)->Label();
 			fCurrentChapter = ChaptersInBook(fBookMenu->FindMarked()->Label());
-		}
-		else
+		} else
 		{
 			fCurrentChapter = 1;
 			return;
@@ -1004,8 +1002,9 @@ void SGMainWindow::SetChapter(const int16 &chapter)
 void SGMainWindow::SetVerse(const int16 &verse)
 {
 	fCurrentVerse = verse;
-	fVerseView->Delete(0,fVerseView->TextLength());
-	// ToDo make a better implemenation since now we redraw everything... just to scroll to the right verse..
+	fVerseView->Delete(0, fVerseView->TextLength());
+	// ToDo make a better implemenation since now we redraw everything...
+	// just to scroll to the right verse..
 	InsertChapter();
 	BString vText;	
 	vText << fCurrentVerse;

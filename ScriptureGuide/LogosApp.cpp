@@ -36,7 +36,7 @@ SGApp::SGApp()
 		prefsLock.Lock();
 		
 		if (preferences.FindRect("windowframe",&windowRect) != B_OK)
-			windowRect.Set(50,50,749,449);
+			windowRect.Set(50, 50, 749, 449);
 		
 		if (preferences.FindString("module",&module) != B_OK)
 			module = "WEB";
@@ -91,7 +91,7 @@ status_t SGApp::StartupCheck(void)
 	// Check to see if the preferences file and/or folder exists. If they don't,
 	// we will create the preferences folder
 	BEntry prefsFolder(PREFERENCES_PATH),prefsFile(PREFERENCES_FILE);
-	bool useDefaultPrefs=false;
+	bool useDefaultPrefs = false;
 	
 	if (!prefsFolder.Exists())
 	{
@@ -157,10 +157,10 @@ status_t SGApp::StartupCheck(void)
 	BDirectory dir;
 	entry.SetTo(MODULES_PATH);
 	bool modfail = false;
-	BAlert*alert = NULL;
+	BAlert* alert = NULL;
 	
 	if (!entry.Exists())
-		create_directory(MODULES_PATH,0777);
+		create_directory(MODULES_PATH, 0777);
 
 	entry.SetTo(MODULES_PATH "mods.d");
 	if (!entry.Exists())
@@ -225,7 +225,7 @@ status_t SGApp::StartupCheck(void)
 		if (!entry.Exists())
 			gDocsAvailable = false;
 	} else
-		gDocsAvailable=false;
+		gDocsAvailable = false;
 	
 	// Ensure that the study notes exist
 	BString notespath(NOTESPATH);
@@ -238,8 +238,8 @@ status_t SGApp::StartupCheck(void)
 		
 		notespath+="Notes.txt";
 		BFile file(notespath.String(), B_READ_WRITE | B_CREATE_FILE);
-		const char notes[]="Scripture Guide Study Notes\n----------------------\n";
-		file.Write(notes,strlen(notes));
+		const char notes[] = "Scripture Guide Study Notes\n----------------------\n";
+		file.Write(notes, strlen(notes));
 		file.Unset();
 	} else
 	{
@@ -249,8 +249,8 @@ status_t SGApp::StartupCheck(void)
 		if (!entry.Exists())
 		{
 			BFile file(notespath.String(), B_READ_WRITE | B_CREATE_FILE);
-			const char notes[]="Scripture Guide Study Notes\n----------------------\n";
-			file.Write(notes,strlen(notes));
+			const char notes[] = "Scripture Guide Study Notes\n----------------------\n";
+			file.Write(notes, strlen(notes));
 			file.Unset();
 		}
 	}
@@ -260,7 +260,7 @@ status_t SGApp::StartupCheck(void)
 
 
 // An easy function to access the path that the file run from
-const char *GetAppPath(void)
+const char* GetAppPath(void)
 {
 	return gAppPath.String();
 }
