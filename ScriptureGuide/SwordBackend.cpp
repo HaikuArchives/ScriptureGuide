@@ -436,8 +436,9 @@ int ChaptersInBook(const char* book)
 {
 	BLanguage language;
 	BLocale::Default()->GetLanguage(&language);
-	VerseKey myKey(book);
+	VerseKey myKey = VerseKey();;
 	myKey.setLocale(language.Code());
+	myKey.setBookName(book);
 	return myKey.getChapterMax();
 }
 
