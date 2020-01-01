@@ -137,7 +137,7 @@ const char* SGModule::GetVerse(const char* key)
 {
 	VerseKey myKey = VerseKey();
 	myKey.setLocale(language.Code());
-	fModule->setKey(myKey);
+	fModule->setKey(key);
 	return fModule->renderText();
 }
 
