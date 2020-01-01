@@ -135,7 +135,8 @@ const char* SGModule::GetVerse(const char* book, int chapter, int verse)
 
 const char* SGModule::GetVerse(const char* key)
 {
-	VerseKey myKey(key);
+	VerseKey myKey = VerseKey();
+	myKey.setLocale(language.Code());
 	fModule->setKey(myKey);
 	return fModule->renderText();
 }
