@@ -181,7 +181,7 @@ void SGSearchWindow::BuildGUI(void)
 	BStringView* resultsLabel = new BStringView("resultslabel", B_TRANSLATE("Search Results:"));
 	
 	// The listview for the results
-	searchResults = new BListView("searchresults", B_MULTIPLE_SELECTION_LIST);
+	searchResults = new ResultListView("searchresults", B_MULTIPLE_SELECTION_LIST);
 	searchResults->SetInvocationMessage(new BMessage(FIND_LIST_DCLICK));
 	searchResults->SetSelectionMessage(new BMessage(FIND_LIST_CLICK));
 	
@@ -296,16 +296,11 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 														books[fSearchStart],
 														books[fSearchEnd],
 														searchStatus);
-				searchResults->RemoveItems(0, searchResults->CountItems());
+				searchResults->MakeEmpty();
 				for (uint32 i = 0; i < verseList.size(); i++)
        			{
-					BLanguage language;
-					BLocale::Default()->GetLanguage(&language);
-					sword::VerseKey myKey = sword::VerseKey(verseList[i]);
-					myKey.setLocale(language.Code());
-					BString tmpstr(myKey.getText());
-					tmpstr << "   " << fCurrentModule->GetVerse(verseList[i]);
-					searchResults->AddItem(new BStringItem(tmpstr.String()));
+					BString tmpstr(fCurrentModule->GetVerse(verseList[i]));
+					searchResults->AddItem(new BibleItem(verseList[i], tmpstr.String()));
        			}
 				findButton->SetEnabled(true);
 				searchString->SetEnabled(true);
@@ -324,14 +319,14 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 		case FIND_LIST_DCLICK:
 		{
 			// an item in the list is double clicked. Open a new window with the selected verse
-			uint32 i = searchResults->CurrentSelection();
-			if (i < verseList.size())
+			BibleItem *item = dynamic_cast<BibleItem*>(searchResults->FullListItemAt(searchResults->FullListCurrentSelection()));
+			if (item)
 			{
 				// TODO: Spawn with a frame obtained from preferences
 				BRect windowRect(50, 50, 599, 399);
 				BLanguage language;
 				BLocale::Default()->GetLanguage(&language);
-				sword::VerseKey myKey = sword::VerseKey(verseList[i]);
+				sword::VerseKey myKey = sword::VerseKey(item->GetKey());
 				myKey.setLocale(language.Code());
 				SGMainWindow* win = new SGMainWindow(windowRect, curModule,
 										myKey, VerseFromKey(myKey), VerseFromKey(myKey));
@@ -343,12 +338,11 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 		case FIND_LIST_CLICK:
 		{
 			// an item in the list is clicked. Show the verse in the textview
-			uint32 i = searchResults->CurrentSelection();
-			verseSelected->Delete(0, verseSelected->TextLength());
-			if (i < verseList.size())
+			BibleItem *item = dynamic_cast<BibleItem*>(searchResults->FullListItemAt(searchResults->FullListCurrentSelection()));
+			if (item)
 			{
 				verseSelected->Delete(0, verseSelected->TextLength());
-				verseSelected->Insert(fCurrentModule->GetParagraph(verseList[i]));
+				verseSelected->Insert(fCurrentModule->GetParagraph(item->GetKey()));
 				verseSelected->Select(0, 0);
 			}
 			break;
@@ -371,18 +365,17 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 		}
 		case B_COPY:
 		{
-			BListItem*	item = NULL;
 			BString		clipBoardString= BString();
-			int32 selected;
 			int32 i = 0;
-			while ( (selected = searchResults->CurrentSelection(i)) >= 0 )
+			int32 selected =searchResults->FullListCurrentSelection(i);
+			BibleItem *item = NULL;
+			while ( (item =dynamic_cast<BibleItem*>(searchResults->FullListItemAt(selected))) != 0 )
 			{
-				item = searchResults->ItemAt(selected);
 				i++;
 				if (i < verseList.size())
 				{
-					clipBoardString << verseList[i];
-					clipBoardString << "   " << fCurrentModule->GetVerse(verseList[i]);
+					clipBoardString << item->GetKey();
+					clipBoardString << "   " << item->GetText();
 				}
 			}
 			BMessage* clip = NULL;

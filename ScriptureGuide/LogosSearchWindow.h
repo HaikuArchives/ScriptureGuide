@@ -9,6 +9,8 @@
 #include <Messenger.h>
 #include <StatusBar.h>
 
+#include "ResultListView.h"
+
 class VersePreview;
 class SGModule;
 
@@ -41,7 +43,7 @@ private:
 	BMenuField			*bookField;
 	BMenuField			*sndBookField;
 	BTextControl		*searchString;
-	BListView			*searchResults;
+	ResultListView		*searchResults;
 	VersePreview		*verseSelected;
 	BCheckBox			*caseSensitiveCheckBox;
 	BStatusBar			*searchStatus;
