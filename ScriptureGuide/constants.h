@@ -88,6 +88,8 @@ const uint32 FIND_TMP					= 'FTmp';
 
 const uint32 DOCS_UNAVAILABLE			= 'DCUN';
 
+const uint32 SG_BIBLE					= 'SGbl';
+
 // search flags
 
 const int REG_ICASE						= 2;  
