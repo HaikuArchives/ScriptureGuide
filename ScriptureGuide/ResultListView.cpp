@@ -3,41 +3,83 @@
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #include <AppDefs.h>
+#include <Bitmap.h>
 #include <Catalog.h>
-#include <ColumnTypes.h>
+#include <ListItem.h>
 #include <Locale.h>
+#include <View.h>
+
+#include <stdio.h>
 
 #include "ResultListView.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "SearchWindow"
 
-ResultRow::ResultRow(char* key, char* text)
-	: BRow()
+BibleItem::BibleItem(const char* key,  const char* text)
+	: BListItem()
 {
-	BStringField *key_field = new BStringField(key);
-	BStringField *text_field = new BStringField(text);
-	SetField(key_field,0);
-	SetField(text_field,1);
+	fKey=key;
+	fText=text;
 }
 
-ResultRow::~ResultRow(void)
+BibleItem::~BibleItem(void)
 {
 }
 
-
-ResultListView::ResultListView(BRect rect, const char* name)
-	: BColumnListView(rect, name, 0, 0, B_NO_BORDER, true),
-		fDragCommand(B_SIMPLE_DATA)
+void BibleItem::DrawItem(BView *owner,
+            BRect frame,
+            bool complete)
 {
-	Init();
+	DrawBackground(owner, frame);
+	ResultListView* rlView = dynamic_cast<ResultListView *>(owner);
+	if (IsSelected())
+		owner->SetHighColor(ui_color(B_LIST_SELECTED_ITEM_TEXT_COLOR));
+	else
+		owner->SetHighColor(ui_color(B_LIST_ITEM_TEXT_COLOR));
+	font_height fh;
+	owner->GetFontHeight(&fh);
+	
+	BString truncatedString(fText);
+	owner->TruncateString(&truncatedString, B_TRUNCATE_MIDDLE,
+						  frame.Width() - TEXT_OFFSET - 4.0);
+						  
+	float height = frame.Height();
+	float textHeight = fh.ascent + fh.descent;
+	BPoint keyPoint;
+	BPoint versePoint;
+	keyPoint.x = frame.left + TEXT_OFFSET;
+	keyPoint.y = frame.top
+				  + ceilf(height / 2.0 - textHeight / 2.0
+				  		  + fh.ascent);	
+	versePoint=keyPoint;
+	keyPoint.x = keyPoint.x + owner->StringWidth(fKey)+5;
+	owner->DrawString(fKey, keyPoint);
+	owner->DrawString(truncatedString.String(),versePoint );
 }
 
+void BibleItem::DrawBackground(BView *owner, BRect frame)
+{
+	// stroke a blue frame around the item if it's focused
+	/*if (flags & FLAGS_FOCUSED) {
+		owner->SetLowColor(ui_color(B_KEYBOARD_NAVIGATION_COLOR));
+		owner->StrokeRect(frame, B_SOLID_LOW);
+		frame.InsetBy(1.0, 1.0);
+	}*/
+	// figure out bg-color
+	rgb_color color = ui_color(B_LIST_BACKGROUND_COLOR);
 
+	if (IsSelected())
+		color = ui_color(B_LIST_SELECTED_BACKGROUND_COLOR);
 
-ResultListView::ResultListView(const char*name)
-	:BColumnListView(name, 0, B_NO_BORDER, true),
-		fDragCommand(B_SIMPLE_DATA)
+	owner->SetLowColor(color);
+	owner->FillRect(frame, B_SOLID_LOW);
+}
+
+ResultListView::ResultListView(const char* name, list_view_type type
+					, uint32 flags)
+	:BOutlineListView( name, type, flags),
+	fDragCommand(B_SIMPLE_DATA)
 {
 	Init();
 }
@@ -49,18 +91,20 @@ ResultListView::~ResultListView()
 
 void ResultListView::Init()
 {
-	BStringColumn *verse_key = new BStringColumn(B_TRANSLATE("Bibleverse"),25,50,50,0);
-	BStringColumn *preview = new BStringColumn(B_TRANSLATE("Preview"),200,50,1000,0);
-	AddColumn(verse_key,0);
-	AddColumn(preview,1);
 }
 
+
 bool
-ResultListView::InitiateDrag( BPoint point, int32 index, bool )
+ResultListView::InitiateDrag( BPoint point, int32 index, bool)
 {
 	bool success = false;
-	BRow* row = CurrentSelection( NULL );
-	if ( row ) {
+	BListItem* item = ItemAt(CurrentSelection(0));
+	if (!item) {
+		// workarround a timing problem
+		Select(index);
+		item = ItemAt(index);
+	}
+	if (item) {
 		// create drag message
 		BMessage msg( fDragCommand );
 		MakeDragMessage( &msg );
@@ -68,14 +112,17 @@ ResultListView::InitiateDrag( BPoint point, int32 index, bool )
 		float width = Bounds().Width();
 		BRect dragRect(0.0, 0.0, width, -1.0);
 		// figure out, how many items fit into our bitmap
-		int32 numItems;
+		int32 sIndex=0;
 		bool fade = false;
-		for (numItems = 0; BRow* item = CurrentSelection( item ) ; numItems++) {
+		BibleItem* tmpItem =NULL;
+		for (int32 i = 0; (sIndex = CurrentSelection(i)) >= 0; i++)
+		{
+			tmpItem = dynamic_cast<BibleItem*>(ItemAt(CurrentSelection(sIndex)));
 			dragRect.bottom += ceilf( item->Height() ) + 1.0;
 			if ( dragRect.Height() > MAX_DRAG_HEIGHT ) {
 				fade = true;
 				dragRect.bottom = MAX_DRAG_HEIGHT;
-				numItems++;
+				i++;
 				break;
 			}
 		}
@@ -87,18 +134,15 @@ ResultListView::InitiateDrag( BPoint point, int32 index, bool )
 				BRect itemBounds( dragRect) ;
 				itemBounds.bottom = 0.0;
 				// let all selected items, that fit into our drag_bitmap, draw
-				BRow* item = NULL;	
-				for ( int32 i = 0; i < numItems; i++ ) {			
-					item = CurrentSelection( item );
+				BibleItem* item = NULL;
+				int32 sIndex=0;
+				for (int32 i = 0; (sIndex = CurrentSelection(i)) >= 0; i++)
+				{
+					item = dynamic_cast<BibleItem*>(ItemAt(CurrentSelection(sIndex)));
 					itemBounds.bottom = itemBounds.top + ceilf( item->Height() );
 					if ( itemBounds.bottom > dragRect.bottom )
 						itemBounds.bottom = dragRect.bottom;
-					for (int32 q = 0; q < CountColumns(); q++)
-					{
-						BColumn* column = ColumnAt(q);
-						column->DrawField(item->GetField(0), itemBounds, v);
-						column->DrawField(item->GetField(1), itemBounds, v);
-					}
+					item->DrawItem(v, itemBounds);
 					itemBounds.top = itemBounds.bottom + 1.0;
 				}
 				// make a black frame arround the edge
@@ -146,25 +190,20 @@ ResultListView::InitiateDrag( BPoint point, int32 index, bool )
 	return success;
 }
 
-
-void
-ResultListView::MakeDragMessage(BMessage* message) const
+void ResultListView::MakeDragMessage(BMessage* message)
 {
-	BLanguage language;
-	BLocale::Default()->GetLanguage(&language);
-	for (int32 i = 0; i < CountRows(); i++)
+	if (message)
 	{
-		const ResultRow* tmpRow = dynamic_cast<const ResultRow*>(RowAt(i));
-		if (tmpRow != NULL)
+		BLanguage language;
+		BLocale::Default()->GetLanguage(&language);
+		int32 index;
+		for (int32 i = 0; (index = CurrentSelection(i)) >= 0; i++)
 		{
-			if (tmpRow->HasLatch() != true)
+			BibleItem* tmpItem = dynamic_cast< BibleItem*>(FullListItemAt(index));
+			if (tmpItem != NULL)
 			{
-				const BStringField* tmpField = dynamic_cast<const BStringField*>(tmpRow->GetField(0));
-				if (tmpField != NULL)
-					message->AddString("key", tmpField->String());
-				tmpField = dynamic_cast<const BStringField*>(tmpRow->GetField(1));
-				if (tmpField != NULL)
-					message->AddString("text",tmpField->String());
+				message->AddString("key", tmpItem->GetKey());
+				message->AddString("text",tmpItem->GetText());
 				message->AddString("locale", language.Code());
 			}
 		}
