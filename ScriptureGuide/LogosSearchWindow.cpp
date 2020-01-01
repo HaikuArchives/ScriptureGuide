@@ -300,7 +300,7 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 				for (uint32 i = 0; i < verseList.size(); i++)
        			{
 					BString tmpstr(fCurrentModule->GetVerse(verseList[i]));
-					searchResults->AddItem(new BibleItem(verseList[i], tmpstr.String()));
+					searchResults->AddItem(new BibleItem(verseList[i], tmpstr.String(), fSearchString.String()));
        			}
 				findButton->SetEnabled(true);
 				searchString->SetEnabled(true);
