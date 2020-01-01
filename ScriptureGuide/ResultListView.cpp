@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+#include "constants.h"
 #include "ResultListView.h"
 
 #undef B_TRANSLATION_CONTEXT
@@ -150,7 +151,7 @@ void BibleItem::Update(BView* owner, const BFont* font)
 ResultListView::ResultListView(const char* name, list_view_type type
 					, uint32 flags)
 	:BOutlineListView( name, type, flags),
-	fDragCommand(B_SIMPLE_DATA)
+	fDragCommand(SG_BIBLE)
 {
 	Init();
 }
@@ -280,6 +281,8 @@ void ResultListView::MakeDragMessage(BMessage* message)
 		BLocale::Default()->GetLanguage(&language);
 		int32 index;
 		BString allVerses;
+		message->AddPointer("be:originator", this);
+
 		for (int32 i = 0; (index = CurrentSelection(i)) >= 0; i++)
 		{
 			BibleItem* tmpItem = dynamic_cast< BibleItem*>(FullListItemAt(index));
@@ -292,7 +295,6 @@ void ResultListView::MakeDragMessage(BMessage* message)
 				message->AddString("locale", language.Code());
 			}
 		}
-		message->AddPointer("be:originator", this);
 		message->AddData("text/plain", B_MIME_TYPE, allVerses.String(), allVerses.Length());
 
 	}
