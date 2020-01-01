@@ -692,6 +692,7 @@ void SGMainWindow::MessageReceived(BMessage* msg)
 		}
 		case MENU_FILE_QUIT:
 		{
+			
 			PostMessage(B_QUIT_REQUESTED);
 			break;
 		}
@@ -818,6 +819,17 @@ void SGMainWindow::MessageReceived(BMessage* msg)
 			SetVerse(num);
 			break;
 		}
+		case SG_BIBLE:
+		{
+			BString key;
+			if (msg->FindString("key",&key) == B_OK)
+			{
+				SetBook(BookFromKey(key.String()));
+				SetChapter(ChapterFromKey(key.String()));
+				SetVerse(VerseFromKey(key.String()));
+			}
+			break;
+		}
 		default:
 		{
 			BWindow::MessageReceived(msg);
@@ -934,6 +946,24 @@ void SGMainWindow::SetModule(const TextType &module, const int32 &index)
 	InsertChapter();
 	fVerseView->MakeFocus();
 }
+
+void SGMainWindow::SetBook(const char* book)
+{
+	BMenuItem *bookItem=fBookMenu->FindItem(book);
+	if (bookItem != NULL)
+	{
+		BMenuItem *tmpItem = fBookMenu->FindMarked();
+		while (tmpItem != NULL)
+		{
+			tmpItem->SetMarked(false);
+			tmpItem = fBookMenu->FindMarked();
+		}
+		bookItem->SetMarked(true);
+	}
+	InsertChapter();
+	fVerseView->MakeFocus();
+}
+
 
 
 void SGMainWindow::SetChapter(const int16 &chapter)

@@ -50,6 +50,7 @@ private:
 	
 	void SetModule(const TextType &module, const int32 &index);
 	void SetModuleFromString(const char* name);
+	void SetBook(const char* name);	
 	void SetChapter(const int16 &chapter);
 	void SetVerse(const int16 &verse);
 
