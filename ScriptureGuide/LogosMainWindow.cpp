@@ -340,6 +340,7 @@ void SGMainWindow::InsertChapter(void)
 	if (fCurrentModule == NULL)
 	{
 		fVerseView->Insert(B_TRANSLATE("No Modules installed\n\n Please use ScriptureGuideManager to download the books you want."));
+		be_roster->Launch("application/x-vnd.wgp.ScriptureGuideManager");
 		return;
 	}
 	if (fCurrentModule->Type() == TEXT_BIBLE) 
