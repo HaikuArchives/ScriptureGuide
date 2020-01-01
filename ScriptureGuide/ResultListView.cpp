@@ -53,7 +53,7 @@ void BibleItem::DrawItem(BView *owner,
 				  + ceilf(height / 2.0 - textHeight / 2.0
 				  		  + fh.ascent);	
 	versePoint=keyPoint;
-	keyPoint.x = keyPoint.x + owner->StringWidth(fKey)+5;
+	versePoint.x = keyPoint.x + owner->StringWidth(fKey)+TEXT_OFFSET;
 	owner->DrawString(fKey, keyPoint);
 	owner->DrawString(truncatedString.String(),versePoint );
 }
