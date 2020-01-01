@@ -297,10 +297,14 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 														books[fSearchEnd],
 														searchStatus);
 				searchResults->MakeEmpty();
+				BLanguage language;
+				BLocale::Default()->GetLanguage(&language);
 				for (uint32 i = 0; i < verseList.size(); i++)
        			{
+					sword::VerseKey myKey = sword::VerseKey(verseList[i]);
+					myKey.setLocale(language.Code());
 					BString tmpstr(fCurrentModule->GetVerse(verseList[i]));
-					searchResults->AddItem(new BibleItem(verseList[i], tmpstr.String(), fSearchString.String()));
+					searchResults->AddItem(new BibleItem(myKey.getText(), tmpstr.String(), fSearchString.String()));
        			}
 				findButton->SetEnabled(true);
 				searchString->SetEnabled(true);
@@ -326,8 +330,9 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 				BRect windowRect(50, 50, 599, 399);
 				BLanguage language;
 				BLocale::Default()->GetLanguage(&language);
-				sword::VerseKey myKey = sword::VerseKey(item->GetKey());
+				sword::VerseKey myKey = sword::VerseKey();
 				myKey.setLocale(language.Code());
+				myKey.setText(item->GetKey());
 				SGMainWindow* win = new SGMainWindow(windowRect, curModule,
 										myKey, VerseFromKey(myKey), VerseFromKey(myKey));
 				win->Show();
