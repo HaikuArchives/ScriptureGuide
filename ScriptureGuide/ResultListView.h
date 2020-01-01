@@ -18,20 +18,27 @@ static const float kRowDragSensitivity = 5.0;
 class BibleItem : public BListItem
 {
 public:
-	BibleItem(const char* key,const  char* text);
-	virtual ~BibleItem(void);
-	const char* GetKey(void){ return fKey; }
-	const char* GetText(void) const { return fText; }
-	void SetKey(const char* key) { fKey = key; }
-	void SetText(const char* text) { fText = text; }
-	virtual void DrawItem(BView *owner,
-            BRect frame,
-            bool complete = false);
-	virtual	void DrawBackground(BView* owner, BRect frame);
+					BibleItem(const char* key,const  char* text, const char* highlight = NULL);
+	virtual			~BibleItem(void);
+
+	const char*		GetKey(void) const { return fKey; }
+	const char*		GetText(void) const { return fText; }
+	const char*		GetHighlight(void) const {return fHighlight;}
+	void			SetKey(const char* key);
+	void			SetText(const char* text);
+	void			SetHighlight(const char* highlight);
+	
+	
+	virtual void	DrawItem(BView *owner, BRect frame,
+						bool complete = false);
+	virtual	void	Update(BView* owner, const BFont* font);
+
 
 private:
-	const char *fKey;
-	const char *fText;
+	char*			fKey;
+	char*			fText;
+	char*			fHighlight;
+	float			fBaselineOffset;	
 };
 
 class ResultListView : public BOutlineListView{
