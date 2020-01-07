@@ -4,8 +4,12 @@
 #include <Application.h>
 #include <AboutWindow.h>
 #include <Button.h>
+#include <Box.h>
 #include <Catalog.h>
+#include <Directory.h>
 #include <Entry.h>
+#include <File.h>
+#include <LayoutBuilder.h>
 #include <Locale.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
@@ -15,11 +19,9 @@
 #include <PopUpMenu.h>
 #include <Roster.h>
 #include <String.h>
-#include <File.h>
-#include <Directory.h>
-#include <Box.h>
+#include <ToolBar.h>
 
-#include <LayoutBuilder.h>
+
 
 #include <string.h>
 #include <stdio.h>
@@ -298,17 +300,17 @@ void SGMainWindow::BuildGUI(void)
 	copyitem->SetTarget(fVerseView);
 	selectallitem->SetTarget(fVerseView);
 	
+	BToolBar *toolBar = new BToolBar();
+	toolBar->AddView(fModuleField);
+	toolBar->AddView(bookfield);
+	toolBar->AddView(fChapterBox);
+	toolBar->AddView(fVerseBox);
+	toolBar->AddGlue();
+	toolBar->AddView(fNoteButton);
+	
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.Add(fMenuBar, B_USE_DEFAULT_SPACING)
-		.AddGroup(B_HORIZONTAL)
-			.SetInsets(B_USE_SMALL_SPACING, 0)
-			.Add(fModuleField)
-			.Add(bookfield)
-			.Add(fChapterBox, -1)
-			.Add(fVerseBox,-1)
-			.AddGlue()
-			.Add(fNoteButton)
-		.End()
+		.Add(toolBar)
 		.AddSplit(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
 			.Add(fScrollView)
 		.End()
