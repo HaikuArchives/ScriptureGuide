@@ -282,7 +282,9 @@ void ResultListView::MakeDragMessage(BMessage* message)
 		BLocale::Default()->GetLanguage(&language);
 		int32 index;
 		BString allVerses;
+		BString allKeys;
 		message->AddPointer("be:originator", this);
+		
 
 		for (int32 i = 0; (index = CurrentSelection(i)) >= 0; i++)
 		{
@@ -291,12 +293,15 @@ void ResultListView::MakeDragMessage(BMessage* message)
 			{
 				allVerses << tmpItem->GetKey() << " ";
 				allVerses << tmpItem->GetText() << "\n";
+				if (allKeys.Length()>0)
+					allKeys << ", ";
+				allKeys << tmpItem->GetKey();
 				message->AddString("key", tmpItem->GetKey());
 				message->AddString("text",tmpItem->GetText());
 				message->AddString("locale", language.Code());
 			}
 		}
 		message->AddData("text/plain", B_MIME_TYPE, allVerses.String(), allVerses.Length());
-
+		message->AddString("be:clip_name", allKeys);
 	}
 }
