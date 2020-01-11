@@ -29,25 +29,50 @@ APP_MIME_SIG = application/x-vnd.Scripture-Guide
 #	means this Makefile will not work correctly if two source files with the
 #	same name (source.c or source.cpp) are included from different directories.
 #	Also note that spaces in folder names do not work well with this Makefile.
-SRCS =	SwordBackend.cpp \
-		LogosMainWindow.cpp \
-		LogosSearchWindow.cpp \
-		LogosApp.cpp \
-		Preferences.cpp \
-		FontPanel.cpp \
-		Spinner.cpp \
-		ResultListView.cpp 
+SRCS = \
+	 FontPanel.cpp  \
+	 LogosApp.cpp  \
+	 LogosMainWindow.cpp  \
+	 LogosSearchWindow.cpp  \
+	 Preferences.cpp  \
+	 ResultListView.cpp  \
+	 Spinner.cpp  \
+	 SwordBackend.cpp  \
+	 textview/Bullet.cpp\
+	 textview/BulletData.cpp\
+	 textview/CharacterStyle.cpp\
+	 textview/CharacterStyleData.cpp\
+	 textview/MarkupParser.cpp\
+	 textview/Paragraph.cpp\
+	 textview/ParagraphLayout.cpp\
+	 textview/ParagraphStyle.cpp\
+	 textview/ParagraphStyleData.cpp\
+	 textview/TextDocument.cpp\
+	 textview/TextDocumentLayout.cpp\
+	 textview/TextDocumentView.cpp\
+	 textview/TextEditor.cpp\
+	 textview/TextListener.cpp\
+	 textview/TextSelection.cpp\
+	 textview/TextSpan.cpp\
+	 textview/TextView.cpp\
+	 textview/UndoableEditListener.cpp
+
 		
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
-RDEFS = ScriptureGuide.rdef
+RDEFS = \
+	 ScriptureGuide.rdef  \
+
 
 #	Specify the resource files to use. Full or relative paths can be used.
 #	Both RDEFS and RSRCS can be utilized in the same Makefile.
-RSRCS = 
+RSRCS = \
+
 
 # End Pe/Eddie support.
 # @<-src@ 
+#%}
+
 #%}
 
 #	Specify libraries to link against.
@@ -76,16 +101,20 @@ LIBPATHS =
 MACHINE=$(shell uname -m)
 ifeq ($(MACHINE), BePC)
 	SYSTEM_INCLUDE_PATHS =  /system/develop/headers/x86/sword \
-							/system/develop/headers/private/interface
+							/system/develop/headers/private/interface \
+							/boot/system/develop/headers/private/shared \
+							/boot/system/develop/headers/private/interface
 else
 	SYSTEM_INCLUDE_PATHS =  /system/develop/headers/sword \
-							/system/develop/headers/private/interface
+							/system/develop/headers/private/interface \
+							/boot/system/develop/headers/private/shared \
+							/boot/system/develop/headers/private/interface
 endif
 
 #	Additional paths paths to look for local headers. These use the form
 #	#include "header". Directories that contain the files in SRCS are
 #	automatically included.
-LOCAL_INCLUDE_PATHS = 
+LOCAL_INCLUDE_PATHS =  . textview support
 
 #	Specify the level of optimization that you want. Specify either NONE (O0),
 #	SOME (O1), FULL (O2), or leave blank (for the default optimization level).
