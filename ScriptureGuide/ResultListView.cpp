@@ -12,6 +12,7 @@
 #include <View.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "constants.h"
 #include "ResultListView.h"
