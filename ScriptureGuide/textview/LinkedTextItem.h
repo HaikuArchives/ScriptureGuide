@@ -23,9 +23,9 @@ public:
 			 * and +,- and +=  -= for easy forward and backward in the list
 			 */
 			void				SetPrev(LinkedTextItem &newPrev){prev=&newPrev;};
-			void				Prev(){reutrn prev;};
+			LinkedTextItem*		Prev(){return prev;};
 			void				SetNext(LinkedTextItem &newNext){next=&newNext;};
-			void				Next(){reutrn next;};
+			LinkedTextItem*		Next(){return next;};
 			//returns the end of the previous LinkedTextItem
 			//so its always up to date
 			int32				Start();
@@ -36,7 +36,7 @@ public:
 	virtual	BString*			Text();
 			
 			//returns the Start + Length()
-			void				End();
+			int32				End();
 
 			int32				Index();
 

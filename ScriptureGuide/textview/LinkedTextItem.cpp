@@ -29,7 +29,7 @@ LinkedTextItem::operator=(const LinkedTextItem& other)
 {
 	prev = other.prev;
 	next = other.next;
-	lengt = other.lengt;
+	length = other.length;
 	return *this;
 }
 
@@ -44,7 +44,7 @@ LinkedTextItem::operator==(const LinkedTextItem& other) const
 
 
 bool
-TextSpan::operator!=(const TextSpan& other) const
+LinkedTextItem::operator!=(const LinkedTextItem& other) const
 {
 	return !(*this == other);
 }
