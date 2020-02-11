@@ -720,9 +720,24 @@ void SGMainWindow::MessageReceived(BMessage* msg)
 				"Jon Yoder (DarkWyrm)",
 				NULL
 			};
-
-			window->AddCopyright(2019, "Scripture Guide Team");
+			const char* specialThanks[] = {
+				"al-popa (ru, ro)",
+				"Begasus",
+				"Briseur (fr)",
+				"extrowerk",
+				"korli",
+				"sword lib team",
+				"unspacyar (es)",
+				"zvacet (hr)",
+				NULL
+			};
+			const char* extraCopyrights[] = {
+				"2004 Jan Bungeroth",
+				NULL
+			};
+			window->AddCopyright(2005, "Scripture Guide Team",extraCopyrights);
 			window->AddAuthors(authors);
+			window->AddSpecialThanks(specialThanks);
 
 			window->Show();
 			break;
