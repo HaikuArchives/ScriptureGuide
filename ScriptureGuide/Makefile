@@ -37,25 +37,7 @@ SRCS = \
 	 Preferences.cpp  \
 	 ResultListView.cpp  \
 	 Spinner.cpp  \
-	 SwordBackend.cpp  \
-	 textview/Bullet.cpp\
-	 textview/BulletData.cpp\
-	 textview/CharacterStyle.cpp\
-	 textview/CharacterStyleData.cpp\
-	 textview/MarkupParser.cpp\
-	 textview/Paragraph.cpp\
-	 textview/ParagraphLayout.cpp\
-	 textview/ParagraphStyle.cpp\
-	 textview/ParagraphStyleData.cpp\
-	 textview/TextDocument.cpp\
-	 textview/TextDocumentLayout.cpp\
-	 textview/TextDocumentView.cpp\
-	 textview/TextEditor.cpp\
-	 textview/TextListener.cpp\
-	 textview/TextSelection.cpp\
-	 textview/TextSpan.cpp\
-	 textview/TextView.cpp\
-	 textview/UndoableEditListener.cpp
+	 SwordBackend.cpp  
 
 		
 #	Specify the resource definition files to use. Full or relative paths can be
@@ -87,7 +69,7 @@ RSRCS = \
 #	- 	if your library does not follow the standard library naming scheme,
 #		you need to specify the path to the library and it's name.
 #		(e.g. for mylib.a, specify "mylib.a" or "path/mylib.a")
-LIBS = be $(STDCPPLIBS) sword z columnlistview localestub
+LIBS = be $(STDCPPLIBS) sword z columnlistview localestub shared
 #	Specify additional paths to directories following the standard libXXX.so
 #	or libXXX.a naming scheme. You can specify full paths or paths relative
 #	to the Makefile. The paths included are not parsed recursively, so
@@ -114,7 +96,7 @@ endif
 #	Additional paths paths to look for local headers. These use the form
 #	#include "header". Directories that contain the files in SRCS are
 #	automatically included.
-LOCAL_INCLUDE_PATHS =  . textview support
+LOCAL_INCLUDE_PATHS =  .
 
 #	Specify the level of optimization that you want. Specify either NONE (O0),
 #	SOME (O1), FULL (O2), or leave blank (for the default optimization level).
