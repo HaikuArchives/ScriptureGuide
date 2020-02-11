@@ -1,0 +1,40 @@
+1	Croatian	application/x-vnd.Scripture-Guide	740233707
+Find Verse…	MainWindow		Nađi stih…
+Program	MainWindow		Program
+Next Chapter	MainWindow		Slijedeće poglavlje
+About Scripture Guide…	MainWindow		About Scripture Guide…
+This module does not have this section.	MainWindow		This module does not have this section.
+Previous Book	MainWindow		Prethodna knjiga
+Select All	MainWindow		Odaberi sve
+Quit	MainWindow		Isključi
+Chapter	MainWindow		Poglavlje
+Options	MainWindow		Opcije
+Copy Verses	MainWindow		Copy Verses
+Duplicate This Window…	MainWindow		Duplirajte ovaj prozor…
+Choose Font...	MainWindow		Odaberite font...
+Commentaries	MainWindow		Commentaries
+Close This Window	MainWindow		Zatvorite ovaj prozor
+Show Verse Numbers	MainWindow		Pokaži brojeve stihova
+Text:	MainWindow		Tekst:
+Navigation	MainWindow		Navigacija
+Bibles	MainWindow		Bibles
+Notes…	MainWindow		Bilješke…
+Next Book	MainWindow		Slijedeća knjiga
+Previous Chapter	MainWindow		Prethodno poglavlje
+Book:	MainWindow		Knjiga:
+Verse	MainWindow		Stih
+No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.	MainWindow		No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.
+Font Name	FontPanel		Ime fonta
+Preview	FontPanel		Preview
+OK	FontPanel		U redu
+Font Size: 	FontPanel		Veličina fonta:
+Regular Expression	SearchWindow		Regular Expression
+Search Progress:	SearchWindow		Tijek traženja:
+Find Phrase	SearchWindow		Nađi frazu
+Match Case	SearchWindow		Match Case
+Search Results:	SearchWindow		Rezultati traženja:
+Find	SearchWindow		Nađi
+End in 	SearchWindow		End in 
+Start in 	SearchWindow		Start in 
+Find Words	SearchWindow		Nađi riječi
+Find: 	SearchWindow		Nađi:

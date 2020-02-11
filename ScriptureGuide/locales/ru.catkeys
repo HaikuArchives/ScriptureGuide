@@ -1,0 +1,40 @@
+1	Russian	application/x-vnd.Scripture-Guide	740233707
+Find Verse…	MainWindow		Найти стих…
+Program	MainWindow		Программа
+Next Chapter	MainWindow		Следующая глава
+About Scripture Guide…	MainWindow		О Scripture Guide…
+This module does not have this section.	MainWindow		Текущий модуль не содержит этут раздел.
+Previous Book	MainWindow		Предыдущая книга
+Select All	MainWindow		Выбрать всё
+Quit	MainWindow		Завершить
+Chapter	MainWindow		Глава
+Options	MainWindow		Параметры
+Copy Verses	MainWindow		Скопировать стихи
+Duplicate This Window…	MainWindow		Дублировать это окно…
+Choose Font...	MainWindow		Выбрать шрифт...
+Commentaries	MainWindow		Комментарии
+Close This Window	MainWindow		Закрыть это окно
+Show Verse Numbers	MainWindow		Показывать нумерацию стихов
+Text:	MainWindow		Текст:
+Navigation	MainWindow		Навигация
+Bibles	MainWindow		Библии
+Notes…	MainWindow		Заметки…
+Next Book	MainWindow		Следующая книга
+Previous Chapter	MainWindow		Предыдущая глава
+Book:	MainWindow		Книга:
+Verse	MainWindow		Стих
+No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.	MainWindow		Нет установленных модулей\n\n Вы можете скачать нужные книги с помощью ScriptureGuideManager.
+Font Name	FontPanel		Гарнитура шрифта
+Preview	FontPanel		Предпросмотр
+OK	FontPanel		OK
+Font Size: 	FontPanel		Размер шрифта:
+Regular Expression	SearchWindow		Регулярное выражение
+Search Progress:	SearchWindow		Прогресс поиска:
+Find Phrase	SearchWindow		Найти фразу
+Match Case	SearchWindow		С учётом регистра
+Search Results:	SearchWindow		Результаты поиска:
+Find	SearchWindow		Найти
+End in 	SearchWindow		Заканчивается
+Start in 	SearchWindow		Начинаится с
+Find Words	SearchWindow		Найти слова
+Find: 	SearchWindow		Найти:

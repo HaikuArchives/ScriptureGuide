@@ -1,0 +1,40 @@
+1	French	application/x-vnd.Scripture-Guide	740233707
+Find Verse…	MainWindow		Chercher un verset…
+Program	MainWindow		Programme
+Next Chapter	MainWindow		Chapitre suivant
+About Scripture Guide…	MainWindow		À propos de Scripture Guide…
+This module does not have this section.	MainWindow		Ce module n'a pas cette section.
+Previous Book	MainWindow		Livre précédant
+Select All	MainWindow		Sélectionner tout
+Quit	MainWindow		Quitter
+Chapter	MainWindow		Chapitre
+Options	MainWindow		Options
+Copy Verses	MainWindow		Copier les versets
+Duplicate This Window…	MainWindow		Dupliquer cette fenêtre…
+Choose Font...	MainWindow		Choisir une police...
+Commentaries	MainWindow		Commentaires
+Close This Window	MainWindow		Fermer cette fenêtre
+Show Verse Numbers	MainWindow		Afficher les numéros des versets
+Text:	MainWindow		Texte :
+Navigation	MainWindow		Navigation
+Bibles	MainWindow		Bibles
+Notes…	MainWindow		Notes…
+Next Book	MainWindow		Livre suivant
+Previous Chapter	MainWindow		Chapitre précédant
+Book:	MainWindow		Livre :
+Verse	MainWindow		Verset
+No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.	MainWindow		Aucun module installé\n\n Veuillez utiliser ScriptureGuideManager pour télécharger les livres désirés.
+Font Name	FontPanel		Nom de la police
+Preview	FontPanel		Aperçu
+OK	FontPanel		OK
+Font Size: 	FontPanel		Dimension de la police : 
+Regular Expression	SearchWindow		Expression régulière
+Search Progress:	SearchWindow		Progression de la recherche :
+Find Phrase	SearchWindow		Chercher une phrase
+Match Case	SearchWindow		Respecter la casse
+Search Results:	SearchWindow		Résultats de la recherche :
+Find	SearchWindow		Chercher
+End in 	SearchWindow		Prend fin
+Start in 	SearchWindow		Débute
+Find Words	SearchWindow		Chercher des mots
+Find: 	SearchWindow		Chercher : 
