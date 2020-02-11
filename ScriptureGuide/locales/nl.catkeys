@@ -1,0 +1,40 @@
+1	German	application/x-vnd.Scripture-Guide	740233707
+Find Verse…	MainWindow		Vers vinden…
+Program	MainWindow		Programma
+Next Chapter	MainWindow		Volgend hoofdstuk
+About Scripture Guide…	MainWindow		Over Scripture Guide…
+This module does not have this section.	MainWindow		Deze module heeft deze sectie niet
+Previous Book	MainWindow		Vorig boek
+Select All	MainWindow		Alles selecteren
+Quit	MainWindow		Afsluiten
+Chapter	MainWindow		Hoofdstuk
+Options	MainWindow		Instellingen
+Copy Verses	MainWindow		Vers kopiëren
+Duplicate This Window…	MainWindow		Venster dupliceren...
+Choose Font...	MainWindow		Kies Font...
+Commentaries	MainWindow		Commentaren
+Close This Window	MainWindow		Venster sluiten
+Show Verse Numbers	MainWindow		Toon vers nummers
+Text:	MainWindow		Tekst:
+Navigation	MainWindow		Navigatie
+Bibles	MainWindow		Bijbels
+Notes…	MainWindow		Aantekeningen...
+Next Book	MainWindow		Volgend boek
+Previous Chapter	MainWindow		Vorig hoofdstuk
+Book:	MainWindow		Boek:
+Verse	MainWindow		Vers
+No Modules installed\n\n Please use ScriptureGuideManager to download the books you want.	MainWindow		Geen modules geïnstalleerd\n\n Gebruik ScriptureGuideManager om de boeken die je wil te downloaden.
+Font Name	FontPanel		Font naam
+Preview	FontPanel		Voorbeeld
+OK	FontPanel		OK
+Font Size: 	FontPanel		Font grootte:
+Regular Expression	SearchWindow		Reguliere uitdrukking
+Search Progress:	SearchWindow		Voortgang zoeken:
+Find Phrase	SearchWindow		Zoek Uitdrukking
+Match Case	SearchWindow		Hoofdletter gevoelig
+Search Results:	SearchWindow		Zoekresultaten:
+Find	SearchWindow		Zoek
+End in 	SearchWindow		Eindig in
+Start in 	SearchWindow		Start in
+Find Words	SearchWindow		Zoek woorden
+Find: 	SearchWindow		Zoek:
