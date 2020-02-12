@@ -21,8 +21,6 @@
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "FontPanel"
 
-// TODO: Add Escape key as a shortcut for cancelling
-
 enum
 {
 	M_OK='m_ok',
@@ -196,7 +194,7 @@ private:
 FontWindow::FontWindow(const BRect& frame, float fontsize, BHandler* target,
 				BMessage *msg)
  : BWindow(frame, "Choose a Font", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL,
-				B_NOT_CLOSABLE)
+				B_NOT_CLOSABLE | B_CLOSE_ON_ESCAPE)
 {
 	fReallyQuit = false;
 	fTarget = target;
@@ -398,8 +396,10 @@ bool FontWindow::QuitRequested(void)
 {
 	if (fReallyQuit)
 		return true;
-	
-	return false;
+	else
+		Hide();
+		
+	return false;	
 }
 
 
@@ -410,6 +410,7 @@ FontPanel::FontPanel(BHandler* target, BMessage* msg, float size, bool modal,
 
 	if (modal)
 		fWindow->SetFeel(B_MODAL_APP_WINDOW_FEEL);
+	
 }
 
 

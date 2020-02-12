@@ -74,7 +74,7 @@ void VersePreview::FrameResized(float width, float height)
 SGSearchWindow::SGSearchWindow(BRect frame, const char* module,
 					BMessenger* owner)
  :	BWindow(frame, "", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL,
-			B_NOT_ZOOMABLE),
+			B_NOT_ZOOMABLE | B_CLOSE_ON_ESCAPE),
  	fMessenger(owner)
 {
 	float minw, minh, maxw, maxh;
@@ -229,6 +229,8 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 		case M_ACTIVATE_WINDOW:
 		{
 			Activate(true);
+			if (IsHidden())
+				Show();
 			break;
 		}
 		case FIND_SELECT_FROM:
@@ -407,5 +409,6 @@ void SGSearchWindow::MessageReceived(BMessage* message)
 
 bool SGSearchWindow::QuitRequested() 
 {
-	return true;
+	Hide();
+	return false;
 }

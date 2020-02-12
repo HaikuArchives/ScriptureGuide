@@ -1073,9 +1073,15 @@ bool SGMainWindow::QuitRequested()
 		fFindMessenger = NULL;
 	}
 	if (fFontPanel)
-		fFontPanel->Window()->Quit();
+	{
+		if (fFontPanel->Window()->LockLooper())
+			fFontPanel->Window()->Quit();
+	}
 	if(fSearchWindow)
-		fSearchWindow->Quit();
+	{
+		if (fSearchWindow->LockLooper())
+			fSearchWindow->Quit();
+	}
 	SavePrefsForModule();
 	be_app_messenger.SendMessage(new BMessage(M_WINDOW_CLOSED));
 	return true;
