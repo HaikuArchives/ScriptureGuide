@@ -30,7 +30,6 @@
 
 #include "constants.h"
 #include "LogosApp.h"
-#include "LogosSearchWindow.h"
 #include "FontPanel.h"
 #include "Preferences.h"
 
@@ -45,7 +44,8 @@ SGMainWindow::SGMainWindow(BRect frame, const char* module, const char* key,
  	fCurrentModule(NULL),
  	fCurrentChapter(1),
  	fCurrentFont(NULL),
- 	fFindMessenger(NULL)
+ 	fFindMessenger(NULL),
+	fSearchWindow(NULL)
 {
 	fCurrentVerse = selectVers;
 	fCurrentVerseEnd = selectVersEnd;
@@ -760,10 +760,13 @@ void SGMainWindow::MessageReceived(BMessage* msg)
 			BRect r(Frame().OffsetByCopy(5, 23));
 			r.right = r.left + 325;
 			r.bottom = r.top + 410;
-			SGSearchWindow* win = new SGSearchWindow(r, fCurrentModule->Name(),
+			if (!fSearchWindow)
+			{
+				fSearchWindow = new SGSearchWindow(r, fCurrentModule->Name(),
 										new BMessenger(this));
-			fFindMessenger = new BMessenger(win);
-			win->Show();
+				fFindMessenger = new BMessenger(fSearchWindow);
+			}
+			fSearchWindow->Show();
 			break;
 		}
 		case MENU_EDIT_NOTE:
@@ -1069,7 +1072,10 @@ bool SGMainWindow::QuitRequested()
 		delete fFindMessenger;
 		fFindMessenger = NULL;
 	}
-	
+	if (fFontPanel)
+		fFontPanel->Window()->Quit();
+	if(fSearchWindow)
+		fSearchWindow->Quit();
 	SavePrefsForModule();
 	be_app_messenger.SendMessage(new BMessage(M_WINDOW_CLOSED));
 	return true;

@@ -9,6 +9,10 @@
 #include <Messenger.h>
 #include <StatusBar.h>
 
+#include <vector>
+
+#include "SwordBackend.h"
+
 #include "ResultListView.h"
 
 class VersePreview;
@@ -16,6 +20,9 @@ class SGModule;
 
 #define FIND_QUIT			'FTqu'
 #define M_ACTIVATE_WINDOW	'ACwn'
+
+using namespace std;
+
 
 enum
 {

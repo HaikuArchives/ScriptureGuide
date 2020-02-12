@@ -16,7 +16,10 @@
 
 #include <vector>
 
+#include "LogosSearchWindow.h"
 #include "SwordBackend.h"
+
+
 
 class FontPanel;
 class SGModule;
@@ -80,6 +83,7 @@ private:
 	BScrollView		*fScrollView;
 	
 	FontPanel		*fFontPanel;
+	SGSearchWindow	*fSearchWindow;
 	
 	
 	SwordBackend	*fModManager;
